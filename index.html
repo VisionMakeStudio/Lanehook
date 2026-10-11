@@ -146,7 +146,7 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
 .scr.on{opacity:1;transform:none;pointer-events:auto}
 .scr.left{transform:translateX(-24px)}
 .scr.on.left{transform:none}
-.lcard{width:100%;text-align:left;background:var(--navy2);border:1px solid transparent;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.lcard{width:100%;text-align:start;background:var(--navy2);border:1px solid transparent;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px}
 .lcard.sel{border-color:var(--orange)}
 .lcard .a{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
 .lcard .b{display:flex;justify-content:space-between;font-size:11px;color:var(--gray)}
@@ -171,7 +171,7 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
 /* driver section */
 .split{display:flex;gap:72px;flex-wrap:wrap;align-items:center}
 .split > .txt{flex:1 1 420px;min-width:0}
-.feat{width:100%;text-align:left;display:flex;gap:14px;align-items:flex-start;background:transparent;border:1px solid var(--line);border-radius:14px;padding:16px 18px;color:var(--navy);position:relative;overflow:hidden}
+.feat{width:100%;text-align:start;display:flex;gap:14px;align-items:flex-start;background:transparent;border:1px solid var(--line);border-radius:14px;padding:16px 18px;color:var(--navy);position:relative;overflow:hidden}
 .feat svg{flex-shrink:0;margin-top:2px;stroke:#64748B}
 .feat.on{background:#fff;border-color:var(--blue);box-shadow:0 10px 30px rgba(11,19,43,.08)}
 .feat.on svg{stroke:var(--blue)}
@@ -264,7 +264,7 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
 
 /* faq */
 .faq-i{border-top:1px solid #CBD5E1}
-.faq-q{width:100%;text-align:left;background:none;border:none;padding:22px 0;display:flex;justify-content:space-between;align-items:center;gap:16px;color:var(--navy);font-size:18px;font-weight:600}
+.faq-q{width:100%;text-align:start;background:none;border:none;padding:22px 0;display:flex;justify-content:space-between;align-items:center;gap:16px;color:var(--navy);font-size:18px;font-weight:600}
 .faq-q .ic{width:32px;height:32px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:transform .35s var(--ease),background .3s}
 .faq-i.open .ic{background:var(--orange);transform:rotate(45deg)}
 .faq-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease)}
@@ -283,6 +283,28 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
 .foot{max-width:1180px;margin:90px auto 0;padding-top:28px;border-top:1px solid var(--line-d);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--gray)}
 .foot nav{display:flex;gap:22px;flex-wrap:wrap}
 
+/* language switcher */
+.nav-r{display:flex;align-items:center;gap:14px}
+.lang{position:relative}
+.lang-btn{display:inline-flex;align-items:center;gap:7px;height:44px;padding:0 12px;border-radius:12px;background:var(--navy2);border:1px solid #22305A;color:var(--off);font-size:13px;font-weight:600}
+.lang-btn svg{flex-shrink:0}
+.lang-menu{position:absolute;top:calc(100% + 8px);inset-inline-end:0;min-width:200px;background:var(--navy2);border:1px solid #22305A;border-radius:14px;padding:6px;box-shadow:0 18px 50px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:2px;opacity:0;transform:translateY(-6px) scale(.98);transform-origin:top right;pointer-events:none;transition:opacity .2s,transform .25s var(--ease);z-index:70}
+.lang.open .lang-menu{opacity:1;transform:none;pointer-events:auto}
+.lang-menu button{display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;background:none;border:none;color:#CBD5E1;font-size:15px;padding:11px 12px;border-radius:10px;min-height:44px;text-align:start}
+.lang-menu button b{font-size:11px;color:var(--gray);font-weight:600}
+.lang-menu button:hover{background:var(--navy3);color:var(--off)}
+.lang-menu button.on{background:var(--orange);color:var(--navy)}
+.lang-menu button.on b{color:var(--navy)}
+/* fonts for other scripts */
+html[lang=ru] h1,html[lang=ru] h2,html[lang=ru] h3,html[lang=uk] h1,html[lang=uk] h2,html[lang=uk] h3{font-family:'Manrope','IBM Plex Sans',system-ui,sans-serif;font-stretch:normal;letter-spacing:-.01em}
+html[lang=pa] body,html[lang=pa] h1,html[lang=pa] h2,html[lang=pa] h3{font-family:'Noto Sans Gurmukhi','IBM Plex Sans',system-ui,sans-serif;font-stretch:normal}
+html[lang=ar] body,html[lang=ar] h1,html[lang=ar] h2,html[lang=ar] h3{font-family:'IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif;font-stretch:normal;letter-spacing:0}
+html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
+/* right-to-left: keep swipe rows and the device stage left-to-right so the scrolling math stays simple */
+[dir=rtl] .stage-inner,[dir=rtl] .feats,[dir=rtl] .kan,[dir=rtl] .hscroll,[dir=rtl] .seg,[dir=rtl] .dev-switch,[dir=rtl] .marq{direction:ltr}
+[dir=rtl] .stage-inner>*,[dir=rtl] .feats>*,[dir=rtl] .kan>*,[dir=rtl] .hscroll>*,[dir=rtl] .seg>button,[dir=rtl] .dev-switch>button{direction:rtl}
+[dir=rtl] .mono{unicode-bidi:plaintext}
+
 /* toast + sticky cta */
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));z-index:60;transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--off);color:var(--navy);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:500;box-shadow:0 14px 40px rgba(0,0,0,.45);display:flex;gap:10px;align-items:center;width:max-content;max-width:calc(100% - 32px);transition:transform .45s var(--ease),opacity .35s}
 .toast.show{transform:translate(-50%,0);opacity:1}
@@ -295,6 +317,7 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
   .split{gap:48px}
 }
 @media (max-width:860px){
+  .lang-btn{padding:0 10px}
   .nav-links{position:absolute;top:72px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:rgba(11,19,43,.98);border-bottom:1px solid var(--line-d);padding:8px var(--pad) 20px;clip-path:inset(0 0 100% 0);opacity:0;pointer-events:none;transition:clip-path .45s var(--ease),opacity .3s}
   .nav.open .nav-links{clip-path:inset(0 0 0 0);opacity:1;pointer-events:auto}
   .nav-links a{padding:15px 0;font-size:17px;border-bottom:1px solid var(--line-d)}
@@ -304,6 +327,9 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
 @media (max-width:719px){
   :root{--pad:18px}
   .mob-only{display:block}
+  .nav-r{gap:8px}
+  .nav-in{gap:10px}
+  .nav-in > a svg{width:150px;height:18px}
   .section{padding:76px var(--pad)}
   .hero{padding:44px var(--pad) 56px}
   .road{display:none}
@@ -410,14 +436,23 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
 <header class="nav" id="nav">
   <div class="nav-in">
     <a href="#top" aria-label="LaneHook home"><svg width="172" height="20" aria-hidden="true"><use href="#wordmark"/></svg></a>
-    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
-    <nav class="nav-links" id="navLinks">
-      <a href="#driver">Driver app</a>
-      <a href="#dispatch">Dispatcher</a>
-      <a href="#tools">Try the tools</a>
-      <a href="#faq">FAQ</a>
-      <a href="#join" class="cta">Get early access</a>
-    </nav>
+    <div class="nav-r">
+      <nav class="nav-links" id="navLinks">
+        <a href="#driver">Driver app</a>
+        <a href="#dispatch">Dispatcher</a>
+        <a href="#tools">Try the tools</a>
+        <a href="#faq">FAQ</a>
+        <a href="#join" class="cta">Get early access</a>
+      </nav>
+      <div class="lang" id="langWrap">
+        <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Language">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>
+          <span id="langBtnTxt" translate="no">EN</span>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu"></div>
+      </div>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
+    </div>
   </div>
   <div class="progress" id="progress"></div>
 </header>
@@ -428,7 +463,7 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
   <div class="road" style="height:84px"></div>
   <div class="hero-copy">
     <div class="pill"><b>New</b>Built for owner-operators &amp; small fleets</div>
-    <h1><span class="w" style="animation-delay:.05s">Dispatch</span> <span class="w" style="animation-delay:.12s">sends</span>&nbsp;<span class="w" style="animation-delay:.19s">it.</span><br><span class="w o" style="animation-delay:.3s">The</span> <span class="w o" style="animation-delay:.37s">driver's</span> <span class="w o" style="animation-delay:.44s">already</span> <span class="w o" style="animation-delay:.51s">on</span> <span class="w o" style="animation-delay:.58s">it.</span></h1>
+    <h1 id="h1" translate="no"></h1>
     <p>LaneHook is one app with two logins. Drivers get a pocket toolkit for loads, detention, and paperwork. Dispatchers get a command center for the whole fleet. Share a company code and they're hooked together.</p>
     <div class="hero-ctas">
       <a href="#join" class="btn btn-o">Get early access</a>
@@ -505,7 +540,7 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
 
 <!-- STRIP -->
 <div style="background:var(--orange);color:var(--navy);overflow:hidden">
-  <div style="display:flex;width:max-content;animation:mq 28s linear infinite;padding:20px 0;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(15px,2.4vw,18px);font-stretch:115%;letter-spacing:.01em;white-space:nowrap">
+  <div class="marq" style="display:flex;width:max-content;animation:mq 28s linear infinite;padding:20px 0;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(15px,2.4vw,18px);font-stretch:115%;letter-spacing:.01em;white-space:nowrap">
     <span>TWO LOGINS · ONE COMPANY CODE · DETENTION, TRACKED · BROKERS, CHECKED · PAPERWORK, FILED ·&nbsp;</span>
     <span aria-hidden="true">TWO LOGINS · ONE COMPANY CODE · DETENTION, TRACKED · BROKERS, CHECKED · PAPERWORK, FILED ·&nbsp;</span>
   </div>
@@ -812,9 +847,9 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
     <form id="joinForm" style="width:100%;display:flex;flex-direction:column;gap:14px;align-items:center">
       <div class="roles" id="roles">
         <span style="font-size:14px;color:var(--gray);margin-right:4px">I'm a</span>
-        <button type="button" data-role="driver" class="on">Driver</button>
-        <button type="button" data-role="dispatcher">Dispatcher</button>
-        <button type="button" data-role="fleet owner">Fleet owner</button>
+        <button type="button" data-role="Driver" class="on">Driver</button>
+        <button type="button" data-role="Dispatcher">Dispatcher</button>
+        <button type="button" data-role="Fleet owner">Fleet owner</button>
       </div>
       <div class="email-row">
         <label for="email" class="sr">Email</label>
@@ -840,6 +875,338 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
 <div class="toast" id="toast" role="status" aria-live="polite"><i></i><span id="toastTxt"></span></div>
 
 <script>
+/* ===== LaneHook translations: [English, Español, Русский, Українська, ਪੰਜਾਬੀ, Oʻzbek, العربية] ===== */
+(function(){
+var CODES=['en','es','ru','uk','pa','uz','ar'];
+var LANGS=[
+  {c:'en',n:'English',s:'EN'},{c:'es',n:'Español',s:'ES'},{c:'ru',n:'Русский',s:'RU'},{c:'uk',n:'Українська',s:'UA'},
+  {c:'pa',n:'ਪੰਜਾਬੀ',s:'ਪੰ'},{c:'uz',n:'Oʻzbekcha',s:'UZ'},{c:'ar',n:'العربية',s:'ع'}];
+var R=[
+["LaneHook — Dispatch and drivers, hooked together","LaneHook — Despacho y choferes, conectados","LaneHook — диспетчер и водители на одной связи","LaneHook — диспетчер і водії на одному зв'язку","LaneHook — ਡਿਸਪੈਚ ਅਤੇ ਡਰਾਈਵਰ, ਇਕੱਠੇ ਜੁੜੇ","LaneHook — dispetcher va haydovchilar birga","LaneHook — المنسّق والسائقون مترابطون"],
+["Language","Idioma","Язык","Мова","ਭਾਸ਼ਾ","Til","اللغة"],
+["Driver app","App del chofer","Приложение водителя","Застосунок водія","ਡਰਾਈਵਰ ਐਪ","Haydovchi ilovasi","تطبيق السائق"],
+["Dispatcher","Despachador","Диспетчер","Диспетчер","ਡਿਸਪੈਚਰ","Dispetcher","المنسّق"],
+["Try the tools","Prueba las herramientas","Попробуйте инструменты","Спробуйте інструменти","ਟੂਲ ਵਰਤ ਕੇ ਦੇਖੋ","Vositalarni sinab ko'ring","جرّب الأدوات"],
+["FAQ","Preguntas","Вопросы","Питання","ਸਵਾਲ","Savollar","الأسئلة"],
+["Get early access","Acceso anticipado","Ранний доступ","Ранній доступ","ਜਲਦੀ ਪਹੁੰਚ ਲਓ","Erta kirish","احصل على وصول مبكر"],
+["Open menu","Abrir menú","Открыть меню","Відкрити меню","ਮੀਨੂ ਖੋਲ੍ਹੋ","Menyuni ochish","فتح القائمة"],
+["LaneHook home","Inicio de LaneHook","Главная LaneHook","Головна LaneHook","LaneHook ਹੋਮ","LaneHook bosh sahifa","الصفحة الرئيسية لـ LaneHook"],
+["New","Nuevo","Новое","Нове","ਨਵਾਂ","Yangi","جديد"],
+["Built for owner-operators & small fleets","Hecho para owner-operators y flotas pequeñas","Для владельцев-операторов и небольших автопарков","Для власників-операторів і невеликих автопарків","ਓਨਰ-ਆਪਰੇਟਰਾਂ ਅਤੇ ਛੋਟੀਆਂ ਫਲੀਟਾਂ ਲਈ ਬਣਾਇਆ","Owner-operatorlar va kichik avtoparklar uchun","مصمَّم للسائقين المالكين والأساطيل الصغيرة"],
+["Dispatch sends it.","Despacho lo envía.","Диспетчер отправил.","Диспетчер надіслав.","ਡਿਸਪੈਚ ਭੇਜਦਾ ਹੈ।","Dispetcher yuboradi.","المنسّق يرسلها."],
+["The driver's already on it.","El chofer ya va en camino.","Водитель уже в пути.","Водій уже в дорозі.","ਡਰਾਈਵਰ ਪਹਿਲਾਂ ਹੀ ਰਾਹ ਵਿੱਚ ਹੈ।","Haydovchi allaqachon yo'lda.","والسائق في الطريق بالفعل."],
+["LaneHook is one app with two logins. Drivers get a pocket toolkit for loads, detention, and paperwork. Dispatchers get a command center for the whole fleet. Share a company code and they're hooked together.","LaneHook es una sola app con dos accesos. Los choferes llevan en el bolsillo todo para cargas, tiempo de espera (detention) y papeleo. Los despachadores tienen un centro de mando para toda la flota. Compartan un código de empresa y quedan conectados.","LaneHook — одно приложение с двумя входами. У водителя в кармане всё для грузов, простоя (detention) и документов. У диспетчера — центр управления всем автопарком. Общий код компании — и они на связи.","LaneHook — один застосунок із двома входами. У водія в кишені все для вантажів, простою (detention) і документів. У диспетчера — центр керування всім автопарком. Спільний код компанії — і вони на зв'язку.","LaneHook ਇੱਕ ਐਪ ਹੈ ਜਿਸ ਵਿੱਚ ਦੋ ਲੌਗਇਨ ਹਨ। ਡਰਾਈਵਰਾਂ ਨੂੰ ਲੋਡ, ਡਿਟੈਂਸ਼ਨ ਅਤੇ ਕਾਗਜ਼ਾਂ ਲਈ ਜੇਬ ਵਿੱਚ ਪੂਰਾ ਟੂਲਕਿੱਟ ਮਿਲਦਾ ਹੈ। ਡਿਸਪੈਚਰਾਂ ਨੂੰ ਪੂਰੀ ਫਲੀਟ ਲਈ ਕਮਾਂਡ ਸੈਂਟਰ ਮਿਲਦਾ ਹੈ। ਇੱਕ ਕੰਪਨੀ ਕੋਡ ਸਾਂਝਾ ਕਰੋ ਅਤੇ ਦੋਵੇਂ ਜੁੜ ਜਾਂਦੇ ਹਨ।","LaneHook — ikki xil kirishga ega bitta ilova. Haydovchilar yuklar, kutish vaqti (detention) va hujjatlar uchun cho'ntak vositalarini oladi. Dispetcherlar butun avtopark uchun boshqaruv markazini oladi. Kompaniya kodini ulashing — ular bir-biriga bog'lanadi.","LaneHook تطبيق واحد بتسجيلَي دخول. يحصل السائقون على أدوات في جيبهم للأحمال ووقت الانتظار والأوراق. ويحصل المنسّقون على مركز تحكم للأسطول بالكامل. شاركوا رمز الشركة ليصبحوا مترابطين."],
+["Try the live demo ↓","Prueba la demo en vivo ↓","Живая демонстрация ↓","Жива демонстрація ↓","ਲਾਈਵ ਡੈਮੋ ਵੇਖੋ ↓","Jonli demoni sinang ↓","جرّب العرض المباشر ↓"],
+["LIVE","EN VIVO","LIVE","LIVE","ਲਾਈਵ","JONLI","مباشر"],
+["Click \"Send load\" on the laptop to dispatch Marcus.","Haz clic en \"Enviar carga\" en la laptop para despachar a Marcus.","Нажмите «Отправить груз» на ноутбуке — груз уйдёт водителю Marcus.","Натисніть «Надіслати вантаж» на ноутбуці — вантаж піде водієві Marcus.","Marcus ਨੂੰ ਲੋਡ ਭੇਜਣ ਲਈ ਲੈਪਟਾਪ ਉੱਤੇ \"ਲੋਡ ਭੇਜੋ\" ਦਬਾਓ।","Marcusga yuk yuborish uchun noutbukda \"Yuk yuborish\" tugmasini bosing.","اضغط \"إرسال الحمولة\" على الحاسوب لإرسالها إلى Marcus."],
+["Tap \"Send load\" under the laptop.","Toca \"Enviar carga\" debajo de la laptop.","Нажмите «Отправить груз» под ноутбуком.","Натисніть «Надіслати вантаж» під ноутбуком.","ਲੈਪਟਾਪ ਦੇ ਹੇਠਾਂ \"ਲੋਡ ਭੇਜੋ\" ਦਬਾਓ।","Noutbuk ostidagi \"Yuk yuborish\" tugmasini bosing.","اضغط \"إرسال الحمولة\" أسفل الحاسوب."],
+["Now accept the load on Marcus's phone.","Ahora acepta la carga en el teléfono de Marcus.","Теперь примите груз на телефоне Marcus.","Тепер прийміть вантаж на телефоні Marcus.","ਹੁਣ Marcus ਦੇ ਫ਼ੋਨ 'ਤੇ ਲੋਡ ਮਨਜ਼ੂਰ ਕਰੋ।","Endi Marcus telefonida yukni qabul qiling.","الآن اقبل الحمولة على هاتف Marcus."],
+["Tap the status button. The laptop updates live.","Toca el botón de estado. La laptop se actualiza al instante.","Нажмите кнопку статуса — ноутбук обновится сразу.","Натисніть кнопку статусу — ноутбук оновиться одразу.","ਸਟੇਟਸ ਬਟਨ ਦਬਾਓ। ਲੈਪਟਾਪ ਉਸੇ ਵੇਲੇ ਅੱਪਡੇਟ ਹੁੰਦਾ ਹੈ।","Holat tugmasini bosing. Noutbuk darhol yangilanadi.","اضغط زر الحالة. يتحدّث الحاسوب فورًا."],
+["Delivered. That's the whole loop, no texts needed.","Entregado. Ese es todo el ciclo, sin mensajes de texto.","Доставлено. Весь цикл — без единой SMS.","Доставлено. Увесь цикл — без жодного SMS.","ਡਿਲੀਵਰ ਹੋ ਗਿਆ। ਪੂਰਾ ਕੰਮ, ਬਿਨਾਂ ਕਿਸੇ ਮੈਸੇਜ ਦੇ।","Yetkazildi. Butun jarayon — SMSsiz.","تم التسليم. هذه هي الدورة كاملة بلا رسائل نصية."],
+["Reset","Reiniciar","Сбросить","Скинути","ਮੁੜ ਸ਼ੁਰੂ","Qayta boshlash","إعادة"],
+["Choose device","Elegir dispositivo","Выбор устройства","Вибір пристрою","ਡਿਵਾਈਸ ਚੁਣੋ","Qurilmani tanlang","اختر الجهاز"],
+["Dispatch laptop","Laptop de despacho","Ноутбук диспетчера","Ноутбук диспетчера","ਡਿਸਪੈਚ ਲੈਪਟਾਪ","Dispetcher noutbuki","حاسوب المنسّق"],
+["Driver's phone","Teléfono del chofer","Телефон водителя","Телефон водія","ਡਰਾਈਵਰ ਦਾ ਫ਼ੋਨ","Haydovchi telefoni","هاتف السائق"],
+["Dispatch","Despacho","Диспетчер","Диспетчер","ਡਿਸਪੈਚ","Dispetcher","التنسيق"],
+["Fleet","Flota","Автопарк","Автопарк","ਫਲੀਟ","Avtopark","الأسطول"],
+["Loads","Cargas","Грузы","Вантажі","ਲੋਡ","Yuklar","الأحمال"],
+["Settlements","Liquidaciones","Расчёты","Розрахунки","ਸੈਟਲਮੈਂਟ","Hisob-kitoblar","التسويات"],
+["Messages","Mensajes","Сообщения","Повідомлення","ਸੁਨੇਹੇ","Xabarlar","الرسائل"],
+["Company code","Código de empresa","Код компании","Код компанії","ਕੰਪਨੀ ਕੋਡ","Kompaniya kodi","رمز الشركة"],
+["Fleet today","Flota hoy","Автопарк сегодня","Автопарк сьогодні","ਅੱਜ ਦੀ ਫਲੀਟ","Bugungi avtopark","الأسطول اليوم"],
+["Rolling","En ruta","В пути","У дорозі","ਚੱਲ ਰਹੇ","Yo'lda","على الطريق"],
+["Need loads","Sin carga","Нужен груз","Потрібен вантаж","ਲੋਡ ਚਾਹੀਦੇ","Yuk kerak","بحاجة لحمولة"],
+["Drivers","Choferes","Водители","Водії","ਡਰਾਈਵਰ","Haydovchilar","السائقون"],
+["Live activity","Actividad en vivo","Активность","Активність","ਲਾਈਵ ਗਤੀਵਿਧੀ","Jonli faollik","النشاط المباشر"],
+["Send load","Enviar carga","Отправить груз","Надіслати вантаж","ਲੋਡ ਭੇਜੋ","Yuk yuborish","إرسال الحمولة"],
+["Available","Disponible","Свободен","Вільний","ਉਪਲਬਧ","Bo'sh","متاح"],
+["Offer sent","Oferta enviada","Предложение отправлено","Пропозицію надіслано","ਪੇਸ਼ਕਸ਼ ਭੇਜੀ","Taklif yuborildi","تم إرسال العرض"],
+["Accepted","Aceptada","Принят","Прийнято","ਮਨਜ਼ੂਰ","Qabul qilindi","مقبولة"],
+["At pickup","En la recogida","На погрузке","На завантаженні","ਪਿਕਅੱਪ 'ਤੇ","Yuklash joyida","في نقطة الاستلام"],
+["Loaded","Cargado","Загружен","Завантажено","ਲੋਡ ਹੋ ਗਿਆ","Yuklandi","تم التحميل"],
+["Delivered","Entregado","Доставлен","Доставлено","ਡਿਲੀਵਰ","Yetkazildi","تم التسليم"],
+["Idle 2h","Inactivo 2 h","Простой 2 ч","Простій 2 год","2 ਘੰਟੇ ਵਿਹਲਾ","2 soat bo'sh","متوقف ساعتين"],
+["Newark, NJ · ready","Newark, NJ · listo","Newark, NJ · готов","Newark, NJ · готовий","Newark, NJ · ਤਿਆਰ","Newark, NJ · tayyor","Newark, NJ · جاهز"],
+["Waiting on Marcus…","Esperando a Marcus…","Ждём ответа Marcus…","Чекаємо на Marcus…","Marcus ਦੀ ਉਡੀਕ…","Marcus javobi kutilmoqda…","بانتظار Marcus…"],
+["See phone →","Ver teléfono →","Открыть телефон →","Відкрити телефон →","ਫ਼ੋਨ ਵੇਖੋ →","Telefonni ko'rish →","عرض الهاتف ←"],
+["Jay P. marked Loaded at Edison, NJ","Jay P. marcó Cargado en Edison, NJ","Jay P. отметил «Загружен» в Edison, NJ","Jay P. позначив «Завантажено» в Edison, NJ","Jay P. ਨੇ Edison, NJ ਵਿੱਚ ਲੋਡ ਹੋਇਆ ਦੱਸਿਆ","Jay P. Edison, NJ da \"Yuklandi\" deb belgiladi","Jay P. أكّد التحميل في Edison, NJ"],
+["Ana S. checked in at Secaucus","Ana S. registró llegada en Secaucus","Ana S. отметилась в Secaucus","Ana S. відмітилася в Secaucus","Ana S. ਨੇ Secaucus ਵਿੱਚ ਚੈੱਕ-ਇਨ ਕੀਤਾ","Ana S. Secaucusda ro'yxatdan o'tdi","Ana S. سجّلت الوصول في Secaucus"],
+["Load Guard flagged Northline Freight","Load Guard marcó a Northline Freight","Load Guard пометил Northline Freight","Load Guard позначив Northline Freight","Load Guard ਨੇ Northline Freight ਨੂੰ ਫਲੈਗ ਕੀਤਾ","Load Guard Northline Freightni belgiladi","Load Guard نبّه على Northline Freight"],
+["Dana sent Newark → Allentown to Marcus","Dana envió Newark → Allentown a Marcus","Dana отправила Marcus груз Newark → Allentown","Dana надіслала Marcus вантаж Newark → Allentown","Dana ਨੇ Marcus ਨੂੰ Newark → Allentown ਭੇਜਿਆ","Dana Marcusga Newark → Allentown yukini yubordi","Dana أرسلت Newark → Allentown إلى Marcus"],
+["Marcus accepted Newark → Allentown","Marcus aceptó Newark → Allentown","Marcus принял Newark → Allentown","Marcus прийняв Newark → Allentown","Marcus ਨੇ Newark → Allentown ਮਨਜ਼ੂਰ ਕੀਤਾ","Marcus Newark → Allentown yukini qabul qildi","Marcus قبل Newark → Allentown"],
+["Marcus passed on the load","Marcus rechazó la carga","Marcus отказался от груза","Marcus відмовився від вантажу","Marcus ਨੇ ਲੋਡ ਛੱਡ ਦਿੱਤਾ","Marcus yukdan voz kechdi","Marcus رفض الحمولة"],
+["Marcus arrived at pickup · Newark","Marcus llegó a la recogida · Newark","Marcus прибыл на погрузку · Newark","Marcus прибув на завантаження · Newark","Marcus ਪਿਕਅੱਪ 'ਤੇ ਪਹੁੰਚ ਗਿਆ · Newark","Marcus yuklash joyiga yetib keldi · Newark","Marcus وصل لنقطة الاستلام · Newark"],
+["Marcus is loaded and rolling","Marcus está cargado y en ruta","Marcus загружен и в пути","Marcus завантажений і в дорозі","Marcus ਲੋਡ ਹੋ ਕੇ ਚੱਲ ਪਿਆ","Marcus yuklandi va yo'lda","Marcus محمّل وعلى الطريق"],
+["Marcus delivered · POD uploaded","Marcus entregó · POD subido","Marcus доставил · POD загружен","Marcus доставив · POD завантажено","Marcus ਨੇ ਡਿਲੀਵਰ ਕੀਤਾ · POD ਅੱਪਲੋਡ","Marcus yetkazdi · POD yuklandi","Marcus سلّم الحمولة · تم رفع POD"],
+["Dispatch laptop:","Laptop de despacho:","Ноутбук диспетчера:","Ноутбук диспетчера:","ਡਿਸਪੈਚ ਲੈਪਟਾਪ:","Dispetcher noutbuki:","حاسوب المنسّق:"],
+["Marcus accepted the load","Marcus aceptó la carga","Marcus принял груз","Marcus прийняв вантаж","Marcus ਨੇ ਲੋਡ ਮਨਜ਼ੂਰ ਕੀਤਾ","Marcus yukni qabul qildi","Marcus قبل الحمولة"],
+["Detention notice sent with timestamps","Aviso de detention enviado con horas registradas","Уведомление о простое отправлено с отметками времени","Повідомлення про простій надіслано з відмітками часу","ਸਮੇਂ ਦੇ ਰਿਕਾਰਡ ਨਾਲ ਡਿਟੈਂਸ਼ਨ ਨੋਟਿਸ ਭੇਜਿਆ","Kutish haqidagi xabarnoma vaqt belgilari bilan yuborildi","تم إرسال إشعار الانتظار مع التوقيتات"],
+["POD filed under load #LH-20418","POD guardado en la carga #LH-20418","POD сохранён в грузе #LH-20418","POD збережено у вантажі #LH-20418","POD ਲੋਡ #LH-20418 ਵਿੱਚ ਸੰਭਾਲਿਆ","POD #LH-20418 yukiga saqlandi","تم حفظ POD في الحمولة #LH-20418"],
+["Driver · Unit 12","Chofer · Unidad 12","Водитель · Unit 12","Водій · Unit 12","ਡਰਾਈਵਰ · ਯੂਨਿਟ 12","Haydovchi · 12-birlik","السائق · الوحدة 12"],
+["Hey, Marcus","Hola, Marcus","Привет, Marcus","Привіт, Marcus","ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ, Marcus","Salom, Marcus","مرحبًا Marcus"],
+["Home","Inicio","Главная","Головна","ਹੋਮ","Bosh sahifa","الرئيسية"],
+["Docs","Docs","Документы","Документи","ਕਾਗਜ਼","Hujjatlar","المستندات"],
+["Chat","Chat","Чат","Чат","ਚੈਟ","Chat","الدردشة"],
+["Status","Estado","Статус","Статус","ਸਟੇਟਸ","Holat","الحالة"],
+["Available · Newark, NJ","Disponible · Newark, NJ","Свободен · Newark, NJ","Вільний · Newark, NJ","ਉਪਲਬਧ · Newark, NJ","Bo'sh · Newark, NJ","متاح · Newark, NJ"],
+["Waiting on dispatch. New loads land here the second they're sent.","Esperando a despacho. Las cargas nuevas llegan aquí en cuanto se envían.","Ждём диспетчера. Новые грузы появляются здесь сразу после отправки.","Чекаємо на диспетчера. Нові вантажі з'являються тут одразу після надсилання.","ਡਿਸਪੈਚ ਦੀ ਉਡੀਕ। ਨਵੇਂ ਲੋਡ ਭੇਜਦੇ ਹੀ ਇੱਥੇ ਆ ਜਾਂਦੇ ਹਨ।","Dispetcher kutilmoqda. Yangi yuklar yuborilishi bilan shu yerda paydo bo'ladi.","بانتظار المنسّق. تصل الأحمال الجديدة هنا لحظة إرسالها."],
+["This week","Esta semana","За неделю","За тиждень","ਇਸ ਹਫ਼ਤੇ","Shu hafta","هذا الأسبوع"],
+["Miles","Millas","Мили","Милі","ਮੀਲ","Millar","الأميال"],
+["Recent","Recientes","Недавние","Нещодавні","ਹਾਲੀਆ","So'nggi","الأخيرة"],
+["Paid","Pagado","Оплачено","Оплачено","ਭੁਗਤਾਨ ਹੋਇਆ","To'langan","مدفوع"],
+["LaneHook · New load from Dana","LaneHook · Nueva carga de Dana","LaneHook · Новый груз от Dana","LaneHook · Новий вантаж від Dana","LaneHook · Dana ਵੱਲੋਂ ਨਵਾਂ ਲੋਡ","LaneHook · Danadan yangi yuk","LaneHook · حمولة جديدة من Dana"],
+["LOAD OFFER","OFERTA DE CARGA","ПРЕДЛОЖЕНИЕ ГРУЗА","ПРОПОЗИЦІЯ ВАНТАЖУ","ਲੋਡ ਦੀ ਪੇਸ਼ਕਸ਼","YUK TAKLIFI","عرض حمولة"],
+["84 mi · dry van","84 mi · caja seca","84 mi · фургон","84 mi · фургон","84 ਮੀਲ · ਡ੍ਰਾਈ ਵੈਨ","84 mi · yopiq furgon","84 ميل · مقطورة جافة"],
+["Pickup 10:30","Recogida 10:30","Погрузка 10:30","Завантаження 10:30","ਪਿਕਅੱਪ 10:30","Yuklash 10:30","الاستلام 10:30"],
+["Rate","Tarifa","Ставка","Ставка","ਰੇਟ","Narx","السعر"],
+["Decline","Rechazar","Отклонить","Відхилити","ਨਾਂਹ","Rad etish","رفض"],
+["Accept","Aceptar","Принять","Прийняти","ਮਨਜ਼ੂਰ","Qabul qilish","قبول"],
+["ACTIVE LOAD","CARGA ACTIVA","ТЕКУЩИЙ ГРУЗ","ПОТОЧНИЙ ВАНТАЖ","ਚੱਲ ਰਿਹਾ ਲੋਡ","FAOL YUK","الحمولة الحالية"],
+["Update status →","Actualizar estado →","Обновить статус →","Оновити статус →","ਸਟੇਟਸ ਬਦਲੋ →","Holatni yangilash →","تحديث الحالة ←"],
+["Delivered.","Entregado.","Доставлено.","Доставлено.","ਡਿਲੀਵਰ ਹੋ ਗਿਆ।","Yetkazildi.","تم التسليم."],
+["POD uploaded and sent to dispatch. Nice run.","POD subido y enviado a despacho. Buen viaje.","POD загружен и отправлен диспетчеру. Отличный рейс.","POD завантажено й надіслано диспетчеру. Чудовий рейс.","POD ਅੱਪਲੋਡ ਹੋ ਕੇ ਡਿਸਪੈਚ ਨੂੰ ਗਿਆ। ਵਧੀਆ ਗੇੜਾ।","POD yuklandi va dispetcherga yuborildi. Zo'r reys.","تم رفع POD وإرساله للمنسّق. رحلة موفقة."],
+["TWO LOGINS · ONE COMPANY CODE · DETENTION, TRACKED · BROKERS, CHECKED · PAPERWORK, FILED ·","DOS ACCESOS · UN CÓDIGO DE EMPRESA · DETENTION, REGISTRADO · BROKERS, VERIFICADOS · PAPELEO, ARCHIVADO ·","ДВА ВХОДА · ОДИН КОД КОМПАНИИ · ПРОСТОЙ ПОД КОНТРОЛЕМ · БРОКЕРЫ ПРОВЕРЕНЫ · ДОКУМЕНТЫ В ПОРЯДКЕ ·","ДВА ВХОДИ · ОДИН КОД КОМПАНІЇ · ПРОСТІЙ ПІД КОНТРОЛЕМ · БРОКЕРИ ПЕРЕВІРЕНІ · ДОКУМЕНТИ В ПОРЯДКУ ·","ਦੋ ਲੌਗਇਨ · ਇੱਕ ਕੰਪਨੀ ਕੋਡ · ਡਿਟੈਂਸ਼ਨ ਦਾ ਹਿਸਾਬ · ਬ੍ਰੋਕਰਾਂ ਦੀ ਜਾਂਚ · ਕਾਗਜ਼ ਸੰਭਾਲੇ ·","IKKI KIRISH · BITTA KOMPANIYA KODI · KUTISH VAQTI NAZORATDA · BROKERLAR TEKSHIRILGAN · HUJJATLAR TARTIBDA ·","تسجيلا دخول · رمز شركة واحد · وقت الانتظار محسوب · الوسطاء مُتحقَّق منهم · الأوراق محفوظة ·"],
+["01 — DRIVER APP","01 — APP DEL CHOFER","01 — ПРИЛОЖЕНИЕ ВОДИТЕЛЯ","01 — ЗАСТОСУНОК ВОДІЯ","01 — ਡਰਾਈਵਰ ਐਪ","01 — HAYDOVCHI ILOVASI","01 — تطبيق السائق"],
+["Your whole trucking business, in your pocket.","Todo tu negocio de transporte, en tu bolsillo.","Весь ваш трак-бизнес — в кармане.","Увесь ваш трак-бізнес — у кишені.","ਤੁਹਾਡਾ ਪੂਰਾ ਟਰੱਕਿੰਗ ਕਾਰੋਬਾਰ, ਤੁਹਾਡੀ ਜੇਬ ਵਿੱਚ।","Butun yuk tashish biznesingiz — cho'ntagingizda.","عملك في النقل بالكامل، في جيبك."],
+["Run solo or link to a dispatcher. Either way, the money you're owed and the paperwork you need stop living in your text messages.","Trabaja solo o conéctate con un despachador. De cualquier forma, el dinero que te deben y los papeles que necesitas dejan de vivir en tus mensajes de texto.","Работайте сами или подключитесь к диспетчеру. В любом случае деньги, которые вам должны, и нужные документы больше не теряются в переписке.","Працюйте самі або підключіться до диспетчера. У будь-якому разі гроші, які вам винні, і потрібні документи більше не губляться в листуванні.","ਇਕੱਲੇ ਚਲਾਓ ਜਾਂ ਡਿਸਪੈਚਰ ਨਾਲ ਜੁੜੋ। ਦੋਵਾਂ ਤਰੀਕਿਆਂ ਨਾਲ, ਤੁਹਾਡੇ ਬਕਾਇਆ ਪੈਸੇ ਅਤੇ ਲੋੜੀਂਦੇ ਕਾਗਜ਼ ਹੁਣ ਮੈਸੇਜਾਂ ਵਿੱਚ ਨਹੀਂ ਗੁਆਚਦੇ।","Mustaqil ishlang yoki dispetcherga ulaning. Har holda sizga tegishli pul va kerakli hujjatlar endi SMSlar orasida yo'qolmaydi.","اعمل بمفردك أو اربط حسابك بمنسّق. في الحالتين، لن تضيع مستحقاتك وأوراقك بين الرسائل النصية بعد الآن."],
+["Swipe the cards ↔ to change the screen","Desliza las tarjetas ↔ para cambiar la pantalla","Листайте карточки ↔, чтобы сменить экран","Гортайте картки ↔, щоб змінити екран","ਸਕ੍ਰੀਨ ਬਦਲਣ ਲਈ ਕਾਰਡ ↔ ਸਵਾਈਪ ਕਰੋ","Ekranni almashtirish uchun kartalarni ↔ suring","اسحب البطاقات ↔ لتغيير الشاشة"],
+["Load board & self-dispatch","Bolsa de cargas y autodespacho","Биржа грузов и самодиспетчеризация","Біржа вантажів і самодиспетчеризація","ਲੋਡ ਬੋਰਡ ਅਤੇ ਖੁਦ ਡਿਸਪੈਚ","Yuk birjasi va mustaqil dispetcherlik","لوحة الأحمال والتنسيق الذاتي"],
+["Filter by equipment and radius. See rate per mile before you call.","Filtra por equipo y radio. Ve la tarifa por milla antes de llamar.","Фильтр по типу трейлера и радиусу. Ставка за милю видна до звонка.","Фільтр за типом причепа і радіусом. Ставку за милю видно до дзвінка.","ਸਾਮਾਨ ਅਤੇ ਦੂਰੀ ਮੁਤਾਬਕ ਫਿਲਟਰ ਕਰੋ। ਕਾਲ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਪ੍ਰਤੀ ਮੀਲ ਰੇਟ ਵੇਖੋ।","Uskuna va masofa bo'yicha saralang. Qo'ng'iroqdan oldin milya narxini ko'ring.","صفِّ حسب نوع المعدّة والمسافة. شاهد السعر لكل ميل قبل أن تتصل."],
+["Detention tracker","Control de detention","Учёт простоя","Облік простою","ਡਿਟੈਂਸ਼ਨ ਟਰੈਕਰ","Kutish vaqti hisobi","متتبّع وقت الانتظار"],
+["Check in at the dock and the clock starts itself. Billable time turns into dollars live.","Registra tu llegada al muelle y el reloj arranca solo. El tiempo cobrable se convierte en dólares en vivo.","Отметьтесь у дока — таймер запустится сам. Оплачиваемое время сразу превращается в доллары.","Відмітьтеся біля доку — таймер запуститься сам. Оплачуваний час одразу перетворюється на долари.","ਡੌਕ 'ਤੇ ਚੈੱਕ-ਇਨ ਕਰੋ ਅਤੇ ਘੜੀ ਆਪੇ ਚੱਲ ਪੈਂਦੀ ਹੈ। ਬਿਲ ਹੋਣ ਵਾਲਾ ਸਮਾਂ ਉਸੇ ਵੇਲੇ ਡਾਲਰਾਂ ਵਿੱਚ ਦਿਸਦਾ ਹੈ।","Dokda ro'yxatdan o'ting — taymer o'zi ishga tushadi. To'lanadigan vaqt darhol dollarga aylanadi.","سجّل وصولك إلى الرصيف ويبدأ العدّاد تلقائيًا. يتحوّل الوقت القابل للفوترة إلى دولارات مباشرةً."],
+["Document vault","Archivo de documentos","Хранилище документов","Сховище документів","ਦਸਤਾਵੇਜ਼ ਤਿਜੋਰੀ","Hujjatlar ombori","خزنة المستندات"],
+["Rate cons, BOLs and PODs scanned and filed under the load they belong to.","Rate cons, BOLs y PODs escaneados y guardados en la carga a la que pertenecen.","Rate con, BOL и POD сканируются и хранятся в нужном грузе.","Rate con, BOL і POD скануються та зберігаються у потрібному вантажі.","ਰੇਟ ਕੌਨ, BOL ਅਤੇ POD ਸਕੈਨ ਹੋ ਕੇ ਆਪਣੇ ਲੋਡ ਹੇਠ ਸੰਭਾਲੇ ਜਾਂਦੇ ਹਨ।","Rate con, BOL va POD skanerlanib, tegishli yuk ostida saqlanadi.","تأكيدات الأسعار وBOL وPOD تُمسح ضوئيًا وتُحفظ ضمن الحمولة الخاصة بها."],
+["Line to dispatch","Línea directa con despacho","Связь с диспетчером","Зв'язок із диспетчером","ਡਿਸਪੈਚ ਨਾਲ ਸਿੱਧੀ ਗੱਲ","Dispetcher bilan aloqa","خط مباشر مع المنسّق"],
+["One tap status updates. Messages live with the load, not in a group chat.","Actualiza el estado con un toque. Los mensajes viven con la carga, no en un chat de grupo.","Статус — в одно касание. Сообщения хранятся в грузе, а не в групповом чате.","Статус — одним дотиком. Повідомлення зберігаються у вантажі, а не в груповому чаті.","ਇੱਕ ਟੈਪ ਨਾਲ ਸਟੇਟਸ ਅੱਪਡੇਟ। ਸੁਨੇਹੇ ਲੋਡ ਨਾਲ ਰਹਿੰਦੇ ਹਨ, ਗਰੁੱਪ ਚੈਟ ਵਿੱਚ ਨਹੀਂ।","Holat bir bosishda yangilanadi. Xabarlar guruh chatida emas, yuk bilan birga saqlanadi.","تحديث الحالة بلمسة واحدة. تبقى الرسائل مع الحمولة، لا في مجموعة دردشة."],
+["Load board","Bolsa de cargas","Биржа грузов","Біржа вантажів","ਲੋਡ ਬੋਰਡ","Yuk birjasi","لوحة الأحمال"],
+["Dry van","Caja seca","Фургон","Фургон","ਡ੍ਰਾਈ ਵੈਨ","Yopiq furgon","مقطورة جافة"],
+["From Newark","Desde Newark","Из Newark","З Newark","Newark ਤੋਂ","Newarkdan","من Newark"],
+["84 mi · today 10:30","84 mi · hoy 10:30","84 mi · сегодня 10:30","84 mi · сьогодні 10:30","84 ਮੀਲ · ਅੱਜ 10:30","84 mi · bugun 10:30","84 ميل · اليوم 10:30"],
+["168 mi · today 1:00","168 mi · hoy 1:00","168 mi · сегодня 1:00","168 mi · сьогодні 1:00","168 ਮੀਲ · ਅੱਜ 1:00","168 mi · bugun 1:00","168 ميل · اليوم 1:00"],
+["186 mi · tomorrow","186 mi · mañana","186 mi · завтра","186 mi · завтра","186 ਮੀਲ · ਕੱਲ੍ਹ","186 mi · ertaga","186 ميل · غدًا"],
+["Book this load","Reservar esta carga","Взять этот груз","Взяти цей вантаж","ਇਹ ਲੋਡ ਬੁੱਕ ਕਰੋ","Bu yukni band qilish","احجز هذه الحمولة"],
+["Tap a load · sample data","Toca una carga · datos de ejemplo","Нажмите на груз · пример данных","Натисніть на вантаж · приклад даних","ਕਿਸੇ ਲੋਡ 'ਤੇ ਟੈਪ ਕਰੋ · ਨਮੂਨਾ ਡਾਟਾ","Yukni bosing · namunaviy ma'lumot","اضغط على حمولة · بيانات تجريبية"],
+["Detention","Detention","Простой","Простій","ਡਿਟੈਂਸ਼ਨ","Kutish","الانتظار"],
+["Port Newark · Whse 4 · Dock 7","Port Newark · Almacén 4 · Muelle 7","Port Newark · Склад 4 · Док 7","Port Newark · Склад 4 · Док 7","Port Newark · ਗੋਦਾਮ 4 · ਡੌਕ 7","Port Newark · 4-ombor · 7-dok","Port Newark · مستودع 4 · رصيف 7"],
+["At the dock","En el muelle","У дока","Біля доку","ਡੌਕ 'ਤੇ","Dokda","عند الرصيف"],
+["owed","a cobrar","к оплате","до сплати","ਬਕਾਇਆ","to'lanadi","مستحقة"],
+["Free time","Tiempo libre","Бесплатное время","Безкоштовний час","ਮੁਫ਼ਤ ਸਮਾਂ","Bepul vaqt","الوقت المجاني"],
+["2:00:00 used","2:00:00 usado","2:00:00 использовано","2:00:00 використано","2:00:00 ਵਰਤਿਆ","2:00:00 ishlatildi","2:00:00 مُستخدم"],
+["Send detention notice","Enviar aviso de detention","Отправить уведомление о простое","Надіслати повідомлення про простій","ਡਿਟੈਂਸ਼ਨ ਨੋਟਿਸ ਭੇਜੋ","Kutish xabarnomasini yuborish","إرسال إشعار الانتظار"],
+["Notice sent to broker ✓","Aviso enviado al broker ✓","Уведомление отправлено брокеру ✓","Повідомлення надіслано брокеру ✓","ਬ੍ਰੋਕਰ ਨੂੰ ਨੋਟਿਸ ਭੇਜਿਆ ✓","Xabarnoma brokerga yuborildi ✓","تم إرسال الإشعار للوسيط ✓"],
+["Documents","Documentos","Документы","Документи","ਦਸਤਾਵੇਜ਼","Hujjatlar","المستندات"],
+["Load #LH-20418 · Newark → Allentown","Carga #LH-20418 · Newark → Allentown","Груз #LH-20418 · Newark → Allentown","Вантаж #LH-20418 · Newark → Allentown","ਲੋਡ #LH-20418 · Newark → Allentown","Yuk #LH-20418 · Newark → Allentown","الحمولة #LH-20418 · Newark → Allentown"],
+["Rate confirmation","Confirmación de tarifa","Подтверждение ставки","Підтвердження ставки","ਰੇਟ ਪੁਸ਼ਟੀ","Narx tasdig'i","تأكيد السعر"],
+["Signed","Firmado","Подписано","Підписано","ਦਸਤਖ਼ਤ ਹੋਏ","Imzolangan","موقّع"],
+["Bill of lading","Conocimiento de embarque","Коносамент (BOL)","Коносамент (BOL)","ਬਿੱਲ ਆਫ਼ ਲੇਡਿੰਗ","Yuk xati (BOL)","بوليصة الشحن"],
+["Scanned","Escaneado","Отсканировано","Відскановано","ਸਕੈਨ ਹੋਇਆ","Skanerlangan","ممسوح ضوئيًا"],
+["Proof of delivery","Comprobante de entrega","Подтверждение доставки","Підтвердження доставки","ਡਿਲੀਵਰੀ ਦਾ ਸਬੂਤ","Yetkazib berish dalili","إثبات التسليم"],
+["Needed","Falta","Нужно","Потрібно","ਚਾਹੀਦਾ","Kerak","مطلوب"],
+["Uploaded","Subido","Загружено","Завантажено","ਅੱਪਲੋਡ ਹੋਇਆ","Yuklandi","تم الرفع"],
+["Align POD","Alinea el POD","Поместите POD","Розмістіть POD","POD ਨੂੰ","POD ni","ضع POD"],
+["inside frame","dentro del marco","в рамку","у рамку","ਫਰੇਮ ਵਿੱਚ ਰੱਖੋ","ramkaga joylang","داخل الإطار"],
+["captured ✓","capturado ✓","снят ✓","знято ✓","ਕੈਪਚਰ ✓","olindi ✓","تم الالتقاط ✓"],
+["Scan POD","Escanear POD","Сканировать POD","Сканувати POD","POD ਸਕੈਨ ਕਰੋ","POD ni skanerlash","مسح POD"],
+["Scanning…","Escaneando…","Сканирование…","Сканування…","ਸਕੈਨ ਹੋ ਰਿਹਾ…","Skanerlanmoqda…","جارٍ المسح…"],
+["Scan again","Escanear otra vez","Сканировать снова","Сканувати знову","ਮੁੜ ਸਕੈਨ ਕਰੋ","Qayta skanerlash","امسح مجددًا"],
+["Dana · Dispatch","Dana · Despacho","Dana · Диспетчер","Dana · Диспетчер","Dana · ਡਿਸਪੈਚ","Dana · Dispetcher","Dana · التنسيق"],
+["Linked via RMS-4471","Vinculado con RMS-4471","Связаны кодом RMS-4471","Пов'язані кодом RMS-4471","RMS-4471 ਰਾਹੀਂ ਜੁੜੇ","RMS-4471 orqali bog'langan","مرتبط عبر RMS-4471"],
+["Pickup moved to 10:30. Dock 7, ask for Luis.","La recogida pasó a las 10:30. Muelle 7, pregunta por Luis.","Погрузку перенесли на 10:30. Док 7, спросите Luis.","Завантаження перенесли на 10:30. Док 7, спитайте Luis.","ਪਿਕਅੱਪ 10:30 ਵਜੇ ਹੋ ਗਿਆ। ਡੌਕ 7, Luis ਨੂੰ ਪੁੱਛਣਾ।","Yuklash 10:30 ga ko'chdi. 7-dok, Luisni so'rang.","تم نقل الاستلام إلى 10:30. الرصيف 7، اسأل عن Luis."],
+["Copy. Rolling now.","Entendido. Ya voy en camino.","Принял. Уже еду.","Прийняв. Уже їду.","ਠੀਕ ਹੈ। ਹੁਣੇ ਚੱਲ ਪਿਆ।","Tushundim. Yo'lga chiqdim.","تمام. أنا في الطريق."],
+["STATUS → AT PICKUP · 10:24","ESTADO → EN LA RECOGIDA · 10:24","СТАТУС → НА ПОГРУЗКЕ · 10:24","СТАТУС → НА ЗАВАНТАЖЕННІ · 10:24","ਸਟੇਟਸ → ਪਿਕਅੱਪ 'ਤੇ · 10:24","HOLAT → YUKLASH JOYIDA · 10:24","الحالة ← في نقطة الاستلام · 10:24"],
+["Saw the detention clock. I'll bill the broker.","Vi el reloj de detention. Le cobro al broker.","Вижу таймер простоя. Выставлю брокеру.","Бачу таймер простою. Виставлю брокеру.","ਡਿਟੈਂਸ਼ਨ ਘੜੀ ਵੇਖ ਲਈ। ਮੈਂ ਬ੍ਰੋਕਰ ਨੂੰ ਬਿੱਲ ਭੇਜਾਂਗੀ।","Kutish taymerini ko'rdim. Brokerga hisob yuboraman.","رأيت عدّاد الانتظار. سأرسل الفاتورة للوسيط."],
+["Loaded and rolling","Cargado y en camino","Загружен, еду","Завантажений, їду","ਲੋਡ ਹੋ ਗਿਆ, ਚੱਲ ਪਿਆ","Yuklandi, yo'ldaman","تم التحميل وأنا في الطريق"],
+["Running late","Voy tarde","Опаздываю","Запізнююсь","ਲੇਟ ਹਾਂ","Kechikyapman","متأخر"],
+["Running about 20 min late","Voy como 20 min tarde","Опаздываю минут на 20","Запізнююсь хвилин на 20","ਲਗਭਗ 20 ਮਿੰਟ ਲੇਟ ਹਾਂ","Taxminan 20 daqiqa kechikaman","متأخر حوالي 20 دقيقة"],
+["Delivered. POD uploaded.","Entregado. POD subido.","Доставил. POD загружен.","Доставив. POD завантажено.","ਡਿਲੀਵਰ ਕਰ ਦਿੱਤਾ। POD ਅੱਪਲੋਡ।","Yetkazdim. POD yuklandi.","تم التسليم. رفعت POD."],
+["Got it, thanks Marcus.","Recibido, gracias Marcus.","Принято, спасибо, Marcus.","Прийнято, дякую, Marcus.","ਠੀਕ ਹੈ, ਧੰਨਵਾਦ Marcus।","Qabul qilindi, rahmat Marcus.","تم، شكرًا Marcus."],
+["02 — DISPATCHER","02 — DESPACHADOR","02 — ДИСПЕТЧЕР","02 — ДИСПЕТЧЕР","02 — ਡਿਸਪੈਚਰ","02 — DISPETCHER","02 — المنسّق"],
+["See every truck. Send every load. From one screen.","Ve cada camión. Envía cada carga. Desde una pantalla.","Каждый трак. Каждый груз. На одном экране.","Кожен трак. Кожен вантаж. На одному екрані.","ਹਰ ਟਰੱਕ ਵੇਖੋ। ਹਰ ਲੋਡ ਭੇਜੋ। ਇੱਕੋ ਸਕ੍ਰੀਨ ਤੋਂ।","Har bir mashinani ko'ring. Har bir yukni yuboring. Bitta ekrandan.","كل شاحنة أمامك. كل حمولة بإرسالة. من شاشة واحدة."],
+["Dispatcher screens","Pantallas del despachador","Экраны диспетчера","Екрани диспетчера","ਡਿਸਪੈਚਰ ਸਕ੍ਰੀਨਾਂ","Dispetcher ekranlari","شاشات المنسّق"],
+["Fleet map","Mapa de flota","Карта автопарка","Карта автопарку","ਫਲੀਟ ਨਕਸ਼ਾ","Avtopark xaritasi","خريطة الأسطول"],
+["Live roster","Lista en vivo","Водители онлайн","Водії онлайн","ਲਾਈਵ ਸੂਚੀ","Jonli ro'yxat","القائمة المباشرة"],
+["Detention at Port Newark ·","Detention en Port Newark ·","Простой в Port Newark ·","Простій у Port Newark ·","Port Newark ਵਿੱਚ ਡਿਟੈਂਸ਼ਨ ·","Port Newarkda kutish ·","انتظار في Port Newark ·"],
+["accruing","acumulándose","начисляется","нараховується","ਵੱਧ ਰਿਹਾ","hisoblanmoqda","تتراكم"],
+["I-84 E · ETA Hartford 1:10 PM","I-84 E · llega a Hartford 1:10 PM","I-84 E · прибытие в Hartford 1:10 PM","I-84 E · прибуття в Hartford 1:10 PM","I-84 E · Hartford ਪਹੁੰਚ 1:10 PM","I-84 E · Hartfordga 1:10 PM da","I-84 E · الوصول إلى Hartford ‏1:10 PM"],
+["I-95 S · ETA Baltimore 3:40 PM","I-95 S · llega a Baltimore 3:40 PM","I-95 S · прибытие в Baltimore 3:40 PM","I-95 S · прибуття в Baltimore 3:40 PM","I-95 S · Baltimore ਪਹੁੰਚ 3:40 PM","I-95 S · Baltimorega 3:40 PM da","I-95 S · الوصول إلى Baltimore ‏3:40 PM"],
+["Elizabeth, NJ · needs a load","Elizabeth, NJ · necesita carga","Elizabeth, NJ · нужен груз","Elizabeth, NJ · потрібен вантаж","Elizabeth, NJ · ਲੋਡ ਚਾਹੀਦਾ","Elizabeth, NJ · yuk kerak","Elizabeth, NJ · بحاجة لحمولة"],
+["Idle","Inactivo","Простаивает","Простоює","ਵਿਹਲਾ","Bo'sh turibdi","متوقف"],
+["Loads this week","Cargas de la semana","Грузы за неделю","Вантажі за тиждень","ਇਸ ਹਫ਼ਤੇ ਦੇ ਲੋਡ","Shu haftadagi yuklar","أحمال هذا الأسبوع"],
+["+ New load","+ Nueva carga","+ Новый груз","+ Новий вантаж","+ ਨਵਾਂ ਲੋਡ","+ Yangi yuk","+ حمولة جديدة"],
+["Booked · 2","Reservadas · 2","Забронировано · 2","Заброньовано · 2","ਬੁੱਕ · 2","Band qilingan · 2","محجوزة · 2"],
+["In transit · 3","En tránsito · 3","В пути · 3","У дорозі · 3","ਰਾਹ ਵਿੱਚ · 3","Yo'lda · 3","قيد النقل · 3"],
+["Delivered · 2","Entregadas · 2","Доставлено · 2","Доставлено · 2","ਡਿਲੀਵਰ · 2","Yetkazilgan · 2","تم التسليم · 2"],
+["Unassigned · $560","Sin asignar · $560","Не назначен · $560","Не призначено · $560","ਕਿਸੇ ਨੂੰ ਨਹੀਂ ਦਿੱਤਾ · $560","Biriktirilmagan · $560","غير مُسندة · $560"],
+["Assign driver →","Asignar chofer →","Назначить водителя →","Призначити водія →","ਡਰਾਈਵਰ ਲਾਓ →","Haydovchi biriktirish →","تعيين سائق ←"],
+["Marcus R. · $425 + detention","Marcus R. · $425 + detention","Marcus R. · $425 + простой","Marcus R. · $425 + простій","Marcus R. · $425 + ਡਿਟੈਂਸ਼ਨ","Marcus R. · $425 + kutish","Marcus R. · $425 + الانتظار"],
+["POD in · ready to invoice","POD recibido · listo para facturar","POD получен · можно выставлять счёт","POD отримано · можна виставляти рахунок","POD ਆ ਗਿਆ · ਬਿੱਲ ਲਈ ਤਿਆਰ","POD keldi · hisob-fakturaga tayyor","وصل POD · جاهز للفوترة"],
+["Invoiced · $640","Facturado · $640","Счёт выставлен · $640","Рахунок виставлено · $640","ਬਿੱਲ ਭੇਜਿਆ · $640","Hisob yuborildi · $640","صدرت الفاتورة · $640"],
+["Swipe columns ↔","Desliza las columnas ↔","Листайте колонки ↔","Гортайте колонки ↔","ਕਾਲਮ ਸਵਾਈਪ ਕਰੋ ↔","Ustunlarni suring ↔","اسحب الأعمدة ↔"],
+["Check before you dispatch","Verifica antes de despachar","Проверьте до отправки","Перевірте до відправлення","ਡਿਸਪੈਚ ਤੋਂ ਪਹਿਲਾਂ ਜਾਂਚੋ","Yuborishdan oldin tekshiring","تحقّق قبل الإرسال"],
+["Linden → Scranton · posted by \"Northline Freight LLC\"","Linden → Scranton · publicado por \"Northline Freight LLC\"","Linden → Scranton · разместил «Northline Freight LLC»","Linden → Scranton · розмістив «Northline Freight LLC»","Linden → Scranton · \"Northline Freight LLC\" ਵੱਲੋਂ ਪੋਸਟ","Linden → Scranton · \"Northline Freight LLC\" joylagan","Linden → Scranton · نشرها \"Northline Freight LLC\""],
+["Broker authority on file","Autoridad del broker registrada","Лицензия брокера в реестре","Ліцензія брокера в реєстрі","ਬ੍ਰੋਕਰ ਅਥਾਰਟੀ ਦਰਜ","Broker litsenziyasi ro'yxatda","ترخيص الوسيط مسجّل"],
+["Looks active","Parece activa","Похоже, действует","Схоже, чинна","ਚਾਲੂ ਲੱਗਦੀ ਹੈ","Faol ko'rinadi","يبدو ساريًا"],
+["Contact matches records","Contacto coincide con registros","Контакты совпадают с реестром","Контакти збігаються з реєстром","ਸੰਪਰਕ ਰਿਕਾਰਡ ਨਾਲ ਮਿਲਦਾ","Aloqa ma'lumoti mos","بيانات الاتصال مطابقة"],
+["Email domain changed","Cambió el dominio del correo","Сменился домен почты","Змінився домен пошти","ਈਮੇਲ ਡੋਮੇਨ ਬਦਲਿਆ","Email domeni o'zgargan","تغيّر نطاق البريد"],
+["Same load, other posters","Misma carga, otros anunciantes","Тот же груз у других","Той самий вантаж в інших","ਉਹੀ ਲੋਡ, ਹੋਰ ਪੋਸਟਰ","Shu yuk, boshqa e'lonchilar","نفس الحمولة لدى ناشرين آخرين"],
+["Seen under 2 MCs","Visto con 2 MC","Под 2 номерами MC","Під 2 номерами MC","2 MC ਹੇਠ ਵੇਖਿਆ","2 ta MC ostida","ظهرت تحت رقمَي MC"],
+["Your history with them","Tu historial con ellos","Ваша история с ними","Ваша історія з ними","ਉਨ੍ਹਾਂ ਨਾਲ ਤੁਹਾਡਾ ਇਤਿਹਾਸ","Ular bilan tarixingiz","سجلّك معهم"],
+["First load","Primera carga","Первый груз","Перший вантаж","ਪਹਿਲਾ ਲੋਡ","Birinchi yuk","أول حمولة"],
+["Verify before you send a truck.","Verifica antes de mandar un camión.","Проверьте, прежде чем отправлять трак.","Перевірте, перш ніж відправляти трак.","ਟਰੱਕ ਭੇਜਣ ਤੋਂ ਪਹਿਲਾਂ ਪੁਸ਼ਟੀ ਕਰੋ।","Mashinani yuborishdan oldin tekshiring.","تحقّق قبل إرسال شاحنة."],
+["Call the broker on the number from their official listing, not the one in the email.","Llama al broker al número de su registro oficial, no al del correo.","Звоните брокеру по номеру из официального реестра, а не из письма.","Телефонуйте брокеру за номером з офіційного реєстру, а не з листа.","ਬ੍ਰੋਕਰ ਨੂੰ ਉਨ੍ਹਾਂ ਦੀ ਸਰਕਾਰੀ ਲਿਸਟਿੰਗ ਵਾਲੇ ਨੰਬਰ 'ਤੇ ਫ਼ੋਨ ਕਰੋ, ਈਮੇਲ ਵਾਲੇ 'ਤੇ ਨਹੀਂ।","Brokerga elektron xatdagi emas, rasmiy ro'yxatdagi raqam orqali qo'ng'iroq qiling.","اتصل بالوسيط على الرقم المُدرج رسميًا، لا الرقم الموجود في البريد."],
+["RECENT CHECKS","VERIFICACIONES RECIENTES","НЕДАВНИЕ ПРОВЕРКИ","НЕЩОДАВНІ ПЕРЕВІРКИ","ਹਾਲੀਆ ਜਾਂਚਾਂ","SO'NGGI TEKSHIRUVLAR","عمليات التحقق الأخيرة"],
+["Flagged","Alerta","Под подозрением","Під підозрою","ਫਲੈਗ","Shubhali","مُنبَّه عليه"],
+["Clear","Limpio","Чисто","Чисто","ਠੀਕ","Toza","سليم"],
+["Sample brokers for preview","Brokers de ejemplo","Примеры брокеров","Приклади брокерів","ਨਮੂਨਾ ਬ੍ਰੋਕਰ","Namunaviy brokerlar","وسطاء تجريبيون"],
+["Settlements · Oct 5 – 11","Liquidaciones · 5 – 11 oct","Расчёты · 5–11 окт","Розрахунки · 5–11 жовт","ਸੈਟਲਮੈਂਟ · 5 – 11 ਅਕਤੂ","Hisob-kitoblar · 5–11 okt","التسويات · 5 – 11 أكتوبر"],
+["Export PDFs","Exportar PDF","Экспорт PDF","Експорт PDF","PDF ਐਕਸਪੋਰਟ","PDF eksport","تصدير PDF"],
+["Driver","Chofer","Водитель","Водій","ਡਰਾਈਵਰ","Haydovchi","سائق"],
+["Gross","Bruto","Брутто","Брутто","ਕੁੱਲ","Yalpi","الإجمالي"],
+["Fuel + fees","Combustible + cargos","Топливо + сборы","Пальне + збори","ਤੇਲ + ਫ਼ੀਸ","Yoqilg'i + to'lovlar","الوقود + الرسوم"],
+["Net pay","Pago neto","К выплате","До виплати","ਨੈੱਟ ਤਨਖ਼ਾਹ","Sof to'lov","صافي الأجر"],
+["Detention recovered this week","Detention cobrado esta semana","Возвращено за простой за неделю","Отримано за простій за тиждень","ਇਸ ਹਫ਼ਤੇ ਵਸੂਲ ਹੋਈ ਡਿਟੈਂਸ਼ਨ","Shu hafta undirilgan kutish to'lovi","مستحقات الانتظار المُحصّلة هذا الأسبوع"],
+["Docs missing before invoicing","Docs faltantes para facturar","Не хватает документов для счёта","Бракує документів для рахунку","ਬਿੱਲ ਤੋਂ ਪਹਿਲਾਂ ਘੱਟ ਕਾਗਜ਼","Hisobdan oldin yetishmayotgan hujjatlar","مستندات ناقصة قبل الفوترة"],
+["Sample figures for preview","Cifras de ejemplo","Примеры цифр","Приклади цифр","ਨਮੂਨਾ ਅੰਕੜੇ","Namunaviy raqamlar","أرقام تجريبية"],
+["Fleet roster","Lista de flota","Список водителей","Список водіїв","ਫਲੀਟ ਸੂਚੀ","Avtopark ro'yxati","قائمة الأسطول"],
+["Every driver on your code with live status, location, and the load they're on.","Cada chofer con tu código, con estado en vivo, ubicación y la carga que lleva.","Все водители по вашему коду: статус, местоположение и текущий груз.","Усі водії за вашим кодом: статус, місцезнаходження і поточний вантаж.","ਤੁਹਾਡੇ ਕੋਡ ਵਾਲਾ ਹਰ ਡਰਾਈਵਰ — ਲਾਈਵ ਸਟੇਟਸ, ਟਿਕਾਣਾ ਅਤੇ ਮੌਜੂਦਾ ਲੋਡ।","Kodingizdagi har bir haydovchi: jonli holat, joylashuv va hozirgi yuk.","كل سائق على رمزك مع حالته المباشرة وموقعه والحمولة التي ينقلها."],
+["Send & track loads","Envía y rastrea cargas","Отправка и отслеживание грузов","Надсилання й відстеження вантажів","ਲੋਡ ਭੇਜੋ ਅਤੇ ਟ੍ਰੈਕ ਕਰੋ","Yuk yuborish va kuzatish","أرسل الأحمال وتتبّعها"],
+["Push a load to a driver's phone and watch it move from booked to delivered.","Envía una carga al teléfono del chofer y mírala pasar de reservada a entregada.","Отправьте груз на телефон водителя и следите за ним от брони до доставки.","Надішліть вантаж на телефон водія і стежте за ним від броні до доставки.","ਡਰਾਈਵਰ ਦੇ ਫ਼ੋਨ 'ਤੇ ਲੋਡ ਭੇਜੋ ਅਤੇ ਬੁਕਿੰਗ ਤੋਂ ਡਿਲੀਵਰੀ ਤੱਕ ਵੇਖੋ।","Yukni haydovchi telefoniga yuboring va band qilishdan yetkazishgacha kuzating.","أرسل الحمولة إلى هاتف السائق وتابعها من الحجز حتى التسليم."],
+["A quick broker check for double-brokering red flags before a truck rolls.","Una revisión rápida del broker para detectar doble corretaje antes de que salga el camión.","Быстрая проверка брокера на признаки двойного брокеринга до выезда трака.","Швидка перевірка брокера на ознаки подвійного брокерингу до виїзду трака.","ਟਰੱਕ ਚੱਲਣ ਤੋਂ ਪਹਿਲਾਂ ਡਬਲ-ਬ੍ਰੋਕਰਿੰਗ ਦੇ ਖ਼ਤਰੇ ਲਈ ਬ੍ਰੋਕਰ ਦੀ ਤੇਜ਼ ਜਾਂਚ।","Mashina yo'lga chiqishidan oldin ikki tomonlama brokerlik belgilarini tez tekshirish.","فحص سريع للوسيط بحثًا عن علامات الوساطة المزدوجة قبل انطلاق الشاحنة."],
+["Driver pay sheets built from the loads, fuel, and fees already in the app.","Hojas de pago del chofer hechas con las cargas, combustible y cargos que ya están en la app.","Расчётные листы водителей из грузов, топлива и сборов, которые уже есть в приложении.","Розрахункові листи водіїв із вантажів, пального і зборів, що вже є в застосунку.","ਐਪ ਵਿੱਚ ਪਹਿਲਾਂ ਤੋਂ ਮੌਜੂਦ ਲੋਡ, ਤੇਲ ਅਤੇ ਫ਼ੀਸਾਂ ਤੋਂ ਬਣੀਆਂ ਡਰਾਈਵਰ ਤਨਖ਼ਾਹ ਸ਼ੀਟਾਂ।","Ilovadagi yuklar, yoqilg'i va to'lovlardan tuzilgan haydovchi maosh varaqalari.","كشوف رواتب السائقين مبنية من الأحمال والوقود والرسوم الموجودة في التطبيق."],
+["03 — TRY IT","03 — PRUÉBALO","03 — ПОПРОБУЙТЕ","03 — СПРОБУЙТЕ","03 — ਵਰਤ ਕੇ ਵੇਖੋ","03 — SINAB KO'RING","03 — جرّبها"],
+["Two tools you can use right now.","Dos herramientas que puedes usar ya.","Два инструмента, которыми можно пользоваться уже сейчас.","Два інструменти, якими можна користуватися вже зараз.","ਦੋ ਟੂਲ ਜੋ ਤੁਸੀਂ ਹੁਣੇ ਵਰਤ ਸਕਦੇ ਹੋ।","Hozirning o'zida ishlatish mumkin bo'lgan ikki vosita.","أداتان يمكنك استخدامهما الآن."],
+["Detention $","Detention $","Простой $","Простій $","ਡਿਟੈਂਸ਼ਨ $","Kutish $","الانتظار $"],
+["Broker check","Revisar broker","Проверка брокера","Перевірка брокера","ਬ੍ਰੋਕਰ ਜਾਂਚ","Broker tekshiruvi","فحص الوسيط"],
+["Detention calculator","Calculadora de detention","Калькулятор простоя","Калькулятор простою","ਡਿਟੈਂਸ਼ਨ ਕੈਲਕੁਲੇਟਰ","Kutish kalkulyatori","حاسبة الانتظار"],
+["How much did that dock wait cost you?","¿Cuánto te costó esa espera en el muelle?","Во сколько вам обошлось ожидание у дока?","Скільки вам коштувало очікування біля доку?","ਡੌਕ 'ਤੇ ਉਡੀਕ ਨੇ ਤੁਹਾਡਾ ਕਿੰਨਾ ਨੁਕਸਾਨ ਕੀਤਾ?","Dokda kutish sizga qanchaga tushdi?","كم كلّفك ذلك الانتظار عند الرصيف؟"],
+["Time at the dock","Tiempo en el muelle","Время у дока","Час біля доку","ਡੌਕ 'ਤੇ ਸਮਾਂ","Dokdagi vaqt","الوقت عند الرصيف"],
+["Free time on the rate con","Tiempo libre en el rate con","Бесплатное время по rate con","Безкоштовний час за rate con","ਰੇਟ ਕੌਨ ਮੁਤਾਬਕ ਮੁਫ਼ਤ ਸਮਾਂ","Rate con bo'yicha bepul vaqt","الوقت المجاني في تأكيد السعر"],
+["1 hr","1 h","1 ч","1 год","1 ਘੰਟਾ","1 soat","ساعة"],
+["2 hr","2 h","2 ч","2 год","2 ਘੰਟੇ","2 soat","ساعتان"],
+["3 hr","3 h","3 ч","3 год","3 ਘੰਟੇ","3 soat","3 ساعات"],
+["Detention rate","Tarifa de detention","Ставка за простой","Ставка за простій","ਡਿਟੈਂਸ਼ਨ ਰੇਟ","Kutish narxi","سعر الانتظار"],
+["You're owed","Te deben","Вам должны","Вам винні","ਤੁਹਾਡਾ ਬਕਾਇਆ","Sizga qarz","مستحقاتك"],
+["{b} billable hrs after {f} hr free. LaneHook logs the timestamps for the invoice.","{b} h cobrables después de {f} h libres. LaneHook guarda las horas para la factura.","{b} ч к оплате после {f} ч бесплатного времени. LaneHook сохраняет отметки времени для счёта.","{b} год до оплати після {f} год безкоштовного часу. LaneHook зберігає відмітки часу для рахунку.","{f} ਘੰਟੇ ਮੁਫ਼ਤ ਤੋਂ ਬਾਅਦ {b} ਘੰਟੇ ਬਿੱਲ ਹੋਣਗੇ। LaneHook ਬਿੱਲ ਲਈ ਸਮੇਂ ਦਾ ਰਿਕਾਰਡ ਰੱਖਦਾ ਹੈ।","{f} soat bepul vaqtdan keyin {b} soat to'lanadi. LaneHook hisob uchun vaqt belgilarini saqlaydi.","{b} ساعة قابلة للفوترة بعد {f} ساعة مجانية. يسجّل LaneHook التوقيتات للفاتورة."],
+["Still inside free time. The clock keeps watching so you don't have to.","Todavía en tiempo libre. El reloj sigue contando por ti.","Пока в пределах бесплатного времени. Таймер следит за этим вместо вас.","Поки в межах безкоштовного часу. Таймер стежить за цим замість вас.","ਹਾਲੇ ਮੁਫ਼ਤ ਸਮੇਂ ਵਿੱਚ ਹੋ। ਘੜੀ ਤੁਹਾਡੇ ਲਈ ਨਜ਼ਰ ਰੱਖਦੀ ਹੈ।","Hali bepul vaqt ichidasiz. Taymer siz uchun kuzatib turadi.","ما زلت ضمن الوقت المجاني. العدّاد يراقب بدلًا منك."],
+["Load Guard check","Revisión Load Guard","Проверка Load Guard","Перевірка Load Guard","Load Guard ਜਾਂਚ","Load Guard tekshiruvi","فحص Load Guard"],
+["Type a broker MC number and run a sample check.","Escribe el número MC de un broker y haz una revisión de ejemplo.","Введите номер MC брокера и запустите пробную проверку.","Введіть номер MC брокера і запустіть пробну перевірку.","ਬ੍ਰੋਕਰ ਦਾ MC ਨੰਬਰ ਲਿਖੋ ਅਤੇ ਨਮੂਨਾ ਜਾਂਚ ਚਲਾਓ।","Broker MC raqamini kiriting va namunaviy tekshiruvni boshlang.","اكتب رقم MC للوسيط وشغّل فحصًا تجريبيًا."],
+["Broker MC number","Número MC del broker","Номер MC брокера","Номер MC брокера","ਬ੍ਰੋਕਰ MC ਨੰਬਰ","Broker MC raqami","رقم MC للوسيط"],
+["MC number, e.g. 482910","Número MC, ej. 482910","Номер MC, напр. 482910","Номер MC, напр. 482910","MC ਨੰਬਰ, ਜਿਵੇਂ 482910","MC raqami, masalan 482910","رقم MC، مثل 482910"],
+["Run check","Revisar","Проверить","Перевірити","ਜਾਂਚ ਕਰੋ","Tekshirish","افحص"],
+["Results show up here: authority, contact match, duplicate postings, and your history with this broker.","Los resultados salen aquí: autoridad, contacto, publicaciones duplicadas y tu historial con este broker.","Здесь появятся результаты: лицензия, совпадение контактов, дубли объявлений и ваша история с брокером.","Тут з'являться результати: ліцензія, збіг контактів, дублікати оголошень і ваша історія з брокером.","ਨਤੀਜੇ ਇੱਥੇ ਦਿਸਣਗੇ: ਅਥਾਰਟੀ, ਸੰਪਰਕ ਮਿਲਾਨ, ਦੋਹਰੀਆਂ ਪੋਸਟਾਂ ਅਤੇ ਇਸ ਬ੍ਰੋਕਰ ਨਾਲ ਤੁਹਾਡਾ ਇਤਿਹਾਸ।","Natijalar shu yerda chiqadi: litsenziya, aloqa mosligi, takroriy e'lonlar va bu broker bilan tarixingiz.","ستظهر النتائج هنا: الترخيص وتطابق بيانات الاتصال والإعلانات المكررة وسجلّك مع هذا الوسيط."],
+["Checking","Revisando","Проверяем","Перевіряємо","ਜਾਂਚ ਹੋ ਰਹੀ","Tekshirilmoqda","جارٍ فحص"],
+["Verify first","Verificar antes","Сначала проверьте","Спершу перевірте","ਪਹਿਲਾਂ ਪੁਸ਼ਟੀ ਕਰੋ","Avval tekshiring","تحقّق أولًا"],
+["Looks clear","Parece limpio","Выглядит чисто","Виглядає чисто","ਠੀਕ ਲੱਗਦਾ","Toza ko'rinadi","يبدو سليمًا"],
+["Broker authority","Autoridad del broker","Лицензия брокера","Ліцензія брокера","ਬ੍ਰੋਕਰ ਅਥਾਰਟੀ","Broker litsenziyasi","ترخيص الوسيط"],
+["Active","Activa","Действует","Чинна","ਚਾਲੂ","Faol","ساري"],
+["Contact info","Datos de contacto","Контакты","Контакти","ਸੰਪਰਕ ਜਾਣਕਾਰੀ","Aloqa ma'lumoti","بيانات الاتصال"],
+["Changed in last 30 days","Cambió en los últimos 30 días","Изменены за последние 30 дней","Змінені за останні 30 днів","ਪਿਛਲੇ 30 ਦਿਨਾਂ ਵਿੱਚ ਬਦਲੀ","So'nggi 30 kunda o'zgargan","تغيّرت خلال آخر 30 يومًا"],
+["Matches records","Coincide con registros","Совпадают с реестром","Збігаються з реєстром","ਰਿਕਾਰਡ ਨਾਲ ਮਿਲਦੀ","Ma'lumotlarga mos","مطابقة للسجلات"],
+["Duplicate postings","Publicaciones duplicadas","Дубли объявлений","Дублікати оголошень","ਦੋਹਰੀਆਂ ਪੋਸਟਾਂ","Takroriy e'lonlar","إعلانات مكررة"],
+["Same load under 2 MCs","Misma carga con 2 MC","Один груз под 2 MC","Один вантаж під 2 MC","ਉਹੀ ਲੋਡ 2 MC ਹੇਠ","Bitta yuk 2 ta MC ostida","نفس الحمولة تحت رقمَي MC"],
+["None found","Ninguna","Не найдено","Не знайдено","ਕੋਈ ਨਹੀਂ ਮਿਲੀ","Topilmadi","لا يوجد"],
+["Your history","Tu historial","Ваша история","Ваша історія","ਤੁਹਾਡਾ ਇਤਿਹਾਸ","Tarixingiz","سجلّك"],
+["No past loads","Sin cargas previas","Ранее грузов не было","Раніше вантажів не було","ਪਹਿਲਾਂ ਕੋਈ ਲੋਡ ਨਹੀਂ","Oldingi yuklar yo'q","لا أحمال سابقة"],
+["3 paid loads","3 cargas pagadas","3 оплаченных груза","3 оплачені вантажі","3 ਭੁਗਤਾਨ ਹੋਏ ਲੋਡ","3 ta to'langan yuk","3 أحمال مدفوعة"],
+["Sample result for preview. The real check pulls from public carrier and broker records.","Resultado de ejemplo. La revisión real usa registros públicos de transportistas y brokers.","Пример результата. Настоящая проверка использует открытые реестры перевозчиков и брокеров.","Приклад результату. Справжня перевірка використовує відкриті реєстри перевізників і брокерів.","ਨਮੂਨਾ ਨਤੀਜਾ। ਅਸਲ ਜਾਂਚ ਕੈਰੀਅਰਾਂ ਅਤੇ ਬ੍ਰੋਕਰਾਂ ਦੇ ਜਨਤਕ ਰਿਕਾਰਡ ਤੋਂ ਹੁੰਦੀ ਹੈ।","Namunaviy natija. Haqiqiy tekshiruv tashuvchi va brokerlarning ochiq ma'lumotlaridan foydalanadi.","نتيجة تجريبية. يعتمد الفحص الحقيقي على السجلات العامة للناقلين والوسطاء."],
+["04 — COMPANY LINK","04 — VÍNCULO DE EMPRESA","04 — СВЯЗЬ С КОМПАНИЕЙ","04 — ЗВ'ЯЗОК ІЗ КОМПАНІЄЮ","04 — ਕੰਪਨੀ ਲਿੰਕ","04 — KOMPANIYA ALOQASI","04 — ربط الشركة"],
+["The hook in LaneHook.","El gancho de LaneHook.","Вот в чём «hook» LaneHook.","Ось у чому «hook» LaneHook.","LaneHook ਦਾ ਅਸਲੀ ਜੋੜ।","LaneHookning asosiy ilgagi.","سرّ الربط في LaneHook."],
+["Driving solo? The driver app works on its own. Running a fleet? Share one company code and both sides lock together: loads go out, statuses come back, and everyone's looking at the same truth.","¿Manejas solo? La app del chofer funciona por sí sola. ¿Tienes una flota? Comparte un código de empresa y ambos lados quedan conectados: las cargas salen, los estados regresan y todos ven la misma información.","Работаете сами? Приложение водителя работает самостоятельно. Есть автопарк? Один общий код компании — и обе стороны связаны: грузы уходят, статусы приходят, и все видят одно и то же.","Працюєте самі? Застосунок водія працює самостійно. Маєте автопарк? Один спільний код компанії — і обидві сторони пов'язані: вантажі йдуть, статуси приходять, і всі бачать те саме.","ਇਕੱਲੇ ਚਲਾਉਂਦੇ ਹੋ? ਡਰਾਈਵਰ ਐਪ ਆਪਣੇ ਆਪ ਕੰਮ ਕਰਦੀ ਹੈ। ਫਲੀਟ ਚਲਾਉਂਦੇ ਹੋ? ਇੱਕ ਕੰਪਨੀ ਕੋਡ ਸਾਂਝਾ ਕਰੋ ਅਤੇ ਦੋਵੇਂ ਪਾਸੇ ਜੁੜ ਜਾਂਦੇ ਹਨ: ਲੋਡ ਜਾਂਦੇ ਹਨ, ਸਟੇਟਸ ਵਾਪਸ ਆਉਂਦੇ ਹਨ, ਅਤੇ ਸਾਰੇ ਇੱਕੋ ਜਾਣਕਾਰੀ ਵੇਖਦੇ ਹਨ।","Yolg'iz ishlaysizmi? Haydovchi ilovasi mustaqil ishlaydi. Avtoparkingiz bormi? Bitta kompaniya kodini ulashing — ikki tomon bog'lanadi: yuklar ketadi, holatlar qaytadi va hamma bir xil ma'lumotni ko'radi.","تعمل بمفردك؟ تطبيق السائق يعمل وحده. تدير أسطولًا؟ شارك رمز شركة واحدًا ويترابط الطرفان: تخرج الأحمال، وتعود التحديثات، ويرى الجميع المعلومات نفسها."],
+["Dispatcher creates the company","El despachador crea la empresa","Диспетчер создаёт компанию","Диспетчер створює компанію","ਡਿਸਪੈਚਰ ਕੰਪਨੀ ਬਣਾਉਂਦਾ ਹੈ","Dispetcher kompaniya yaratadi","المنسّق ينشئ الشركة"],
+["Gets a code like","Recibe un código como","Получает код вида","Отримує код на кшталт","ਇਸ ਤਰ੍ਹਾਂ ਦਾ ਕੋਡ ਮਿਲਦਾ ਹੈ:","Shunday kod oladi:","يحصل على رمز مثل"],
+["Drivers enter the code once","Los choferes ingresan el código una vez","Водители вводят код один раз","Водії вводять код один раз","ਡਰਾਈਵਰ ਇੱਕ ਵਾਰ ਕੋਡ ਪਾਉਂਦੇ ਹਨ","Haydovchilar kodni bir marta kiritadi","يُدخل السائقون الرمز مرة واحدة"],
+["They show up on the roster instantly","Aparecen en la lista al instante","И сразу появляются в списке","І одразу з'являються в списку","ਉਹ ਤੁਰੰਤ ਸੂਚੀ ਵਿੱਚ ਆ ਜਾਂਦੇ ਹਨ","Ular darhol ro'yxatda paydo bo'ladi","يظهرون في القائمة فورًا"],
+["Loads, updates & docs sync both ways","Cargas, estados y documentos se sincronizan en ambos sentidos","Грузы, статусы и документы синхронизируются в обе стороны","Вантажі, статуси й документи синхронізуються в обидва боки","ਲੋਡ, ਅੱਪਡੇਟ ਅਤੇ ਕਾਗਜ਼ ਦੋਵੇਂ ਪਾਸੇ ਸਿੰਕ ਹੁੰਦੇ ਹਨ","Yuklar, holatlar va hujjatlar ikki tomonlama sinxronlanadi","تتزامن الأحمال والتحديثات والمستندات في الاتجاهين"],
+["Unlink anytime. The driver keeps their own records.","Desvincúlate cuando quieras. El chofer conserva sus registros.","Отвязаться можно в любой момент — записи остаются у водителя.","Відв'язатися можна будь-коли — записи залишаються у водія.","ਕਦੇ ਵੀ ਵੱਖ ਹੋਵੋ। ਡਰਾਈਵਰ ਦਾ ਰਿਕਾਰਡ ਉਸ ਕੋਲ ਰਹਿੰਦਾ ਹੈ।","Istalgan vaqtda uzish mumkin. Haydovchi o'z yozuvlarini saqlab qoladi.","يمكن فك الربط في أي وقت. يحتفظ السائق بسجلاته."],
+["Questions drivers ask","Preguntas de los choferes","Частые вопросы водителей","Часті запитання водіїв","ਡਰਾਈਵਰਾਂ ਦੇ ਸਵਾਲ","Haydovchilar so'raydigan savollar","أسئلة يطرحها السائقون"],
+["Is LaneHook a dispatch service or a broker?","¿LaneHook es un servicio de despacho o un broker?","LaneHook — это диспетчерская служба или брокер?","LaneHook — це диспетчерська служба чи брокер?","ਕੀ LaneHook ਡਿਸਪੈਚ ਸੇਵਾ ਹੈ ਜਾਂ ਬ੍ਰੋਕਰ?","LaneHook dispetcherlik xizmatimi yoki brokermi?","هل LaneHook خدمة تنسيق أم وسيط شحن؟"],
+["Neither. LaneHook is software. You and your dispatcher keep booking loads your way. We never sit in the middle of your payments and we don't broker freight.","Ninguno. LaneHook es software. Tú y tu despachador siguen reservando cargas a su manera. Nunca nos metemos en sus pagos y no hacemos corretaje de carga.","Ни то, ни другое. LaneHook — это программа. Вы и ваш диспетчер продолжаете брать грузы как привыкли. Мы не вмешиваемся в ваши платежи и не занимаемся брокерингом.","Ні те, ні інше. LaneHook — це програма. Ви й ваш диспетчер і далі берете вантажі як звикли. Ми не втручаємося у ваші платежі й не займаємося брокерингом.","ਦੋਵੇਂ ਨਹੀਂ। LaneHook ਇੱਕ ਸਾਫ਼ਟਵੇਅਰ ਹੈ। ਤੁਸੀਂ ਅਤੇ ਤੁਹਾਡਾ ਡਿਸਪੈਚਰ ਆਪਣੇ ਤਰੀਕੇ ਨਾਲ ਲੋਡ ਬੁੱਕ ਕਰਦੇ ਰਹੋ। ਅਸੀਂ ਕਦੇ ਤੁਹਾਡੇ ਭੁਗਤਾਨਾਂ ਵਿੱਚ ਨਹੀਂ ਆਉਂਦੇ ਅਤੇ ਮਾਲ ਦੀ ਬ੍ਰੋਕਰੀ ਨਹੀਂ ਕਰਦੇ।","Hech biri emas. LaneHook — dastur. Siz va dispetcheringiz yuklarni o'z usulingizda band qilishda davom etasiz. Biz to'lovlaringizga aralashmaymiz va brokerlik qilmaymiz.","لا هذا ولا ذاك. LaneHook برنامج. تواصل أنت ومنسّقك حجز الأحمال بطريقتكما. لا نتدخل أبدًا في مدفوعاتكم ولا نعمل وسطاء شحن."],
+["Do I need a dispatcher to use the driver app?","¿Necesito un despachador para usar la app del chofer?","Нужен ли диспетчер, чтобы пользоваться приложением водителя?","Чи потрібен диспетчер, щоб користуватися застосунком водія?","ਕੀ ਡਰਾਈਵਰ ਐਪ ਵਰਤਣ ਲਈ ਡਿਸਪੈਚਰ ਚਾਹੀਦਾ ਹੈ?","Haydovchi ilovasidan foydalanish uchun dispetcher kerakmi?","هل أحتاج إلى منسّق لاستخدام تطبيق السائق؟"],
+["No. The driver app works on its own for independent owner-operators. Company Link is optional for when you want a dispatcher connected.","No. La app del chofer funciona sola para owner-operators independientes. El vínculo de empresa es opcional, para cuando quieras conectar a un despachador.","Нет. Приложение водителя работает само по себе для независимых владельцев-операторов. Связь с компанией — по желанию, если хотите подключить диспетчера.","Ні. Застосунок водія працює самостійно для незалежних власників-операторів. Зв'язок із компанією — за бажанням, якщо хочете підключити диспетчера.","ਨਹੀਂ। ਆਜ਼ਾਦ ਓਨਰ-ਆਪਰੇਟਰਾਂ ਲਈ ਡਰਾਈਵਰ ਐਪ ਆਪਣੇ ਆਪ ਕੰਮ ਕਰਦੀ ਹੈ। ਕੰਪਨੀ ਲਿੰਕ ਸਿਰਫ਼ ਉਦੋਂ ਚਾਹੀਦਾ ਹੈ ਜਦੋਂ ਤੁਸੀਂ ਡਿਸਪੈਚਰ ਨਾਲ ਜੁੜਨਾ ਚਾਹੋ।","Yo'q. Mustaqil owner-operatorlar uchun haydovchi ilovasi o'zi ishlaydi. Kompaniya aloqasi ixtiyoriy — dispetcher ulamoqchi bo'lsangiz.","لا. يعمل تطبيق السائق وحده للسائقين المالكين المستقلين. ربط الشركة اختياري عندما تريد ربط منسّق."],
+["Who makes the final call on a rate or a load?","¿Quién decide al final sobre una tarifa o una carga?","Кто принимает окончательное решение по ставке или грузу?","Хто ухвалює остаточне рішення щодо ставки чи вантажу?","ਰੇਟ ਜਾਂ ਲੋਡ ਬਾਰੇ ਆਖ਼ਰੀ ਫ਼ੈਸਲਾ ਕੌਣ ਕਰਦਾ ਹੈ?","Narx yoki yuk bo'yicha yakuniy qarorni kim qabul qiladi?","من يتخذ القرار النهائي بشأن السعر أو الحمولة؟"],
+["You do, every time. Tools like the rate assistant draft counters inside a floor you set. Nothing gets booked or accepted on its own.","Tú, siempre. Herramientas como el asistente de tarifas preparan contraofertas dentro del mínimo que tú fijas. Nada se reserva ni se acepta solo.","Вы — всегда. Инструменты вроде помощника по ставкам готовят встречные предложения в рамках заданного вами минимума. Ничего не бронируется и не принимается само.","Ви — завжди. Інструменти на кшталт помічника зі ставок готують зустрічні пропозиції в межах заданого вами мінімуму. Нічого не бронюється й не приймається саме.","ਤੁਸੀਂ, ਹਰ ਵਾਰ। ਰੇਟ ਸਹਾਇਕ ਵਰਗੇ ਟੂਲ ਤੁਹਾਡੀ ਤੈਅ ਕੀਤੀ ਹੱਦ ਅੰਦਰ ਜਵਾਬੀ ਪੇਸ਼ਕਸ਼ ਤਿਆਰ ਕਰਦੇ ਹਨ। ਕੁਝ ਵੀ ਆਪਣੇ ਆਪ ਬੁੱਕ ਜਾਂ ਮਨਜ਼ੂਰ ਨਹੀਂ ਹੁੰਦਾ।","Siz — har doim. Narx yordamchisi kabi vositalar siz belgilagan minimal chegara ichida qarshi taklif tayyorlaydi. Hech narsa o'z-o'zidan band qilinmaydi yoki qabul qilinmaydi.","أنت، في كل مرة. أدوات مثل مساعد الأسعار تجهّز عروضًا مضادة ضمن الحد الأدنى الذي تحدده. لا شيء يُحجز أو يُقبل تلقائيًا."],
+["What happens to my records if I unlink from a company?","¿Qué pasa con mis registros si me desvinculo de una empresa?","Что будет с моими записями, если я отвяжусь от компании?","Що буде з моїми записами, якщо я відв'яжуся від компанії?","ਜੇ ਮੈਂ ਕੰਪਨੀ ਤੋਂ ਵੱਖ ਹੋ ਜਾਵਾਂ ਤਾਂ ਮੇਰੇ ਰਿਕਾਰਡ ਦਾ ਕੀ ਹੋਵੇਗਾ?","Kompaniyadan uzilsam, yozuvlarim nima bo'ladi?","ماذا يحدث لسجلاتي إذا فككت الربط مع شركة؟"],
+["Your loads, documents, and mileage stay with you. The dispatcher keeps the records for loads they sent you.","Tus cargas, documentos y millaje se quedan contigo. El despachador conserva los registros de las cargas que te envió.","Ваши грузы, документы и пробег остаются у вас. У диспетчера остаются записи о грузах, которые он вам отправил.","Ваші вантажі, документи й пробіг залишаються у вас. У диспетчера залишаються записи про вантажі, які він вам надіслав.","ਤੁਹਾਡੇ ਲੋਡ, ਦਸਤਾਵੇਜ਼ ਅਤੇ ਮੀਲ ਤੁਹਾਡੇ ਕੋਲ ਰਹਿੰਦੇ ਹਨ। ਡਿਸਪੈਚਰ ਕੋਲ ਸਿਰਫ਼ ਉਹਨਾਂ ਲੋਡਾਂ ਦਾ ਰਿਕਾਰਡ ਰਹਿੰਦਾ ਹੈ ਜੋ ਉਸ ਨੇ ਤੁਹਾਨੂੰ ਭੇਜੇ।","Yuklaringiz, hujjatlaringiz va masofangiz sizda qoladi. Dispetcherda faqat u sizga yuborgan yuklar yozuvlari qoladi.","تبقى أحمالك ومستنداتك وأميالك معك. ويحتفظ المنسّق بسجلات الأحمال التي أرسلها إليك."],
+["Get hooked up early.","Conéctate antes que nadie.","Подключайтесь первыми.","Підключайтеся першими.","ਸਭ ਤੋਂ ਪਹਿਲਾਂ ਜੁੜੋ।","Birinchilardan bo'lib ulaning.","انضم مبكرًا."],
+["We're opening LaneHook to drivers and dispatch teams in small batches.","Estamos abriendo LaneHook a choferes y equipos de despacho en grupos pequeños.","Мы открываем LaneHook для водителей и диспетчеров небольшими группами.","Ми відкриваємо LaneHook для водіїв і диспетчерів невеликими групами.","ਅਸੀਂ LaneHook ਨੂੰ ਡਰਾਈਵਰਾਂ ਅਤੇ ਡਿਸਪੈਚ ਟੀਮਾਂ ਲਈ ਛੋਟੇ ਗਰੁੱਪਾਂ ਵਿੱਚ ਖੋਲ੍ਹ ਰਹੇ ਹਾਂ।","LaneHookni haydovchilar va dispetcherlik jamoalari uchun kichik guruhlarda ochmoqdamiz.","نفتح LaneHook للسائقين وفرق التنسيق على دفعات صغيرة."],
+["I'm a","Soy","Я —","Я —","ਮੈਂ ਹਾਂ","Men —","أنا"],
+["Fleet owner","Dueño de flota","Владелец автопарка","Власник автопарку","ਫਲੀਟ ਮਾਲਕ","Avtopark egasi","مالك أسطول"],
+["Email","Correo","Эл. почта","Ел. пошта","ਈਮੇਲ","Email","البريد الإلكتروني"],
+["you@email.com","tu@correo.com","you@email.com","you@email.com","you@email.com","you@email.com","you@email.com"],
+["Join the list","Unirme a la lista","Записаться","Записатися","ਸੂਚੀ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਵੋ","Ro'yxatga yozilish","انضم إلى القائمة"],
+["Enter a valid email","Escribe un correo válido","Введите корректный email","Введіть коректний email","ਸਹੀ ਈਮੇਲ ਲਿਖੋ","To'g'ri email kiriting","أدخل بريدًا صالحًا"],
+["You're on the list as:","Estás en la lista como:","Вы в списке как:","Ви в списку як:","ਤੁਸੀਂ ਸੂਚੀ ਵਿੱਚ ਹੋ:","Siz ro'yxatdasiz:","أنت في القائمة بصفة:"],
+["We'll reach out when your spot opens.","Te escribiremos cuando se abra tu lugar.","Мы напишем, когда для вас откроется доступ.","Ми напишемо, коли для вас відкриється доступ.","ਤੁਹਾਡੀ ਵਾਰੀ ਆਉਣ 'ਤੇ ਅਸੀਂ ਸੰਪਰਕ ਕਰਾਂਗੇ।","Navbatingiz kelganda siz bilan bog'lanamiz.","سنتواصل معك عندما يحين دورك."],
+["Tools","Herramientas","Инструменты","Інструменти","ਟੂਲ","Vositalar","الأدوات"],
+["LaneHook early access","Acceso anticipado a LaneHook","Ранний доступ к LaneHook","Ранній доступ до LaneHook","LaneHook ਜਲਦੀ ਪਹੁੰਚ","LaneHook erta kirish","وصول مبكر إلى LaneHook"],
+["Join","Unirme","Вступить","Приєднатися","ਜੁੜੋ","Qo'shilish","انضم"]
+];
+var D={};R.forEach(function(r){var o={};for(var i=1;i<CODES.length;i++)o[CODES[i]]=r[i];D[r[0]]=o});
+var LANG='en',hooks=[];
+function t(s){if(LANG==='en')return s;var o=D[s];return (o&&o[LANG])||s}
+function skip(el){return !el||el.closest('script,style,svg,[translate="no"]')}
+function trNode(n){
+  var p=n.parentElement;if(skip(p))return;
+  var v=n.nodeValue;if(!v||!v.trim())return;
+  if(n.__tr===undefined||v!==n.__tr)n.__en=v;
+  var m=n.__en.match(/^(\s*)([\s\S]*?)(\s*)$/);
+  var out=m[1]+t(m[2].replace(/\s+/g,' '))+m[3];
+  if(out!==v)n.nodeValue=out;
+  n.__tr=out;
+}
+function trAttrs(root){
+  var els=root.querySelectorAll?root.querySelectorAll('[placeholder],[aria-label]'):[];
+  Array.prototype.forEach.call(els,function(el){
+    ['placeholder','aria-label'].forEach(function(a){
+      var v=el.getAttribute(a);if(v==null)return;var k='data-en-'+a;
+      if(!el.hasAttribute(k)||el.getAttribute('data-tr-'+a)!==v)el.setAttribute(k,v);
+      var o=t(el.getAttribute(k));el.setAttribute('data-tr-'+a,o);if(o!==v)el.setAttribute(a,o);
+    });
+  });
+}
+function apply(root){
+  if(root.nodeType===3){trNode(root);return}
+  if(root.nodeType!==1||skip(root))return;
+  var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null),n;while(n=w.nextNode())trNode(n);
+  trAttrs(root);if(root.matches&&root.matches('[placeholder],[aria-label]'))trAttrs(root.parentNode||root);
+}
+var FONTS={ru:'Manrope:wght@600;700;800',uk:'Manrope:wght@600;700;800',pa:'Noto+Sans+Gurmukhi:wght@400;600;800',ar:'IBM+Plex+Sans+Arabic:wght@400;600;700'},loaded={};
+function loadFont(c){if(!FONTS[c]||loaded[c])return;loaded[c]=1;var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+FONTS[c]+'&display=swap';document.head.appendChild(l)}
+function setLang(c,save){
+  if(CODES.indexOf(c)<0)c='en';LANG=c;
+  var h=document.documentElement;h.lang=c;h.dir=c==='ar'?'rtl':'ltr';loadFont(c);
+  apply(document.body);document.title=t('LaneHook — Dispatch and drivers, hooked together');
+  var cur=LANGS.filter(function(l){return l.c===c})[0];
+  var b=document.getElementById('langBtnTxt');if(b)b.textContent=cur.s;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-lang]'),function(x){var on=x.getAttribute('data-lang')===c;x.classList.toggle('on',on);x.setAttribute('aria-checked',on?'true':'false')});
+  if(save){try{localStorage.setItem('lh-lang',c)}catch(e){}}
+  hooks.forEach(function(f){try{f(c)}catch(e){}});
+}
+function detect(){
+  var q=(location.search.match(/[?&]lang=([a-z]{2})/)||[])[1];if(q&&CODES.indexOf(q)>-1)return q;
+  try{var s=localStorage.getItem('lh-lang');if(s&&CODES.indexOf(s)>-1)return s}catch(e){}
+  var ls=(navigator.languages||[navigator.language||'en']);
+  for(var i=0;i<ls.length;i++){var c=String(ls[i]).slice(0,2).toLowerCase();if(CODES.indexOf(c)>-1)return c}
+  return 'en';
+}
+function init(){
+  var menu=document.getElementById('langMenu'),btn=document.getElementById('langBtn');
+  menu.innerHTML=LANGS.map(function(l){return '<button role="menuitemradio" data-lang="'+l.c+'" lang="'+l.c+'" translate="no"><span>'+l.n+'</span><b>'+l.s+'</b></button>'}).join('');
+  btn.addEventListener('click',function(e){e.stopPropagation();var o=document.getElementById('langWrap').classList.toggle('open');btn.setAttribute('aria-expanded',o?'true':'false')});
+  menu.addEventListener('click',function(e){var b=e.target.closest('[data-lang]');if(!b)return;setLang(b.getAttribute('data-lang'),true);document.getElementById('langWrap').classList.remove('open');btn.setAttribute('aria-expanded','false')});
+  document.addEventListener('click',function(e){if(!e.target.closest('#langWrap')){document.getElementById('langWrap').classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){document.getElementById('langWrap').classList.remove('open')}});
+  new MutationObserver(function(ms){if(LANG==='en')return;ms.forEach(function(m){
+    if(m.type==='characterData')trNode(m.target);
+    else{Array.prototype.forEach.call(m.addedNodes,apply);if(m.type==='attributes')trAttrs(m.target.parentNode||m.target)}
+  })}).observe(document.body,{childList:true,subtree:true,characterData:true});
+  setLang(detect(),false);
+}
+window.LHI={t:t,setLang:setLang,init:init,onChange:function(f){hooks.push(f)},lang:function(){return LANG}};
+})();
+
+</script>
+<script>
 (function(){
   var NAVY='#0B132B',BLUE='#2563EB',ORANGE='#F59E0B',OFF='#F8FAFC';
   var $=function(id){return document.getElementById(id)};
@@ -848,6 +1215,7 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
   function money(n){return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
   function pad(n){return (n<10?'0':'')+n}
   function now(){try{return new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}catch(e){return 'now'}}
+  var t=window.LHI.t;
   var mq=window.matchMedia('(max-width:719px)');
   function isMob(){return mq.matches}
   function buzz(){try{if(navigator.vibrate)navigator.vibrate(12)}catch(e){}}
@@ -925,7 +1293,7 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
       }).join('');
       var pct=Math.round(st/3*100);
       p='<div class="p-body"><div style="background:var(--navy2);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:var(--orange);font-weight:600;letter-spacing:.08em">ACTIVE LOAD</span><span class="mono" style="font-size:13px">$425</span></div><div style="font-size:15px;font-weight:600">Newark → Allentown</div><div style="height:6px;border-radius:9px;background:var(--navy3);overflow:hidden"><div id="lp" style="height:100%;width:'+Math.round(Math.max(0,st-1)/3*100)+'%;background:linear-gradient(90deg,#2563EB,#F59E0B);transition:width .7s var(--ease)"></div></div><div style="display:flex;flex-direction:column;gap:9px">'+steps+'</div></div>'+
-        (st<3?'<button data-act="next" class="pulse" style="background:var(--orange);color:var(--navy);border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:600;min-height:50px">Update status → '+STAT[st+1]+'</button>':'<div class="drop" style="background:var(--blue);border-radius:14px;padding:14px;font-size:13px;line-height:1.5"><b>Delivered.</b> POD uploaded and sent to dispatch. Nice run.</div>')+'</div>';
+        (st<3?'<button data-act="next" class="pulse" style="background:var(--orange);color:var(--navy);border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:600;min-height:50px"><span>Update status →</span> <span>'+STAT[st+1]+'</span></button>':'<div class="drop" style="background:var(--blue);border-radius:14px;padding:14px;font-size:13px;line-height:1.5"><b>Delivered.</b> POD uploaded and sent to dispatch. Nice run.</div>')+'</div>';
       setTimeout(function(){var lp=$('lp');if(lp)lp.style.width=pct+'%'},30);
     }
     $('heroPhone').innerHTML=p;
@@ -940,9 +1308,9 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
   function showNotif(){var n=$('notif');n.classList.add('show');setTimeout(function(){n.classList.remove('show')},2800)}
   var ACT={
     send:function(){H.step=1;push('Dana sent Newark → Allentown to Marcus',BLUE);buzz();goSlide(1);setTimeout(showNotif,isMob()?450:150)},
-    accept:function(){H.step=2;H.status=0;push('Marcus accepted Newark → Allentown',BLUE);buzz();toast('Dispatch laptop: Marcus accepted the load')},
-    decline:function(){H.step=0;push('Marcus passed on the load','#94A3B8');toast('Dispatch laptop: Marcus passed');goSlide(0)},
-    next:function(){H.status=Math.min(3,H.status+1);var m=['','Marcus arrived at pickup · Newark','Marcus is loaded and rolling','Marcus delivered · POD uploaded'];push(m[H.status],H.status===3?ORANGE:BLUE);buzz();toast('Dispatch laptop: '+m[H.status])},
+    accept:function(){H.step=2;H.status=0;push('Marcus accepted Newark → Allentown',BLUE);buzz();toast(t('Dispatch laptop:')+' '+t('Marcus accepted the load'))},
+    decline:function(){H.step=0;push('Marcus passed on the load','#94A3B8');toast(t('Dispatch laptop:')+' '+t('Marcus passed on the load'));goSlide(0)},
+    next:function(){H.status=Math.min(3,H.status+1);var m=['','Marcus arrived at pickup · Newark','Marcus is loaded and rolling','Marcus delivered · POD uploaded'];push(m[H.status],H.status===3?ORANGE:BLUE);buzz();toast(t('Dispatch laptop:')+' '+t(m[H.status]))},
     reset:function(){H.step=0;H.status=0;goSlide(0)}
   };
   document.addEventListener('click',function(e){
@@ -995,9 +1363,9 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
 
   /* phone micro-interactions */
   $$('[data-load]').forEach(function(c){c.addEventListener('click',function(){var on=!c.classList.contains('sel');$$('[data-load]').forEach(function(x){x.classList.remove('sel')});if(on)c.classList.add('sel');buzz()})});
-  $('detBtn').addEventListener('click',function(){var b=this;b.textContent='Notice sent to broker ✓';b.style.background=BLUE;b.style.color='#fff';buzz();toast('Detention notice sent with timestamps');setTimeout(function(){b.textContent='Send detention notice';b.style.background=ORANGE;b.style.color=NAVY},3000)});
+  $('detBtn').addEventListener('click',function(){var b=this;b.textContent='Notice sent to broker ✓';b.style.background=BLUE;b.style.color='#fff';buzz();toast(t('Detention notice sent with timestamps'));setTimeout(function(){b.textContent='Send detention notice';b.style.background=ORANGE;b.style.color=NAVY},3000)});
   $('scanBtn').addEventListener('click',function(){var b=this,box=$('scanbox');if(box.classList.contains('scanning'))return;box.classList.add('scanning');b.textContent='Scanning…';
-    setTimeout(function(){box.classList.remove('scanning');$('scanTxt').innerHTML='POD<br>captured ✓';$('podState').textContent='Uploaded';$('podState').style.color='#60A5FA';$('podRow').style.borderColor='transparent';b.textContent='Scan again';buzz();toast('POD filed under load #LH-20418')},1800)});
+    setTimeout(function(){box.classList.remove('scanning');$('scanTxt').innerHTML='POD<br>captured ✓';$('podState').textContent='Uploaded';$('podState').style.color='#60A5FA';$('podRow').style.borderColor='transparent';b.textContent='Scan again';buzz();toast(t('POD filed under load #LH-20418'))},1800)});
   $$('[data-qr]').forEach(function(q){q.addEventListener('click',function(){var log=$('chatLog');
     function add(cls,t){var d=document.createElement('div');d.className=cls;d.textContent=t;log.appendChild(d);while(log.children.length>5)log.removeChild(log.firstChild)}
     add('bub out',q.getAttribute('data-qr'));buzz();setTimeout(function(){add('bub in','Got it, thanks Marcus.')},900)})});
@@ -1024,7 +1392,7 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
     $('rateLbl').textContent='$'+C.rate+'/hr';
     var o=money(bill*C.rate),el=$('owed');
     if(o!==lastOwed){el.textContent=o;el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');lastOwed=o}
-    $('owedNote').textContent=bill>0?(+bill.toFixed(2))+' billable hrs after '+C.free+' hr free. LaneHook logs the timestamps for the invoice.':'Still inside free time. The clock keeps watching so you don\'t have to.';
+    $('owedNote').textContent=bill>0?t('{b} billable hrs after {f} hr free. LaneHook logs the timestamps for the invoice.').replace('{b}',+bill.toFixed(2)).replace('{f}',C.free):t('Still inside free time. The clock keeps watching so you don\'t have to.');
     $$('#free button').forEach(function(b){b.classList.toggle('on',+b.getAttribute('data-free')===C.free)});
   }
   $('hours').addEventListener('input',function(e){C.hours=parseFloat(e.target.value);calc()});
@@ -1035,7 +1403,7 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
   $('mcForm').addEventListener('submit',function(e){
     e.preventDefault();$('mc').blur();
     var v=($('mc').value||'').replace(/\D/g,'')||'482910';$('mc').value=v;
-    var g=$('gres');g.className='gres empty';g.style.borderColor='';g.innerHTML='<div class="spin"></div><div>Checking MC-'+esc(v)+'…</div>';
+    var g=$('gres');g.className='gres empty';g.style.borderColor='';g.innerHTML='<div class="spin"></div><div><span>Checking</span> MC-'+esc(v)+'…</div>';
     setTimeout(function(){
       var flagged=parseInt(v.slice(-1),10)%2===0;
       var rows=flagged?[['Broker authority','Active','#60A5FA'],['Contact info','Changed in last 30 days',ORANGE],['Duplicate postings','Same load under 2 MCs',ORANGE],['Your history','No past loads','#CBD5E1']]
@@ -1068,13 +1436,13 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
   })});
 
   /* ---------- JOIN ---------- */
-  var role='driver';
+  var role='Driver';
   $$('#roles button').forEach(function(b){b.addEventListener('click',function(){role=b.getAttribute('data-role');$$('#roles button').forEach(function(x){x.classList.toggle('on',x===b)})})});
   $('joinForm').addEventListener('submit',function(e){
     e.preventDefault();var em=$('email');
-    if(!/^\S+@\S+\.\S+$/.test(em.value)){em.classList.add('bad');em.focus();em.placeholder='Enter a valid email';return}
+    if(!/^\S+@\S+\.\S+$/.test(em.value)){em.classList.add('bad');em.focus();em.placeholder=t('Enter a valid email');return}
     $('joinForm').style.display='none';var j=$('joined');j.style.display='block';
-    j.innerHTML='You\'re on the list as a <b style="color:var(--orange)">'+role+'</b>. We\'ll reach out when your spot opens.';buzz();
+    j.innerHTML='<span>You\'re on the list as:</span> <b style="color:var(--orange)">'+role+'</b>. <span>We\'ll reach out when your spot opens.</span>';buzz();
   });
 
   /* ---------- FIT DEVICES TO SCREEN ---------- */
@@ -1092,9 +1460,18 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
   }
   window.addEventListener('resize',fit);
   if(mq.addEventListener)mq.addEventListener('change',function(){fit();renderHero()});
+  /* ---------- HEADLINE (built per language, word-by-word animation) ---------- */
+  function buildH1(){
+    var d=0;
+    function words(s,cls){var w=s.split(' ').map(esc);if(w.length>2){var l=w.pop();w[w.length-1]+='&nbsp;'+l}return w.map(function(x){d+=.07;return '<span class="w'+cls+'" style="white-space:nowrap;animation-delay:'+d.toFixed(2)+'s">'+x+'</span>'}).join(' ')}
+    $('h1').innerHTML=words(t('Dispatch sends it.'),'')+'<br>'+words(t("The driver's already on it."),' o');
+  }
+  window.LHI.onChange(function(){buildH1();calc();renderHero();fit()});
+  buildH1();
   setDp('fleet');fit();
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
 })();
+window.LHI.init();
 </script>
 </body>
 </html>
