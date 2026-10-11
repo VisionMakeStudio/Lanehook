@@ -110,6 +110,7 @@ LH.lookup = async function (mc) {
   let body = null; try { body = await res.json(); } catch (e) { }
   if (res.status === 404 && !body) return { ok: false, reason: 'not_configured' };
   if (res.status === 401) return { ok: false, reason: 'signin' };
+  if (res.status === 402) return { ok: false, reason: 'upgrade' };
   if (!res.ok || !body) return { ok: false, reason: (body && body.error) || 'error' };
   if (!body.found) return { ok: true, found: false };
   const c = body.carrier || {}, bond = c.bondInsuranceOnFile;

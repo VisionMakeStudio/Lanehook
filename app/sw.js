@@ -1,5 +1,5 @@
-const V = 'lh-v3';
-const SHELL = ['./', 'index.html', 'styles.css', 'config.js', 'vendor/supabase.js', 'core.js', 'logic.js', 'sync.js', 'auth.js', 'pages-loads.js', 'pages-more.js', 'manifest.webmanifest',
+const V = 'lh-v4';
+const SHELL = ['./', 'index.html', 'styles.css', 'config.js', 'vendor/supabase.js', 'core.js', 'logic.js', 'sync.js', 'auth.js', 'pages-loads.js', 'billing.js', 'pages-more.js', 'manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',
   'icons/wordmark-nav.svg', 'icons/wordmark-nav-dark.svg', 'icons/symbol.svg'];
 

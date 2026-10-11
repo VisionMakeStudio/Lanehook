@@ -15,7 +15,7 @@ LH.runGuard = async function (mc, enteredName) {
 LH.guardSummary = function (r, mc) {
   const link = `<a class="btn sm" href="${LH.fmcsaURL(mc)}" target="_blank" rel="noopener">Open FMCSA record</a>`;
   if (!r.ok) {
-    const msg = { signin: 'Please sign in again to run broker checks.', offline: 'You appear to be offline. Try again when you have a connection.', not_configured: 'The live FMCSA check is not connected yet. Open the FMCSA record and look at authority status, bond, and company name yourself.' }[r.reason] || 'The lookup did not work. Try again, or open the FMCSA record.';
+    const msg = { upgrade: 'Live broker checks are part of a paid plan.', signin: 'Please sign in again to run broker checks.', offline: 'You appear to be offline. Try again when you have a connection.', not_configured: 'The live FMCSA check is not connected yet. Open the FMCSA record and look at authority status, bond, and company name yourself.' }[r.reason] || 'The lookup did not work. Try again, or open the FMCSA record.';
     return `<div class="alert"><i></i><div><b>Could not check MC ${esc(mc)}</b><small>${esc(msg)}</small></div></div><div style="margin-top:8px">${link}</div>`;
   }
   if (!r.found) return `<div class="alert bad"><i></i><div><b>No FMCSA record for MC ${esc(mc)}</b><small>Do not book until the broker explains this. Check the number against their rate confirmation.</small></div></div><div style="margin-top:8px">${link}</div>`;

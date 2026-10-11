@@ -856,9 +856,9 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
     <div style="max-width:680px;margin-bottom:36px" data-reveal>
       <div class="eyebrow mono" style="color:var(--blue)" translate="no">PRICING</div>
       <h2 class="h2">Simple pricing. Start free.</h2>
-      <p class="sub dk">Everything is free while LaneHook is in early access. We will tell you before any paid plan starts.</p>
+      <p class="sub dk" id="pricingSub">Everything is free while LaneHook is in early access. We will tell you before any paid plan starts.</p>
     </div>
-    <div class="pgrid"><div class="pc " data-reveal><h3>Free</h3><div class="price"><b class="mono" translate="no">$0</b><span>per month</span></div><p class="tag">To try it out</p><ul><li>5 loads a month</li><li>Detention timer and claims</li><li>Profit calculator</li><li>Sync across your devices</li></ul><a href="/app/" class="btn btn-ghost2">Start free</a></div><div class="pc pop" data-reveal><span class="badge">Most popular</span><h3>Solo</h3><div class="price"><b class="mono" translate="no">$19</b><span>per month</span></div><p class="tag">For the owner-operator</p><ul><li>Unlimited loads</li><li>Rate con scanner</li><li>Load Guard broker checks</li><li>Invoices and expenses</li><li>Document vault</li></ul><a href="/app/" class="btn btn-o">Start free</a></div><div class="pc " data-reveal><h3>Crew</h3><div class="price"><b class="mono" translate="no">$49</b><span>per month</span></div><p class="tag">Dispatcher plus drivers</p><ul><li>Everything in Solo</li><li>Dispatcher dashboard</li><li>Up to 5 drivers</li><li>Company Link</li></ul><div class="soon">Coming soon</div></div><div class="pc " data-reveal><h3>Fleet</h3><div class="price"><b class="mono" translate="no">$99</b><span>per month</span></div><p class="tag">For growing fleets</p><ul><li>Everything in Crew</li><li>Up to 15 trucks</li><li>Driver settlements</li><li>Priority support</li></ul><div class="soon">Coming soon</div></div></div>
+    <div class="pgrid" id="pgrid"><div class="pc " data-reveal><h3>Free</h3><div class="price"><b class="mono" translate="no">$0</b><span>per month</span></div><p class="tag">To try it out</p><ul><li>5 loads a month</li><li>Detention timer and claims</li><li>Profit calculator</li><li>Sync across your devices</li></ul><a href="/app/" class="btn btn-ghost2">Start free</a></div><div class="pc pop" data-reveal><span class="badge">Most popular</span><h3>Solo</h3><div class="price"><b class="mono" translate="no">$19</b><span>per month</span></div><p class="tag">For the owner-operator</p><ul><li>Unlimited loads</li><li>Rate con scanner</li><li>Load Guard broker checks</li><li>Invoices and expenses</li><li>Document vault</li></ul><a href="/app/" class="btn btn-o">Start free</a></div><div class="pc " data-reveal><h3>Crew</h3><div class="price"><b class="mono" translate="no">$49</b><span>per month</span></div><p class="tag">Dispatcher plus drivers</p><ul><li>Everything in Solo</li><li>Dispatcher dashboard</li><li>Up to 5 drivers</li><li>Company Link</li></ul><div class="soon">Coming soon</div></div><div class="pc " data-reveal><h3>Fleet</h3><div class="price"><b class="mono" translate="no">$99</b><span>per month</span></div><p class="tag">For growing fleets</p><ul><li>Everything in Crew</li><li>Up to 15 trucks</li><li>Driver settlements</li><li>Priority support</li></ul><div class="soon">Coming soon</div></div></div>
     <p class="fine" data-reveal>Prices are in US dollars. No contract. Cancel any time.</p>
   </div>
 </section>
@@ -1185,6 +1185,8 @@ var R=[
 ["Tools","Herramientas","Инструменты","Інструменти","ਟੂਲ","Vositalar","الأدوات"],
 ["LaneHook early access","Acceso anticipado a LaneHook","Ранний доступ к LaneHook","Ранній доступ до LaneHook","LaneHook ਜਲਦੀ ਪਹੁੰਚ","LaneHook erta kirish","وصول مبكر إلى LaneHook"],
 ["Join","Unirme","Вступить","Приєднатися","ਜੁੜੋ","Qo'shilish","انضم"],
+["Get", "Obtener", "Выбрать", "Обрати", "ਲਵੋ", "Tanlash", "احصل على"],
+["Pick a plan. Cancel any time.", "Elige un plan. Cancela cuando quieras.", "Выберите тариф. Отмена в любой момент.", "Оберіть тариф. Скасування будь-коли.", "ਪਲਾਨ ਚੁਣੋ। ਕਦੇ ਵੀ ਰੱਦ ਕਰੋ।", "Tarifni tanlang. Istalgan vaqtda bekor qiling.", "اختر خطة. ألغِ في أي وقت."],
 ["Features", "Funciones", "Возможности", "Можливості", "ਫੀਚਰ", "Imkoniyatlar", "المزايا"],
 ["Pricing", "Precios", "Цены", "Ціни", "ਕੀਮਤਾਂ", "Narxlar", "الأسعار"],
 ["Log in", "Iniciar sesión", "Войти", "Увійти", "ਲੌਗਇਨ", "Kirish", "تسجيل الدخول"],
@@ -1243,7 +1245,7 @@ var R=[
 ["Already have an account? Log in", "¿Ya tienes cuenta? Inicia sesión", "Уже есть аккаунт? Войти", "Уже є акаунт? Увійти", "ਪਹਿਲਾਂ ਹੀ ਖਾਤਾ ਹੈ? ਲੌਗਇਨ ਕਰੋ", "Hisobingiz bormi? Kiring", "لديك حساب؟ سجّل الدخول"],
 ["Free to start", "Gratis para empezar", "Начать бесплатно", "Почати безкоштовно", "ਸ਼ੁਰੂ ਕਰਨਾ ਮੁਫ਼ਤ", "Boshlash bepul", "البدء مجاني"],
 ["How much does LaneHook cost?", "¿Cuánto cuesta LaneHook?", "Сколько стоит LaneHook?", "Скільки коштує LaneHook?", "LaneHook ਦੀ ਕੀਮਤ ਕੀ ਹੈ?", "LaneHook narxi qancha?", "كم تكلفة LaneHook؟"],
-["It is free while we are in early access. Paid plans start at $19 a month for owner-operators, and we will tell you before anything changes.", "Es gratis mientras estemos en acceso anticipado. Los planes de pago empiezan en $19 al mes para dueños-operadores, y te avisaremos antes de cualquier cambio.", "Пока ранний доступ, это бесплатно. Платные тарифы начнутся от $19 в месяц для владельцев-операторов, и мы предупредим заранее.", "Поки триває ранній доступ, це безкоштовно. Платні тарифи почнуться від $19 на місяць для власників-операторів, і ми попередимо заздалегідь.", "ਜਲਦੀ ਪਹੁੰਚ ਦੌਰਾਨ ਇਹ ਮੁਫ਼ਤ ਹੈ। ਮਾਲਕ-ਡਰਾਈਵਰਾਂ ਲਈ ਭੁਗਤਾਨ ਵਾਲੇ ਪਲਾਨ $19 ਮਹੀਨੇ ਤੋਂ ਸ਼ੁਰੂ ਹੋਣਗੇ, ਤੇ ਬਦਲਾਅ ਤੋਂ ਪਹਿਲਾਂ ਅਸੀਂ ਦੱਸਾਂਗੇ।", "Erta kirish davomida bepul. Pullik rejalar egasi-haydovchilar uchun oyiga $19 dan boshlanadi, o'zgarishdan oldin xabar beramiz.", "إنه مجاني أثناء الوصول المبكر. تبدأ الخطط المدفوعة من 19 دولارًا شهريًا للمالكين المشغّلين، وسنخبرك قبل أي تغيير."],
+["LaneHook is free while we are in early access. See the Pricing section for the current plans. We will tell you before anything changes.", "LaneHook es gratis mientras estemos en acceso anticipado. Mira la sección de precios para ver los planes actuales. Te avisaremos antes de cualquier cambio.", "LaneHook бесплатен, пока идёт ранний доступ. Актуальные тарифы смотрите в разделе цен. Мы предупредим заранее.", "LaneHook безкоштовний, поки триває ранній доступ. Актуальні тарифи дивіться в розділі цін. Ми попередимо заздалегідь.", "ਜਲਦੀ ਪਹੁੰਚ ਦੌਰਾਨ LaneHook ਮੁਫ਼ਤ ਹੈ। ਮੌਜੂਦਾ ਪਲਾਨ ਕੀਮਤਾਂ ਵਾਲੇ ਭਾਗ ਵਿੱਚ ਦੇਖੋ। ਕੋਈ ਵੀ ਬਦਲਾਅ ਹੋਣ ਤੋਂ ਪਹਿਲਾਂ ਅਸੀਂ ਦੱਸਾਂਗੇ।", "Erta kirish davrida LaneHook bepul. Joriy tariflarni Narxlar bo‘limida ko‘ring. Biror narsa o‘zgarishidan oldin xabar beramiz.", "LaneHook مجاني خلال الوصول المبكر. راجع قسم الأسعار لمعرفة الخطط الحالية. سنخبرك قبل أي تغيير."],
 ["How do I log in?", "¿Cómo inicio sesión?", "Как войти?", "Як увійти?", "ਮੈਂ ਲੌਗਇਨ ਕਿਵੇਂ ਕਰਾਂ?", "Qanday kiraman?", "كيف أسجّل الدخول؟"],
 ["Enter your email and we send you a sign-in link. If the link opens in a different app, type the 6-digit code from the same email instead. No password to remember.", "Escribe tu correo y te enviamos un enlace para entrar. Si el enlace se abre en otra app, escribe el código de 6 dígitos del mismo correo. Sin contraseña que recordar.", "Введите email, и мы отправим ссылку для входа. Если ссылка откроется в другом приложении, введите 6-значный код из того же письма. Пароль помнить не нужно.", "Введіть email, і ми надішлемо посилання для входу. Якщо посилання відкриється в іншому застосунку, введіть 6-значний код із того ж листа. Пароль пам'ятати не потрібно.", "ਈਮੇਲ ਲਿਖੋ ਅਤੇ ਅਸੀਂ ਸਾਈਨ ਇਨ ਲਿੰਕ ਭੇਜਾਂਗੇ। ਜੇ ਲਿੰਕ ਕਿਸੇ ਹੋਰ ਐਪ ਵਿੱਚ ਖੁੱਲ੍ਹੇ, ਤਾਂ ਉਸੇ ਈਮੇਲ ਦਾ 6 ਅੰਕਾਂ ਵਾਲਾ ਕੋਡ ਲਿਖੋ। ਪਾਸਵਰਡ ਯਾਦ ਰੱਖਣ ਦੀ ਲੋੜ ਨਹੀਂ।", "Emailingizni kiriting, kirish havolasini yuboramiz. Havola boshqa ilovada ochilsa, o'sha xatdagi 6 xonali kodni kiriting. Parol eslab qolish shart emas.", "أدخل بريدك ونرسل لك رابط تسجيل الدخول. إذا فُتح الرابط في تطبيق آخر، فاكتب الرمز المكوّن من 6 أرقام من البريد نفسه. لا كلمة مرور لتتذكرها."]
 ];
@@ -1531,7 +1533,7 @@ window.LHI={t:t,setLang:setLang,init:init,onChange:function(f){hooks.push(f)},la
     ['Is LaneHook a dispatch service or a broker?','Neither. LaneHook is software. You and your dispatcher keep booking loads your way. We never sit in the middle of your payments and we don\'t broker freight.'],
     ['Do I need a dispatcher to use the driver portal?','No. The driver portal works on its own for independent owner-operators. Company Link is optional for when you want a dispatcher connected.'],
     ['Who makes the final call on a rate or a load?','You do, every time. Tools like the rate assistant draft counters inside a floor you set. Nothing gets booked or accepted on its own.'],
-    ['How much does LaneHook cost?','It is free while we are in early access. Paid plans start at $19 a month for owner-operators, and we will tell you before anything changes.'],
+    ['How much does LaneHook cost?','LaneHook is free while we are in early access. See the Pricing section for the current plans. We will tell you before anything changes.'],
     ['How do I log in?','Enter your email and we send you a sign-in link. If the link opens in a different app, type the 6-digit code from the same email instead. No password to remember.'],
     ['What happens to my records if I unlink from a company?','Your loads, documents, and mileage stay with you. The dispatcher keeps the records for loads they sent you.']];
   $('faqList').innerHTML=FAQ.map(function(f,i){
@@ -1577,6 +1579,34 @@ window.LHI={t:t,setLang:setLang,init:init,onChange:function(f){hooks.push(f)},la
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
 })();
 window.LHI.init();
+</script>
+<script>
+(function(){
+  var URL='https://hsjmtkqzdkcpyfaygxpb.supabase.co/rest/v1/site_settings?id=eq.1&select=data',KEY='sb_publishable_a0uKjOLnATsVJ4G-Iti7Cg_jbVgHcxZ';
+  var cfg=null;
+  function esc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function money(c){var d=Number(c)||0;return '$'+(d%1?d.toFixed(2):d)}
+  function render(){
+    var g=document.getElementById('pgrid'),sub=document.getElementById('pricingSub');if(!g||!cfg||!cfg.plans)return;
+    var early=cfg.earlyAccess!==false,order=['free','solo','crew','fleet'],out='';
+    order.forEach(function(k){
+      var p=cfg.plans[k];if(!p)return;
+      var feats=(p.features||[]).map(function(f){return '<li>'+esc(f)+'</li>'}).join('');
+      var cta;
+      if(k==='free'||early){ if(p.available===false&&k!=='free')cta='<div class="soon">Coming soon</div>'; else cta='<a href="/app/" class="btn '+(p.popular?'btn-o':'btn-ghost2')+'">Start free</a>'; }
+      else if(p.available===false)cta='<div class="soon">Coming soon</div>';
+      else cta='<a href="/app/?plan='+k+'" class="btn '+(p.popular?'btn-o':'btn-ghost2')+'"><span>Get</span> <span translate="no">'+esc(p.name)+'</span></a>';
+      if(early&&k!=='free'&&p.available!==false)cta='<a href="/app/" class="btn '+(p.popular?'btn-o':'btn-ghost2')+'">Start free</a>';
+      out+='<div class="pc'+(p.popular?' pop':'')+'">'+(p.popular?'<span class="badge">Most popular</span>':'')+'<h3 translate="no">'+esc(p.name)+'</h3><div class="price"><b class="mono" translate="no">'+money(p.price)+'</b><span>per month</span></div><p class="tag">'+esc(p.tagline)+'</p><ul>'+feats+'</ul>'+cta+'</div>';
+    });
+    g.innerHTML=out;
+    if(sub)sub.textContent=early?'Everything is free while LaneHook is in early access. We will tell you before any paid plan starts.':'Pick a plan. Cancel any time.';
+  }
+  fetch(URL,{headers:{apikey:KEY}}).then(function(r){return r.ok?r.json():[]}).then(function(a){
+    if(a&&a[0]&&a[0].data){cfg=a[0].data;render()}
+  }).catch(function(){});
+  if(window.LHI)window.LHI.onChange(function(){render()});
+})();
 </script>
 </body>
 </html>

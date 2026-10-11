@@ -44,7 +44,7 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-b
 .r .who b{display:block;word-break:break-all;font-weight:600}.r .who small{display:block;color:var(--muted);font-size:13px}
 .r .meta{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
 .cols{display:none}
-.pill{display:inline-block;font-size:12px;font-weight:600;border-radius:99px;padding:3px 10px;background:#EEF2F7;color:#475569;text-transform:capitalize}
+.pill{white-space:nowrap;display:inline-block;font-size:12px;font-weight:600;border-radius:99px;padding:3px 10px;background:#EEF2F7;color:#475569;text-transform:capitalize}
 .pill.solo,.pill.crew,.pill.fleet{background:#DBEAFE;color:#1D4ED8}.pill.comped{background:#FEF3C7;color:#92400E}.pill.off{background:#FEE2E2;color:var(--bad)}.pill.ok{background:#DCFCE7;color:var(--ok)}
 .dots{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--muted)}.dots:hover{background:#EEF2F7}
 .menu{position:fixed;z-index:60;background:#fff;border:1px solid var(--bd);border-radius:14px;box-shadow:0 16px 40px rgba(11,19,43,.22);padding:6px;min-width:220px}
@@ -64,6 +64,33 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-b
   .cols{padding:11px 16px;font-size:12px;font-weight:600;color:var(--muted);background:#F1F5F9;border-bottom:1px solid var(--bd);text-transform:uppercase;letter-spacing:.05em}
   .r .dots{order:9}.r .meta{display:contents}.r .meta span{font-size:14px;color:var(--navy)}.r .m-hide{display:none}}
 @media(max-width:899px){.r .d-only{display:none}}
+
+.nav2{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:var(--navy);scrollbar-width:none}.nav2::-webkit-scrollbar{display:none}
+.nav2 a{flex-shrink:0;padding:9px 16px;border-radius:99px;text-decoration:none;color:#CBD5E1;font-weight:600;font-size:14px;border:1px solid var(--line)}.nav2 a.on{background:var(--orange);border-color:var(--orange);color:var(--navy)}
+.grid{display:grid;gap:14px;margin-bottom:14px}.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr}
+.panel{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:16px 18px}.panel h3{font-size:16px;margin-bottom:12px}
+.panel .sub{font-size:13px;color:var(--muted);margin:-6px 0 12px}
+.kpis.six{grid-template-columns:repeat(2,1fr)}.kpi small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.banner{border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:14px;line-height:1.5}.banner.warn{background:#FEF3C7;color:#78350F}.banner.info{background:#DBEAFE;color:#1E3A8A}.banner b{display:block;margin-bottom:2px}
+.chart{width:100%;height:auto;display:block}.chart text{font-family:'IBM Plex Sans',sans-serif;fill:#64748B;font-size:12px}
+.bar{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:14px}.bar span.n{width:70px;text-transform:capitalize;flex-shrink:0}.bar .t{flex:1;min-width:0}.bar i{display:block;height:12px;border-radius:6px;background:var(--blue);min-width:3px}.bar b{font-family:'IBM Plex Mono',monospace;font-size:13px}
+.li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--bd);font-size:14px}.li:first-of-type{border-top:0}.li .e{word-break:break-all;min-width:0}.li small{display:block;color:var(--muted);font-size:12px}.li .a{font-family:'IBM Plex Mono',monospace;font-weight:600;white-space:nowrap}.li .a.neg{color:var(--bad)}
+.empty.sm{padding:18px 8px}.li .pill{align-self:center}
+.pill.past_due,.pill.canceled{background:#FEE2E2;color:var(--bad)}.pill.cancels{background:#FEF3C7;color:#92400E}
+.sw{position:relative;width:48px;height:28px;border-radius:99px;background:#CBD5E1;flex-shrink:0;transition:background .2s}.sw:after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}.sw.on{background:var(--blue)}.sw.on:after{transform:translateX(20px)}
+.trow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 0}.trow p{margin:2px 0 0;font-size:13px;color:var(--muted);line-height:1.45}
+.plan{border:1px solid var(--bd);border-radius:16px;padding:16px;background:#fff}.plan h3{font-size:18px;margin-bottom:10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.savebar{position:sticky;bottom:0;background:rgba(248,250,252,.94);backdrop-filter:blur(8px);padding:12px 0 calc(12px + var(--sab));display:flex;gap:10px;align-items:center;justify-content:flex-end;border-top:1px solid var(--bd);margin-top:14px}
+.savebar span{margin-right:auto;font-size:13px;color:var(--muted)}
+.copy{font-family:'IBM Plex Mono',monospace;font-size:13px;background:#F1F5F9;border-radius:10px;padding:10px 12px;word-break:break-all}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:10px 14px;background:#F1F5F9}.tbl td{padding:12px 14px;border-top:1px solid var(--bd)}.tbl td.a{font-family:'IBM Plex Mono',monospace;text-align:right;font-weight:600}.tbl th.a{text-align:right}
+.ptable{display:none}.plist{display:block}
+@media(min-width:600px){.kpis.six{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:1fr 1fr}}
+@media(min-width:900px){.nav2{display:none}.g3{grid-template-columns:1.2fr 1fr 1fr}.ptable{display:table}.plist{display:none}.plans4{display:grid;grid-template-columns:1fr 1fr;gap:14px}}
+@media(min-width:1200px){.kpis.six{grid-template-columns:repeat(6,1fr)}}
+.plans4{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:900px){.plans4{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -74,10 +101,13 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-b
 'use strict';
 const $=(s,r=document)=>r.querySelector(s), esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const C=window.LH_CONFIG, sb=window.supabase.createClient(C.supabaseUrl,C.supabaseKey,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-let USERS=[], ME='', Q='', FILT='all', SORT='new';
+let D={users:[],payments:[],settings:null,stripe:{},me:''}, Q='', FILT='all', SORT='new', DRAFT=null, DIRTY=false;
+const PAID=['active','trialing','past_due'];
+const $$=n=>(n<0?'-':'')+'$'+(Math.abs(n)/100).toLocaleString('en-US',{minimumFractionDigits:n%100?2:0,maximumFractionDigits:2});
 const day=s=>s?new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Never';
 const ago=s=>{if(!s)return 'Never';const d=(Date.now()-Date.parse(s))/864e5;return d<1?'Today':d<2?'Yesterday':Math.floor(d)+' days ago'};
-function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),3200)}
+const DAY=864e5;
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),3400)}
 async function api(body){
   const {data}=await sb.auth.getSession(); if(!data.session)throw new Error('sign_in');
   const r=await fetch('/.netlify/functions/admin',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+data.session.access_token},body:JSON.stringify(body)});
@@ -98,63 +128,178 @@ function loginView(email,stage,msg){
       if(error){$('#go').disabled=false;$('#m').textContent='Could not send. Check the address.';return}loginView(em,'code')};
   }
 }
-/* ---------- main ---------- */
+/* ---------- numbers ---------- */
+function stats(){
+  const U=D.users,P=D.payments,now=Date.now();
+  const paidUsers=U.filter(u=>PAID.includes(u.status));
+  const mrr=paidUsers.reduce((s,u)=>s+u.amount,0);
+  const rev30=P.filter(p=>now-Date.parse(p.created_at)<30*DAY).reduce((s,p)=>s+p.amount,0);
+  const revAll=P.reduce((s,p)=>s+p.amount,0);
+  const signups=Array(30).fill(0); U.forEach(u=>{const d=Math.floor((now-Date.parse(u.created))/DAY);if(d>=0&&d<30)signups[29-d]++});
+  const months=[];for(let i=5;i>=0;i--){const d=new Date();d.setDate(1);d.setHours(0,0,0,0);d.setMonth(d.getMonth()-i);months.push({k:d.getFullYear()*12+d.getMonth(),label:d.toLocaleDateString('en-US',{month:'short'}),v:0})}
+  P.forEach(p=>{const d=new Date(p.created_at),k=d.getFullYear()*12+d.getMonth(),m=months.find(x=>x.k===k);if(m)m.v+=p.amount});
+  const mix={};U.forEach(u=>{const k=u.disabled?'disabled':u.plan;mix[k]=(mix[k]||0)+1});
+  return{mrr,rev30,revAll,total:U.length,paid:paidUsers.length,wk:U.filter(u=>now-Date.parse(u.created)<7*DAY).length,act:U.filter(u=>u.last&&now-Date.parse(u.last)<7*DAY).length,signups,months,mix,
+    attention:U.filter(u=>u.status==='past_due'||(u.cancels&&PAID.includes(u.status)))};
+}
+function barChart(vals,labels,fmt,h=150){
+  const w=420,pad=30,max=Math.max(...vals,1),bw=(w-pad)/vals.length;
+  const bars=vals.map((v,i)=>{const bh=Math.round((h-30)*v/max);return `<rect x="${pad+i*bw+bw*.15}" y="${h-20-bh}" width="${bw*.7}" height="${Math.max(bh,v?2:0)}" rx="3" fill="#2563EB"><title>${esc(labels[i])}: ${esc(fmt(v))}</title></rect>`}).join('');
+  const lab=labels.map((l,i)=>(vals.length<=8||i%5===0||i===vals.length-1)?`<text x="${pad+i*bw+bw/2}" y="${h-4}" text-anchor="middle">${esc(l)}</text>`:'').join('');
+  return `<svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="Bar chart"><line x1="${pad}" y1="${h-20}" x2="${w}" y2="${h-20}" stroke="#E2E8F0"/><text x="0" y="12">${esc(fmt(max))}</text>${bars}${lab}</svg>`;
+}
+/* ---------- shell ---------- */
+const ROUTES=[['overview','Overview'],['subscribers','Subscribers'],['plans','Plans & pricing'],['payments','Payments']];
+const route=()=>{const r=location.hash.replace('#/','').replace('#','');return ROUTES.some(x=>x[0]===r)?r:'overview'};
+function shell(inner){
+  const r=route();
+  return `<div class="shell"><aside class="side"><div class="brand"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Admin</b></div>${ROUTES.map(x=>`<a class="${r===x[0]?'on':''}" href="#/${x[0]}">${x[1]}</a>`).join('')}<a href="../app/">Open the portal</a><a href="../">Main site</a><div class="me">Signed in as<br>${esc(D.me)}<br><button class="btn sm" style="margin-top:10px;width:100%" id="so">Sign out</button></div></aside>
+  <div class="main"><div class="top"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Admin</b><button class="btn sm" id="so2">Sign out</button></div>
+  <nav class="nav2">${ROUTES.map(x=>`<a class="${r===x[0]?'on':''}" href="#/${x[0]}">${x[1]}</a>`).join('')}</nav>
+  <div class="wrap">${inner}</div></div></div>`;
+}
+function stripeBanner(){
+  const s=D.stripe||{};
+  if(!s.key)return `<div class="banner warn"><b>Stripe is not connected yet</b>Nobody can pay until you add the Stripe keys in Netlify. See the checklist on the Payments page.</div>`;
+  if(!s.webhook)return `<div class="banner warn"><b>Stripe webhook is missing</b>Payments will go through, but accounts will not update. Add STRIPE_WEBHOOK_SECRET in Netlify. See the Payments page.</div>`;
+  if(s.test)return `<div class="banner info"><b>Stripe test mode</b>You are using test keys. Payments here are not real money.</div>`;
+  return '';
+}
+/* ---------- pages ---------- */
+function pageOverview(){
+  const t=stats(),S=D.settings||{};
+  const kp=[['MRR',$$(t.mrr),'Monthly recurring'],['Revenue, 30 days',$$(t.rev30),'After refunds'],['Subscribers',t.total,'All accounts'],['Paid',t.paid,'Active plans'],['New this week',t.wk,''],['Active, 7 days',t.act,'Signed in']];
+  const mixMax=Math.max(...Object.values(t.mix),1);
+  const recentU=D.users.slice().sort((a,b)=>Date.parse(b.created)-Date.parse(a.created)).slice(0,5);
+  const emailOf=id=>(D.users.find(u=>u.id===id)||{}).email||'Deleted account';
+  const recentP=D.payments.slice(0,5);
+  return `<div class="head"><div><h1>Overview</h1><p>${S.earlyAccess?'Early access is on. Everyone uses LaneHook free.':'Paid plans are live.'}</p></div><button class="btn sm" id="rf">Refresh</button></div>${stripeBanner()}
+  <div class="kpis six">${kp.map(k=>`<div class="kpi"><span>${k[0]}</span><b class="mono">${k[1]}</b>${k[2]?`<small>${k[2]}</small>`:''}</div>`).join('')}</div>
+  <div class="grid g2"><div class="panel"><h3>New subscribers</h3><div class="sub">Last 30 days</div>${barChart(t.signups,t.signups.map((_,i)=>new Date(Date.now()-(29-i)*DAY).toLocaleDateString('en-US',{month:'short',day:'numeric'})),v=>String(v))}</div>
+  <div class="panel"><h3>Revenue</h3><div class="sub">Last 6 months</div>${barChart(t.months.map(m=>m.v),t.months.map(m=>m.label),v=>$$(v))}</div></div>
+  <div class="grid g3"><div class="panel"><h3>Plans</h3>${Object.keys(t.mix).length?Object.entries(t.mix).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="bar"><span class="n">${esc(k)}</span><span class="t"><i style="width:${Math.round(v/mixMax*100)}%"></i></span><b>${v}</b></div>`).join(''):'<div class="empty sm">No subscribers yet.</div>'}</div>
+  <div class="panel"><h3>Newest subscribers</h3>${recentU.length?recentU.map(u=>`<div class="li"><span class="e">${esc(u.email)}<small>${esc(u.biz||'No business yet')}</small></span><span><small>${day(u.created)}</small></span></div>`).join(''):'<div class="empty sm">Nobody yet.</div>'}</div>
+  <div class="panel"><h3>Latest payments</h3>${recentP.length?recentP.map(p=>`<div class="li"><span class="e">${esc(emailOf(p.user_id))}<small>${day(p.created_at)}</small></span><span class="a ${p.amount<0?'neg':''}">${$$(p.amount)}</span></div>`).join(''):'<div class="empty sm">No payments yet.</div>'}</div></div>
+  ${t.attention.length?`<div class="panel"><h3>Needs attention</h3>${t.attention.map(u=>`<div class="li"><span class="e">${esc(u.email)}<small>${u.status==='past_due'?'Payment failed, card needs updating':'Cancels '+day(u.renews)}</small></span><span><span class="pill ${u.status==='past_due'?'past_due':'cancels'}">${u.status==='past_due'?'Past due':'Canceling'}</span></span></div>`).join('')}</div>`:''}`;
+}
 function filtered(){
-  let u=USERS.slice();const q=Q.trim().toLowerCase();
+  let u=D.users.slice();const q=Q.trim().toLowerCase();
   if(q)u=u.filter(x=>(x.email+' '+x.biz+' '+x.mc+' '+x.notes).toLowerCase().includes(q));
-  if(FILT==='disabled')u=u.filter(x=>x.disabled);else if(FILT==='active')u=u.filter(x=>x.last&&Date.now()-Date.parse(x.last)<7*864e5);else if(FILT==='paid')u=u.filter(x=>['solo','crew','fleet'].includes(x.plan));else if(FILT!=='all')u=u.filter(x=>x.plan===FILT);
+  if(FILT==='disabled')u=u.filter(x=>x.disabled);else if(FILT==='active')u=u.filter(x=>x.last&&Date.now()-Date.parse(x.last)<7*DAY);else if(FILT==='paid')u=u.filter(x=>PAID.includes(x.status));else if(FILT==='attention')u=u.filter(x=>x.status==='past_due'||(x.cancels&&PAID.includes(x.status)));else if(FILT!=='all')u=u.filter(x=>x.plan===FILT);
   const k={new:(a,b)=>Date.parse(b.created)-Date.parse(a.created),last:(a,b)=>(Date.parse(b.last)||0)-(Date.parse(a.last)||0),loads:(a,b)=>b.loads-a.loads,email:(a,b)=>a.email.localeCompare(b.email)}[SORT];
   return u.sort(k);
+}
+function planPill(u){
+  if(u.disabled)return '<span class="pill off">Disabled</span>';
+  let x=`<span class="pill ${esc(u.plan)}">${esc(u.plan)}</span>`;
+  if(u.status==='past_due')x+=' <span class="pill past_due">Past due</span>';else if(u.cancels&&PAID.includes(u.status))x+=' <span class="pill cancels">Canceling</span>';
+  return x;
 }
 function rowHtml(u){
   return `<div class="r"><div class="who"><b>${esc(u.email)}</b><small>${esc(u.biz||'No business name yet')}${u.mc?' · MC '+esc(u.mc):''}</small></div>
   <button class="dots" data-m="${u.id}" aria-label="Actions for ${esc(u.email)}">⋯</button>
-  <div class="meta"><span><span class="pill ${u.disabled?'off':u.plan}">${u.disabled?'Disabled':esc(u.plan)}</span></span><span class="mono"><span class="m-hide">Loads </span>${u.loads}</span><span><span class="m-hide">Joined </span>${day(u.created)}</span><span><span class="m-hide">Active </span>${ago(u.last)}</span></div></div>`;
+  <div class="meta"><span>${planPill(u)}</span><span class="mono"><span class="m-hide">Loads </span>${u.loads}</span><span><span class="m-hide">Joined </span>${day(u.created)}</span><span><span class="m-hide">Active </span>${ago(u.last)}</span></div></div>`;
 }
-function draw(){
-  const total=USERS.length,wk=USERS.filter(u=>Date.now()-Date.parse(u.created)<7*864e5).length,act=USERS.filter(u=>u.last&&Date.now()-Date.parse(u.last)<7*864e5).length,paid=USERS.filter(u=>['solo','crew','fleet'].includes(u.plan)).length;
+function pageSubscribers(){
   const L=filtered();
-  $('#app').innerHTML=`<div class="shell"><aside class="side"><div class="brand"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Admin</b></div><a class="on" href="#">Subscribers</a><a href="../app/">Open the app</a><a href="../">Main site</a><div class="me">Signed in as<br>${esc(ME)}<br><button class="btn sm" style="margin-top:10px;width:100%" id="so">Sign out</button></div></aside>
-  <div class="main"><div class="top"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Admin</b><button class="btn sm" id="so2">Sign out</button></div>
-  <div class="wrap"><div class="head"><div><h1>Subscribers</h1><p>Everyone who has signed up for LaneHook.</p></div><button class="btn sm" id="rf">Refresh</button></div>
-  <div class="kpis"><div class="kpi"><span>Total</span><b class="mono">${total}</b></div><div class="kpi"><span>New this week</span><b class="mono">${wk}</b></div><div class="kpi"><span>Active 7 days</span><b class="mono">${act}</b></div><div class="kpi"><span>Paid plans</span><b class="mono">${paid}</b></div></div>
-  <div class="tools"><input id="q" type="search" placeholder="Search email, business, MC" value="${esc(Q)}" aria-label="Search"><select id="fl" aria-label="Filter">${[['all','All'],['active','Active 7 days'],['free','Free'],['paid','Paid'],['comped','Comped'],['disabled','Disabled']].map(o=>`<option value="${o[0]}" ${FILT===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select><select id="so3" aria-label="Sort">${[['new','Newest'],['last','Last active'],['loads','Most loads'],['email','Email A to Z']].map(o=>`<option value="${o[0]}" ${SORT===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
-  <div class="card"><div class="cols"><span>Subscriber</span><span>Plan</span><span>Loads</span><span>Joined</span><span>Last active</span><span></span></div><div class="rows">${L.length?L.map(rowHtml).join(''):'<div class="empty">'+(USERS.length?'No one matches that search.':'No subscribers yet. They show up here after they sign in for the first time.')+'</div>'}</div></div></div></div></div>`;
-  $('#q').oninput=e=>{Q=e.target.value;const p=e.target.selectionStart;draw();const i=$('#q');i.focus();i.setSelectionRange(p,p)};
-  $('#fl').onchange=e=>{FILT=e.target.value;draw()};$('#so3').onchange=e=>{SORT=e.target.value;draw()};
-  $('#rf').onclick=load;$('#so').onclick=$('#so2').onclick=()=>sb.auth.signOut();
-  document.querySelectorAll('[data-m]').forEach(b=>b.onclick=e=>{e.stopPropagation();menu(b,USERS.find(u=>u.id===b.dataset.m))});
+  return `<div class="head"><div><h1>Subscribers</h1><p>Everyone who has signed up for LaneHook.</p></div><button class="btn sm" id="rf">Refresh</button></div>
+  <div class="tools"><input id="q" type="search" placeholder="Search email, business, MC" value="${esc(Q)}" aria-label="Search"><select id="fl" aria-label="Filter">${[['all','All'],['active','Active 7 days'],['paid','Paying'],['free','Free'],['comped','Comped'],['attention','Needs attention'],['disabled','Disabled']].map(o=>`<option value="${o[0]}" ${FILT===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select><select id="so3" aria-label="Sort">${[['new','Newest'],['last','Last active'],['loads','Most loads'],['email','Email A to Z']].map(o=>`<option value="${o[0]}" ${SORT===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
+  <div class="card"><div class="cols"><span>Subscriber</span><span>Plan</span><span>Loads</span><span>Joined</span><span>Last active</span><span></span></div><div class="rows">${L.length?L.map(rowHtml).join(''):'<div class="empty">'+(D.users.length?'No one matches that search.':'No subscribers yet. They show up here after they sign in for the first time.')+'</div>'}</div></div>`;
+}
+const PN=['free','solo','crew','fleet'];
+function draft(){ if(!DRAFT)DRAFT=JSON.parse(JSON.stringify(D.settings)); return DRAFT }
+function pagePlans(){
+  const d=draft();
+  return `<div class="head"><div><h1>Plans & pricing</h1><p>What you change here shows on lanehook.com and in the portal after you save.</p></div></div>
+  <div class="panel"><div class="trow"><div><b>Early access (everything free)</b><p>When on, everyone gets every feature free and nobody is charged. Turn it off to start charging for plans.</p></div><button class="sw ${d.earlyAccess?'on':''}" id="ea" role="switch" aria-checked="${d.earlyAccess}" aria-label="Early access"></button></div>
+  <label class="f" style="margin:14px 0 0;max-width:260px"><span>Free plan: loads per month (0 = unlimited)</span><input id="fll" type="number" min="0" max="1000" value="${esc(d.freeLoadLimit)}"></label>
+  <p style="font-size:13px;color:var(--muted);margin:10px 0 0;line-height:1.5">When early access is off: the free plan is limited to this many new loads a month, and the rate-con scanner and live broker checks need a paid plan.</p></div>
+  <div class="plans4" style="margin-top:14px">${PN.map(k=>{const p=d.plans[k];return `<div class="plan" data-plan="${k}"><h3>${esc(k[0].toUpperCase()+k.slice(1))}</h3>
+    <div class="two"><label class="f"><span>Name</span><input data-f="name" value="${esc(p.name)}" maxlength="24"></label><label class="f"><span>Price per month ($)</span><input data-f="price" type="number" min="1" step="1" value="${esc(p.price)}" ${k==='free'?'disabled':''}></label></div>
+    <label class="f"><span>One-line description</span><input data-f="tagline" value="${esc(p.tagline)}" maxlength="60"></label>
+    <label class="f"><span>Features (one per line)</span><textarea data-f="features" rows="6">${esc((p.features||[]).join('\n'))}</textarea></label>
+    ${k==='free'?'':`<div class="trow"><div><b>Available to buy</b><p>Off shows "Coming soon" on the site.</p></div><button class="sw ${p.available?'on':''}" data-t="available" role="switch" aria-checked="${!!p.available}" aria-label="Available"></button></div>
+    <div class="trow"><div><b>Most popular badge</b></div><button class="sw ${p.popular?'on':''}" data-t="popular" role="switch" aria-checked="${!!p.popular}" aria-label="Most popular"></button></div>`}</div>`}).join('')}</div>
+  <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:14px 2px 0">A price change applies to new subscribers. People already subscribed keep the price they signed up at until they cancel and re-subscribe.</p>
+  <div class="savebar"><span id="dirty">${DIRTY?'Unsaved changes':''}</span><a class="btn" href="../#pricing" target="_blank" rel="noopener">View on site</a><button class="btn pri" id="sv" ${DIRTY?'':'disabled'}>Save changes</button></div>`;
+}
+function pagePayments(){
+  const P=D.payments,t=stats(),s=D.stripe||{};
+  const emailOf=id=>(D.users.find(u=>u.id===id)||{}).email||'Deleted account';
+  const base='https://dashboard.stripe.com'+(s.test?'/test':'');
+  const hook=location.origin+'/.netlify/functions/stripe-webhook';
+  const ck=(ok,txt)=>`<div class="li"><span>${txt}</span><span class="pill ${ok?'ok':'cancels'}">${ok?'Done':'To do'}</span></div>`;
+  return `<div class="head"><div><h1>Payments</h1><p>Every payment and refund from Stripe.</p></div><div style="display:flex;gap:8px"><a class="btn sm" href="${base}/payments" target="_blank" rel="noopener">Open Stripe</a><button class="btn sm" id="rf">Refresh</button></div></div>${stripeBanner()}
+  <div class="kpis"><div class="kpi"><span>Revenue, all time</span><b class="mono">${$$(t.revAll)}</b></div><div class="kpi"><span>Last 30 days</span><b class="mono">${$$(t.rev30)}</b></div><div class="kpi"><span>MRR</span><b class="mono">${$$(t.mrr)}</b></div><div class="kpi"><span>Payments</span><b class="mono">${P.filter(p=>p.amount>0).length}</b></div></div>
+  <div class="card" style="margin-bottom:14px">${P.length?`<table class="tbl ptable"><thead><tr><th>Date</th><th>Subscriber</th><th>Type</th><th class="a">Amount</th></tr></thead><tbody>${P.map(p=>`<tr><td>${day(p.created_at)}</td><td style="word-break:break-all">${esc(emailOf(p.user_id))}</td><td style="text-transform:capitalize">${esc(p.kind)}</td><td class="a" style="${p.amount<0?'color:var(--bad)':''}">${$$(p.amount)}</td></tr>`).join('')}</tbody></table>
+  <div class="plist" style="padding:4px 16px">${P.map(p=>`<div class="li"><span class="e">${esc(emailOf(p.user_id))}<small>${day(p.created_at)} · ${esc(p.kind)}</small></span><span class="a ${p.amount<0?'neg':''}">${$$(p.amount)}</span></div>`).join('')}</div>`:'<div class="empty">No payments yet. They appear here as soon as someone pays.</div>'}</div>
+  <div class="panel"><h3>Stripe setup checklist</h3>${ck(s.key,'Secret key added in Netlify (STRIPE_SECRET_KEY)')}${ck(s.webhook,'Webhook secret added in Netlify (STRIPE_WEBHOOK_SECRET)')}${ck(D.settings&&!D.settings.earlyAccess,'Early access turned off on the Plans & pricing page')}
+  <p style="font-size:13px;color:var(--muted);margin:12px 0 6px">Webhook address to give Stripe:</p><div class="copy">${esc(hook)}</div>
+  <p style="font-size:13px;color:var(--muted);margin:10px 0 0;line-height:1.5">Events to send: checkout.session.completed, customer.subscription.created, customer.subscription.updated, customer.subscription.deleted, invoice.paid, invoice.payment_failed, charge.refunded.</p></div>`;
+}
+/* ---------- render ---------- */
+function draw(){
+  const r=route();
+  $('#app').innerHTML=shell(r==='overview'?pageOverview():r==='subscribers'?pageSubscribers():r==='plans'?pagePlans():pagePayments());
+  const rf=$('#rf');if(rf)rf.onclick=()=>load(true);
+  $('#so').onclick=$('#so2').onclick=()=>sb.auth.signOut();
+  if(r==='subscribers'){
+    $('#q').oninput=e=>{Q=e.target.value;const p=e.target.selectionStart;draw();const i=$('#q');i.focus();i.setSelectionRange(p,p)};
+    $('#fl').onchange=e=>{FILT=e.target.value;draw()};$('#so3').onchange=e=>{SORT=e.target.value;draw()};
+    document.querySelectorAll('[data-m]').forEach(b=>b.onclick=e=>{e.stopPropagation();menu(b,D.users.find(u=>u.id===b.dataset.m))});
+  }
+  if(r==='plans')wirePlans();
+}
+function mark(){DIRTY=true;const d=$('#dirty'),b=$('#sv');if(d)d.textContent='Unsaved changes';if(b)b.disabled=false}
+function wirePlans(){
+  const d=draft();
+  $('#ea').onclick=()=>{d.earlyAccess=!d.earlyAccess;mark();draw()};
+  $('#fll').oninput=e=>{d.freeLoadLimit=e.target.value;mark()};
+  document.querySelectorAll('.plan').forEach(box=>{
+    const k=box.dataset.plan,p=d.plans[k];
+    box.querySelectorAll('[data-f]').forEach(i=>i.oninput=()=>{const f=i.dataset.f;p[f]=f==='features'?i.value.split('\n'):i.value;mark()});
+    box.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const f=b.dataset.t;p[f]=!p[f];if(f==='popular'&&p[f])PN.forEach(o=>{if(o!==k)d.plans[o].popular=false});mark();draw()});
+  });
+  $('#sv').onclick=async()=>{
+    const bad=PN.filter(k=>k!=='free').find(k=>!(Number(d.plans[k].price)>=1));
+    if(bad){toast('Every paid plan needs a price of at least $1.');return}
+    $('#sv').disabled=true;
+    try{const r=await api({action:'settings_save',settings:d});D.settings=r.settings;DRAFT=null;DIRTY=false;toast('Saved. The site and portal now show these plans.');draw()}
+    catch(e){$('#sv').disabled=false;toast('Could not save. Try again.')}
+  };
 }
 function closeMenu(){document.querySelectorAll('.menu').forEach(m=>m.remove())}
 document.addEventListener('click',closeMenu);
 function menu(btn,u){
   closeMenu();const m=document.createElement('div');m.className='menu';
-  m.innerHTML=`<button data-a="view">View details</button><button data-a="plan">Change plan</button><button data-a="note">Edit note</button><button data-a="mail">Send sign-in email</button><hr><button data-a="${u.disabled?'enable':'disable'}">${u.disabled?'Enable account':'Disable account'}</button><button class="danger" data-a="del">Delete account…</button>`;
+  const stripeBase='https://dashboard.stripe.com'+((D.stripe||{}).test?'/test':'');
+  m.innerHTML=`<button data-a="view">View details</button><button data-a="plan">Change access</button><button data-a="note">Edit note</button><button data-a="mail">Send sign-in email</button>${u.customer?`<button data-a="stripe">Open in Stripe</button>`:''}${PAID.includes(u.status)&&!u.cancels?`<button data-a="cancel">Cancel subscription…</button>`:''}<hr><button data-a="${u.disabled?'enable':'disable'}">${u.disabled?'Enable account':'Disable account'}</button><button class="danger" data-a="del">Delete account…</button>`;
   document.body.appendChild(m);const r=btn.getBoundingClientRect(),w=m.offsetWidth,h=m.offsetHeight;
   m.style.left=Math.max(8,Math.min(innerWidth-w-8,r.right-w))+'px';m.style.top=(r.bottom+h+8>innerHeight?Math.max(8,r.top-h-4):r.bottom+4)+'px';
-  m.onclick=e=>{e.stopPropagation();const a=e.target.dataset.a;if(!a)return;closeMenu();act(a,u)};
+  m.onclick=e=>{e.stopPropagation();const a=e.target.dataset.a;if(!a)return;closeMenu();if(a==='stripe'){window.open(stripeBase+'/customers/'+u.customer,'_blank','noopener');return}act(a,u)};
 }
 function sheet(html){const s=document.createElement('div');s.className='scrim';s.innerHTML='<div class="sheet" role="dialog" aria-modal="true">'+html+'</div>';s.onclick=e=>{if(e.target===s)s.remove()};document.body.appendChild(s);return s}
-async function call(body,ok){try{await api(body);if(ok)toast(ok);await load(true)}catch(e){toast(e.code==='self'?'You cannot do that to your own account.':'That did not work. Try again.')}}
+async function call(body,ok){try{await api(body);if(ok)toast(ok);await load(true)}catch(e){toast(e.code==='self'?'You cannot do that to your own account.':e.code==='stripe_not_configured'?'Stripe is not connected yet.':'That did not work. Try again.')}}
 function act(a,u){
-  if(a==='view'){const s=sheet(`<h2>${esc(u.email)}</h2><div><span class="pill ${u.disabled?'off':u.plan}">${u.disabled?'Disabled':esc(u.plan)}</span></div><dl class="kv"><dt>Business</dt><dd>${esc(u.biz||'Not set')}</dd><dt>MC number</dt><dd>${esc(u.mc||'Not set')}</dd><dt>Joined</dt><dd>${day(u.created)}</dd><dt>Last sign in</dt><dd>${day(u.last)}</dd><dt>Last synced</dt><dd>${day(u.synced)}</dd><dt>Loads</dt><dd class="mono">${u.loads}</dd><dt>Documents</dt><dd class="mono">${u.docs}</dd></dl>${u.notes?'<p style="color:var(--muted);font-size:14px;white-space:pre-wrap">'+esc(u.notes)+'</p>':''}<button class="btn block" style="width:100%" id="x">Close</button>`);$('#x',s).onclick=()=>s.remove()}
-  if(a==='plan'){const s=sheet(`<h2>Change plan</h2><p style="color:var(--muted);font-size:14px;margin:4px 0 14px">${esc(u.email)}. This is a label for now. Billing is not connected yet.</p><label class="f"><span>Plan</span><select id="pl">${['free','solo','crew','fleet','comped'].map(p=>`<option ${u.plan===p?'selected':''}>${p}</option>`).join('')}</select></label><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn pri" id="ok" style="flex:1">Save</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{const p=$('#pl',s).value;s.remove();call({action:'plan',id:u.id,plan:p},'Plan updated')}}
+  if(a==='view'){const s=sheet(`<h2>${esc(u.email)}</h2><div>${planPill(u)}</div><dl class="kv"><dt>Business</dt><dd>${esc(u.biz||'Not set')}</dd><dt>MC number</dt><dd>${esc(u.mc||'Not set')}</dd><dt>Joined</dt><dd>${day(u.created)}</dd><dt>Last sign in</dt><dd>${day(u.last)}</dd><dt>Last synced</dt><dd>${day(u.synced)}</dd><dt>Loads</dt><dd class="mono">${u.loads}</dd><dt>Documents</dt><dd class="mono">${u.docs}</dd>${u.amount?`<dt>Pays</dt><dd class="mono">${$$(u.amount)} / month</dd>`:''}${u.renews?`<dt>${u.cancels?'Ends':'Renews'}</dt><dd>${day(u.renews)}</dd>`:''}</dl>${u.notes?'<p style="color:var(--muted);font-size:14px;white-space:pre-wrap">'+esc(u.notes)+'</p>':''}<button class="btn" style="width:100%" id="x">Close</button>`);$('#x',s).onclick=()=>s.remove()}
+  if(a==='plan'){const s=sheet(`<h2>Change access</h2><p style="color:var(--muted);font-size:14px;margin:4px 0 14px">${esc(u.email)}. "Comped" gives free access to paid features. Paying plans are managed by Stripe.</p><label class="f"><span>Access</span><select id="pl" ${PAID.includes(u.status)?'disabled':''}><option value="free" ${u.plan!=='comped'?'selected':''}>Free</option><option value="comped" ${u.plan==='comped'?'selected':''}>Comped (free paid access)</option></select></label><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn pri" id="ok" style="flex:1" ${PAID.includes(u.status)?'disabled':''}>Save</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{const p=$('#pl',s).value;s.remove();call({action:'plan',id:u.id,plan:p},'Access updated')}}
   if(a==='note'){const s=sheet(`<h2>Note</h2><p style="color:var(--muted);font-size:14px;margin:4px 0 14px">Only you can see this.</p><label class="f"><span>${esc(u.email)}</span><textarea id="nt" rows="5" maxlength="2000">${esc(u.notes)}</textarea></label><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn pri" id="ok" style="flex:1">Save</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{const n=$('#nt',s).value;s.remove();call({action:'note',id:u.id,notes:n},'Note saved')}}
   if(a==='mail')call({action:'mail',id:u.id,email:u.email},'Sign-in email sent');
-  if(a==='disable'||a==='enable'){const s=sheet(`<h2>${a==='disable'?'Disable':'Enable'} this account?</h2><p style="color:var(--muted)">${esc(u.email)} ${a==='disable'?'will be signed out and cannot sign in until you enable it again. Their data is kept.':'will be able to sign in again.'}</p><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn ${a==='disable'?'bad':'pri'}" id="ok" style="flex:1">${a==='disable'?'Disable':'Enable'}</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{s.remove();call({action:a,id:u.id},a==='disable'?'Account disabled':'Account enabled')}}
-  if(a==='del'){const s=sheet(`<h2>Delete this account?</h2><p style="color:var(--muted)">This permanently deletes <b>${esc(u.email)}</b> with ${u.loads} loads, ${u.docs} documents, and all photos. It cannot be undone. Type their email to confirm.</p><label class="f"><span>Email</span><input id="cf" autocomplete="off"></label><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn bad" id="ok" style="flex:1" disabled>Delete</button></div>`);$('#x',s).onclick=()=>s.remove();$('#cf',s).oninput=e=>{$('#ok',s).disabled=e.target.value.trim().toLowerCase()!==u.email.toLowerCase()};$('#ok',s).onclick=()=>{s.remove();call({action:'delete',id:u.id},'Account deleted')}}
+  if(a==='cancel'){const s=sheet(`<h2>Cancel this subscription?</h2><p style="color:var(--muted)">${esc(u.email)} keeps their plan until ${day(u.renews)} and is not charged again. To refund a payment, use Stripe.</p><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Keep it</button><button class="btn bad" id="ok" style="flex:1">Cancel plan</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{s.remove();call({action:'cancel_sub',id:u.id},'Subscription will end at the period end')}}
+  if(a==='disable'||a==='enable'){const s=sheet(`<h2>${a==='disable'?'Disable':'Enable'} this account?</h2><p style="color:var(--muted)">${esc(u.email)} ${a==='disable'?'will be signed out and cannot sign in until you enable it again. Their data is kept. Disabling does not stop billing.':'will be able to sign in again.'}</p><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn ${a==='disable'?'bad':'pri'}" id="ok" style="flex:1">${a==='disable'?'Disable':'Enable'}</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{s.remove();call({action:a,id:u.id},a==='disable'?'Account disabled':'Account enabled')}}
+  if(a==='del'){const s=sheet(`<h2>Delete this account?</h2><p style="color:var(--muted)">This permanently deletes <b>${esc(u.email)}</b> with ${u.loads} loads, ${u.docs} documents, and all photos${PAID.includes(u.status)?', and cancels their subscription right away (no refund)':''}. It cannot be undone. Type their email to confirm.</p><label class="f"><span>Email</span><input id="cf" autocomplete="off"></label><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn bad" id="ok" style="flex:1" disabled>Delete</button></div>`);$('#x',s).onclick=()=>s.remove();$('#cf',s).oninput=e=>{$('#ok',s).disabled=e.target.value.trim().toLowerCase()!==u.email.toLowerCase()};$('#ok',s).onclick=()=>{s.remove();call({action:'delete',id:u.id},'Account deleted')}}
 }
 async function load(quiet){
-  try{const d=await api({action:'list'});USERS=d.users;ME=d.me;draw()}
+  try{const d=await api({action:'overview'});D=d;if(!DIRTY)DRAFT=null;draw();if(quiet===true)toast('Updated')}
   catch(e){
-    if(e.code==='not_admin'||e.code==='not_configured'||e.message==='sign_in'){}
-    $('#app').innerHTML=`<div class="auth"><div class="auth-card"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><h1>${e.code==='not_admin'?'No admin access':e.code==='not_configured'?'Not set up yet':'Could not load'}</h1><p>${e.code==='not_admin'?'This account is not an admin account.':e.code==='not_configured'?'Add SUPABASE_SERVICE_ROLE_KEY in Netlify and redeploy.':'Check your connection and try again.'}</p><button class="btn pri" id="rt">Try again</button><button class="btn ghost" id="so">Sign out</button></div></div>`;
+    $('#app').innerHTML=`<div class="auth"><div class="auth-card"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><h1>${e.code==='not_admin'?'No admin access':e.code==='not_configured'?'Not set up yet':'Could not load'}</h1><p>${e.code==='not_admin'?'This account is not an admin account.':e.code==='not_configured'?'Add SUPABASE_SERVICE_ROLE_KEY in Netlify and redeploy.':e.code&&e.code.startsWith('overview')?'The database update has not been run yet. Run the billing SQL in Supabase, then try again.':'Check your connection and try again.'}</p><button class="btn pri" id="rt">Try again</button><button class="btn ghost" id="so">Sign out</button></div></div>`;
     $('#rt').onclick=()=>load();$('#so').onclick=()=>sb.auth.signOut();
   }
 }
+window.addEventListener('hashchange',()=>{if(D.settings)draw()});
 (async()=>{
   const {data}=await sb.auth.getSession();
-  sb.auth.onAuthStateChange((ev,s)=>{if(ev==='SIGNED_IN'&&s){history.replaceState(null,'',location.pathname);load()}else if(ev==='SIGNED_OUT'){USERS=[];loginView('')}});
+  sb.auth.onAuthStateChange((ev,s)=>{if(ev==='SIGNED_IN'&&s){history.replaceState(null,'',location.pathname+location.hash);load()}else if(ev==='SIGNED_OUT'){D={users:[],payments:[],settings:null,stripe:{},me:''};loginView('')}});
   if(data.session)load();else if(!new URLSearchParams(location.search).has('code'))loginView('');
 })();
 </script>

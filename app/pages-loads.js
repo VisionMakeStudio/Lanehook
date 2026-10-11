@@ -117,6 +117,7 @@ LH.acts.scanRC = async el => {
     const data = await LH.fileToBase64(blob);
     const res = await fetch('/.netlify/functions/ratecon', { method: 'POST', headers: Object.assign({ 'content-type': 'application/json' }, await LH.auth.headers()), body: JSON.stringify({ data, media: type }) });
     if (res.status === 401) { st.textContent = 'Please sign in again to scan. The file is attached.'; return; }
+    if (res.status === 402) { st.innerHTML = 'The rate con scanner is part of a paid plan. The file is attached, so you can type the details in. <button class="btn sm" type="button" data-act="upgrade">See plans</button>'; return; }
     if (res.status === 404) { st.textContent = 'Auto-read is not set up yet. The file is attached. Type the details in.'; return; }
     const j = await res.json().catch(() => null);
     if (!res.ok || !j || !j.ok) { st.textContent = (j && j.error === 'not_configured') ? 'Auto-read is not set up yet. The file is attached. Type the details in.' : 'Could not read that file. It is attached. Type the details in.'; return; }
