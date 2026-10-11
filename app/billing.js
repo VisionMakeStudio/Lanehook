@@ -53,10 +53,13 @@
   };
   P.start = async function () {
     let want = null; try { want = localStorage.getItem('lh-want-plan'); } catch (e) { }
+    const meta = LH.auth.user && LH.auth.user.user_metadata && LH.auth.user.user_metadata.want_plan;
+    if (!want && /^(solo|crew|fleet)$/.test(meta || '')) want = meta;
     if (billingBack) { LH.toast('Thanks. Your plan is being activated.', 5000); [3000, 8000, 15000].forEach(t => setTimeout(() => P.load(), t)); }
     await P.load();
     if (!want) return;
     try { localStorage.removeItem('lh-want-plan'); } catch (e) { }
+    if (meta) { try { LH.auth.sb.auth.updateUser({ data: { want_plan: null } }); } catch (e) { } }
     if (P.early() || P.paid() || !P.paidPlans().includes(want)) return;
     P.go('checkout', want);
   };

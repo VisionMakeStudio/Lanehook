@@ -1,5 +1,6 @@
 'use strict';
 /* LaneHook driver portal: sign-in by email link (or 6-digit code) through Supabase Auth */
+LH.wantPlanData = () => { let p = null; try { p = localStorage.getItem('lh-want-plan'); } catch (e) { } return p ? { data: { want_plan: p } } : {}; };
 LH.auth = {
   sb: null, user: null, local: false, started: false,
 
@@ -68,7 +69,7 @@ LH.auth = {
     f.onsubmit = async e => {
       e.preventDefault(); const em = f.elements.email.value.trim().toLowerCase(); if (!/^\S+@\S+\.\S+$/.test(em)) { $('#authMsg').textContent = 'Enter a valid email address.'; return; }
       const b = $('#authGo'); b.disabled = true; b.innerHTML = '<span class="spin"></span> Sending…';
-      const { error } = await this.sb.auth.signInWithOtp({ email: em, options: { emailRedirectTo: location.origin + '/app/', shouldCreateUser: true } });
+      const { error } = await this.sb.auth.signInWithOtp({ email: em, options: Object.assign({ emailRedirectTo: location.origin + '/app/', shouldCreateUser: true }, LH.wantPlanData()) });
       if (error) { b.disabled = false; b.textContent = 'Email me a sign-in link'; $('#authMsg').textContent = /rate|limit|seconds/i.test(error.message) ? 'Too many emails right now. Wait a minute and try again.' : 'We could not send the email. Check the address and try again.'; return; }
       this.codeStep(em);
     };
@@ -87,7 +88,7 @@ LH.auth = {
     $('#otherEmail').onclick = () => this.emailStep('');
     const rs = $('#resend'); let n = 30; rs.textContent = 'Send again (' + n + ')';
     const t = setInterval(() => { n--; if (!document.body.contains(rs)) return clearInterval(t); if (n <= 0) { clearInterval(t); rs.disabled = false; rs.textContent = 'Send again'; } else rs.textContent = 'Send again (' + n + ')'; }, 1000);
-    rs.onclick = async () => { rs.disabled = true; const { error } = await this.sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + '/app/', shouldCreateUser: true } }); $('#authMsg').textContent = error ? 'Could not send yet. Wait a minute and try again.' : 'Sent again. Check your inbox and spam folder.'; this.codeStep(email); $('#authMsg').textContent = error ? 'Could not send yet. Wait a minute and try again.' : 'Sent again. Check your inbox and spam folder.'; };
+    rs.onclick = async () => { rs.disabled = true; const { error } = await this.sb.auth.signInWithOtp({ email, options: Object.assign({ emailRedirectTo: location.origin + '/app/', shouldCreateUser: true }, LH.wantPlanData()) }); $('#authMsg').textContent = error ? 'Could not send yet. Wait a minute and try again.' : 'Sent again. Check your inbox and spam folder.'; this.codeStep(email); $('#authMsg').textContent = error ? 'Could not send yet. Wait a minute and try again.' : 'Sent again. Check your inbox and spam folder.'; };
   }
 };
 
