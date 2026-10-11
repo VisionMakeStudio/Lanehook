@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>LaneHook Admin</title>
+<meta name="theme-color" content="#0B132B">
+<link rel="icon" type="image/png" href="../app/icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B132B;--navy2:#111C3B;--navy3:#18264C;--line:#22305A;--blue:#2563EB;--orange:#F59E0B;--off:#F8FAFC;--gray:#94A3B8;--muted:#5B6B86;--bd:#E2E8F0;--ok:#16A34A;--bad:#DC2626;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{background:var(--off);color:var(--navy);font:16px/1.45 'IBM Plex Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Archivo',system-ui,sans-serif;font-weight:800;margin:0;line-height:1.15}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer;background:none;border:0;padding:0}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.btn{color:var(--navy);display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;background:#fff;border:1px solid var(--bd);font-weight:600;font-size:15px;white-space:nowrap}
+.btn.pri{background:var(--orange);border-color:var(--orange)}.btn.dark{background:var(--navy);color:var(--off);border-color:var(--navy)}
+.btn.bad{background:var(--bad);border-color:var(--bad);color:#fff}.auth .btn.ghost{color:var(--off)}.btn.sm{min-height:38px;padding:0 14px;font-size:14px}.btn[disabled]{opacity:.55}
+input,select,textarea{width:100%;min-height:46px;padding:10px 12px;border-radius:12px;background:#fff;border:1px solid #CBD5E1;font-size:16px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.18)}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:12px}label.f>*:last-child{margin-top:6px}
+.shell{display:flex;min-height:100vh}
+.side{display:none;width:236px;flex-shrink:0;background:var(--navy);color:#CBD5E1;padding:22px 16px;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.side .brand{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:18px;padding:0 4px}.side .brand img{height:20px;max-width:100%}
+.side .brand b{font-family:'Archivo',sans-serif;color:var(--off);font-size:14px}
+.side a{padding:11px 12px;border-radius:10px;text-decoration:none;color:#CBD5E1;font-weight:600;font-size:15px}.side a.on{background:var(--navy3);color:var(--off)}
+.side .me{margin-top:auto;font-size:13px;line-height:1.5;background:var(--navy2);border-radius:12px;padding:12px;word-break:break-all}
+.main{flex:1;min-width:0}
+.top{position:sticky;top:0;z-index:10;background:var(--navy);color:var(--off);display:flex;align-items:center;gap:10px;padding:calc(10px + var(--sat)) 16px 10px}
+.top img{height:20px}.top b{font-family:'Archivo',sans-serif;font-size:14px;flex:1}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px calc(40px + var(--sab))}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.head p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:12px 14px}.kpi span{display:block;font-size:13px;color:var(--muted)}.kpi b{display:block;font-size:24px;margin-top:2px}
+.tools{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px}
+.card{background:#fff;border:1px solid var(--bd);border-radius:16px;overflow:hidden}
+.rows{display:flex;flex-direction:column}
+.r{display:grid;grid-template-columns:1fr auto;gap:6px 10px;padding:14px 16px;border-top:1px solid var(--bd);align-items:center}.r:first-child{border-top:0}
+.r .who b{display:block;word-break:break-all;font-weight:600}.r .who small{display:block;color:var(--muted);font-size:13px}
+.r .meta{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+.cols{display:none}
+.pill{display:inline-block;font-size:12px;font-weight:600;border-radius:99px;padding:3px 10px;background:#EEF2F7;color:#475569;text-transform:capitalize}
+.pill.solo,.pill.crew,.pill.fleet{background:#DBEAFE;color:#1D4ED8}.pill.comped{background:#FEF3C7;color:#92400E}.pill.off{background:#FEE2E2;color:var(--bad)}.pill.ok{background:#DCFCE7;color:var(--ok)}
+.dots{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--muted)}.dots:hover{background:#EEF2F7}
+.menu{position:fixed;z-index:60;background:#fff;border:1px solid var(--bd);border-radius:14px;box-shadow:0 16px 40px rgba(11,19,43,.22);padding:6px;min-width:220px}
+.menu button{display:block;width:100%;text-align:start;padding:12px 14px;border-radius:10px;font-size:15px;font-weight:500}.menu button:hover{background:#EEF2F7}.menu .danger{color:var(--bad)}.menu hr{border:0;border-top:1px solid var(--bd);margin:4px 0}
+.scrim{position:fixed;inset:0;background:rgba(11,19,43,.55);z-index:70;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#fff;width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 18px calc(22px + var(--sab))}
+.sheet h2{font-size:20px;margin-bottom:4px;word-break:break-all}.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:15px;margin:14px 0}.kv dt{color:var(--muted)}.kv dd{margin:0;text-align:end;font-weight:600;word-break:break-word}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + var(--sab));transform:translateX(-50%);background:var(--navy);color:var(--off);padding:12px 18px;border-radius:12px;z-index:90;font-size:14px;max-width:90vw}
+.auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--navy);color:var(--off)}
+.auth-card{width:100%;max-width:400px}.auth-card h1{font-size:28px;margin:18px 0 8px}.auth-card p{color:var(--gray);margin:0 0 18px}.auth-card img{height:22px}
+.auth input{background:var(--navy2);border-color:var(--line);color:var(--off)}.auth label.f{color:var(--gray)}.auth .msg{min-height:20px;color:var(--orange);font-size:14px;margin:6px 0 10px}
+.auth .btn{width:100%}.auth .btn.ghost{background:transparent;color:var(--off);border-color:var(--line);margin-top:10px}
+@media(min-width:600px){.kpis{grid-template-columns:repeat(4,1fr)}.tools{grid-template-columns:1fr 180px 180px}.scrim{align-items:center}.sheet{border-radius:22px}}
+@media(min-width:900px){.side{display:flex}.top{display:none}.wrap{padding:30px 28px 50px}
+  .cols,.r{display:grid;grid-template-columns:minmax(0,2.4fr) 90px 70px 120px 130px 48px;gap:10px;align-items:center}
+  .cols{padding:11px 16px;font-size:12px;font-weight:600;color:var(--muted);background:#F1F5F9;border-bottom:1px solid var(--bd);text-transform:uppercase;letter-spacing:.05em}
+  .r .dots{order:9}.r .meta{display:contents}.r .meta span{font-size:14px;color:var(--navy)}.r .m-hide{display:none}}
+@media(max-width:899px){.r .d-only{display:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="../app/config.js"></script>
+<script src="../app/vendor/supabase.js"></script>
+<script>
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const C=window.LH_CONFIG, sb=window.supabase.createClient(C.supabaseUrl,C.supabaseKey,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+let USERS=[], ME='', Q='', FILT='all', SORT='new';
+const day=s=>s?new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Never';
+const ago=s=>{if(!s)return 'Never';const d=(Date.now()-Date.parse(s))/864e5;return d<1?'Today':d<2?'Yesterday':Math.floor(d)+' days ago'};
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),3200)}
+async function api(body){
+  const {data}=await sb.auth.getSession(); if(!data.session)throw new Error('sign_in');
+  const r=await fetch('/.netlify/functions/admin',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+data.session.access_token},body:JSON.stringify(body)});
+  let j={};try{j=await r.json()}catch(e){} if(!r.ok){const er=new Error(j.error||('http_'+r.status));er.code=j.error;throw er} return j;
+}
+/* ---------- sign in ---------- */
+function loginView(email,stage,msg){
+  $('#app').innerHTML=`<div class="auth"><div class="auth-card"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><h1>Admin sign in</h1><div id="ab"></div></div></div>`;
+  const b=$('#ab');
+  if(stage==='code'){
+    b.innerHTML=`<p>We sent a link and a code to <b>${esc(email)}</b>. Open the link, or type the code here.</p><form id="cf"><label class="f"><span>Code</span><input name="c" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required></label><div class="msg" id="m">${esc(msg||'')}</div><button class="btn pri">Sign in</button></form><button class="btn ghost" id="bk">Use another email</button>`;
+    $('#cf').onsubmit=async e=>{e.preventDefault();const t=e.target.c.value.replace(/\D/g,'');const {error}=await sb.auth.verifyOtp({email,token:t,type:'email'});if(error)$('#m').textContent='That code did not work.'};
+    $('#bk').onclick=()=>loginView('');
+  }else{
+    b.innerHTML=`<p>Owner access only.</p><form id="ef"><label class="f"><span>Email</span><input name="e" type="email" autocomplete="email" value="${esc(email||'')}" required></label><div class="msg" id="m">${esc(msg||'')}</div><button class="btn pri" id="go">Email me a sign-in link</button></form>`;
+    $('#ef').onsubmit=async e=>{e.preventDefault();const em=e.target.e.value.trim().toLowerCase();$('#go').disabled=true;
+      const {error}=await sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin+'/admin/',shouldCreateUser:false}});
+      if(error){$('#go').disabled=false;$('#m').textContent='Could not send. Check the address.';return}loginView(em,'code')};
+  }
+}
+/* ---------- main ---------- */
+function filtered(){
+  let u=USERS.slice();const q=Q.trim().toLowerCase();
+  if(q)u=u.filter(x=>(x.email+' '+x.biz+' '+x.mc+' '+x.notes).toLowerCase().includes(q));
+  if(FILT==='disabled')u=u.filter(x=>x.disabled);else if(FILT==='active')u=u.filter(x=>x.last&&Date.now()-Date.parse(x.last)<7*864e5);else if(FILT==='paid')u=u.filter(x=>['solo','crew','fleet'].includes(x.plan));else if(FILT!=='all')u=u.filter(x=>x.plan===FILT);
+  const k={new:(a,b)=>Date.parse(b.created)-Date.parse(a.created),last:(a,b)=>(Date.parse(b.last)||0)-(Date.parse(a.last)||0),loads:(a,b)=>b.loads-a.loads,email:(a,b)=>a.email.localeCompare(b.email)}[SORT];
+  return u.sort(k);
+}
+function rowHtml(u){
+  return `<div class="r"><div class="who"><b>${esc(u.email)}</b><small>${esc(u.biz||'No business name yet')}${u.mc?' · MC '+esc(u.mc):''}</small></div>
+  <button class="dots" data-m="${u.id}" aria-label="Actions for ${esc(u.email)}">⋯</button>
+  <div class="meta"><span><span class="pill ${u.disabled?'off':u.plan}">${u.disabled?'Disabled':esc(u.plan)}</span></span><span class="mono"><span class="m-hide">Loads </span>${u.loads}</span><span><span class="m-hide">Joined </span>${day(u.created)}</span><span><span class="m-hide">Active </span>${ago(u.last)}</span></div></div>`;
+}
+function draw(){
+  const total=USERS.length,wk=USERS.filter(u=>Date.now()-Date.parse(u.created)<7*864e5).length,act=USERS.filter(u=>u.last&&Date.now()-Date.parse(u.last)<7*864e5).length,paid=USERS.filter(u=>['solo','crew','fleet'].includes(u.plan)).length;
+  const L=filtered();
+  $('#app').innerHTML=`<div class="shell"><aside class="side"><div class="brand"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Admin</b></div><a class="on" href="#">Subscribers</a><a href="../app/">Open the app</a><a href="../">Main site</a><div class="me">Signed in as<br>${esc(ME)}<br><button class="btn sm" style="margin-top:10px;width:100%" id="so">Sign out</button></div></aside>
+  <div class="main"><div class="top"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Admin</b><button class="btn sm" id="so2">Sign out</button></div>
+  <div class="wrap"><div class="head"><div><h1>Subscribers</h1><p>Everyone who has signed up for LaneHook.</p></div><button class="btn sm" id="rf">Refresh</button></div>
+  <div class="kpis"><div class="kpi"><span>Total</span><b class="mono">${total}</b></div><div class="kpi"><span>New this week</span><b class="mono">${wk}</b></div><div class="kpi"><span>Active 7 days</span><b class="mono">${act}</b></div><div class="kpi"><span>Paid plans</span><b class="mono">${paid}</b></div></div>
+  <div class="tools"><input id="q" type="search" placeholder="Search email, business, MC" value="${esc(Q)}" aria-label="Search"><select id="fl" aria-label="Filter">${[['all','All'],['active','Active 7 days'],['free','Free'],['paid','Paid'],['comped','Comped'],['disabled','Disabled']].map(o=>`<option value="${o[0]}" ${FILT===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select><select id="so3" aria-label="Sort">${[['new','Newest'],['last','Last active'],['loads','Most loads'],['email','Email A to Z']].map(o=>`<option value="${o[0]}" ${SORT===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
+  <div class="card"><div class="cols"><span>Subscriber</span><span>Plan</span><span>Loads</span><span>Joined</span><span>Last active</span><span></span></div><div class="rows">${L.length?L.map(rowHtml).join(''):'<div class="empty">'+(USERS.length?'No one matches that search.':'No subscribers yet. They show up here after they sign in for the first time.')+'</div>'}</div></div></div></div></div>`;
+  $('#q').oninput=e=>{Q=e.target.value;const p=e.target.selectionStart;draw();const i=$('#q');i.focus();i.setSelectionRange(p,p)};
+  $('#fl').onchange=e=>{FILT=e.target.value;draw()};$('#so3').onchange=e=>{SORT=e.target.value;draw()};
+  $('#rf').onclick=load;$('#so').onclick=$('#so2').onclick=()=>sb.auth.signOut();
+  document.querySelectorAll('[data-m]').forEach(b=>b.onclick=e=>{e.stopPropagation();menu(b,USERS.find(u=>u.id===b.dataset.m))});
+}
+function closeMenu(){document.querySelectorAll('.menu').forEach(m=>m.remove())}
+document.addEventListener('click',closeMenu);
+function menu(btn,u){
+  closeMenu();const m=document.createElement('div');m.className='menu';
+  m.innerHTML=`<button data-a="view">View details</button><button data-a="plan">Change plan</button><button data-a="note">Edit note</button><button data-a="mail">Send sign-in email</button><hr><button data-a="${u.disabled?'enable':'disable'}">${u.disabled?'Enable account':'Disable account'}</button><button class="danger" data-a="del">Delete account…</button>`;
+  document.body.appendChild(m);const r=btn.getBoundingClientRect(),w=m.offsetWidth,h=m.offsetHeight;
+  m.style.left=Math.max(8,Math.min(innerWidth-w-8,r.right-w))+'px';m.style.top=(r.bottom+h+8>innerHeight?Math.max(8,r.top-h-4):r.bottom+4)+'px';
+  m.onclick=e=>{e.stopPropagation();const a=e.target.dataset.a;if(!a)return;closeMenu();act(a,u)};
+}
+function sheet(html){const s=document.createElement('div');s.className='scrim';s.innerHTML='<div class="sheet" role="dialog" aria-modal="true">'+html+'</div>';s.onclick=e=>{if(e.target===s)s.remove()};document.body.appendChild(s);return s}
+async function call(body,ok){try{await api(body);if(ok)toast(ok);await load(true)}catch(e){toast(e.code==='self'?'You cannot do that to your own account.':'That did not work. Try again.')}}
+function act(a,u){
+  if(a==='view'){const s=sheet(`<h2>${esc(u.email)}</h2><div><span class="pill ${u.disabled?'off':u.plan}">${u.disabled?'Disabled':esc(u.plan)}</span></div><dl class="kv"><dt>Business</dt><dd>${esc(u.biz||'Not set')}</dd><dt>MC number</dt><dd>${esc(u.mc||'Not set')}</dd><dt>Joined</dt><dd>${day(u.created)}</dd><dt>Last sign in</dt><dd>${day(u.last)}</dd><dt>Last synced</dt><dd>${day(u.synced)}</dd><dt>Loads</dt><dd class="mono">${u.loads}</dd><dt>Documents</dt><dd class="mono">${u.docs}</dd></dl>${u.notes?'<p style="color:var(--muted);font-size:14px;white-space:pre-wrap">'+esc(u.notes)+'</p>':''}<button class="btn block" style="width:100%" id="x">Close</button>`);$('#x',s).onclick=()=>s.remove()}
+  if(a==='plan'){const s=sheet(`<h2>Change plan</h2><p style="color:var(--muted);font-size:14px;margin:4px 0 14px">${esc(u.email)}. This is a label for now. Billing is not connected yet.</p><label class="f"><span>Plan</span><select id="pl">${['free','solo','crew','fleet','comped'].map(p=>`<option ${u.plan===p?'selected':''}>${p}</option>`).join('')}</select></label><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn pri" id="ok" style="flex:1">Save</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{const p=$('#pl',s).value;s.remove();call({action:'plan',id:u.id,plan:p},'Plan updated')}}
+  if(a==='note'){const s=sheet(`<h2>Note</h2><p style="color:var(--muted);font-size:14px;margin:4px 0 14px">Only you can see this.</p><label class="f"><span>${esc(u.email)}</span><textarea id="nt" rows="5" maxlength="2000">${esc(u.notes)}</textarea></label><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn pri" id="ok" style="flex:1">Save</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{const n=$('#nt',s).value;s.remove();call({action:'note',id:u.id,notes:n},'Note saved')}}
+  if(a==='mail')call({action:'mail',id:u.id,email:u.email},'Sign-in email sent');
+  if(a==='disable'||a==='enable'){const s=sheet(`<h2>${a==='disable'?'Disable':'Enable'} this account?</h2><p style="color:var(--muted)">${esc(u.email)} ${a==='disable'?'will be signed out and cannot sign in until you enable it again. Their data is kept.':'will be able to sign in again.'}</p><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn ${a==='disable'?'bad':'pri'}" id="ok" style="flex:1">${a==='disable'?'Disable':'Enable'}</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{s.remove();call({action:a,id:u.id},a==='disable'?'Account disabled':'Account enabled')}}
+  if(a==='del'){const s=sheet(`<h2>Delete this account?</h2><p style="color:var(--muted)">This permanently deletes <b>${esc(u.email)}</b> with ${u.loads} loads, ${u.docs} documents, and all photos. It cannot be undone. Type their email to confirm.</p><label class="f"><span>Email</span><input id="cf" autocomplete="off"></label><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn bad" id="ok" style="flex:1" disabled>Delete</button></div>`);$('#x',s).onclick=()=>s.remove();$('#cf',s).oninput=e=>{$('#ok',s).disabled=e.target.value.trim().toLowerCase()!==u.email.toLowerCase()};$('#ok',s).onclick=()=>{s.remove();call({action:'delete',id:u.id},'Account deleted')}}
+}
+async function load(quiet){
+  try{const d=await api({action:'list'});USERS=d.users;ME=d.me;draw()}
+  catch(e){
+    if(e.code==='not_admin'||e.code==='not_configured'||e.message==='sign_in'){}
+    $('#app').innerHTML=`<div class="auth"><div class="auth-card"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><h1>${e.code==='not_admin'?'No admin access':e.code==='not_configured'?'Not set up yet':'Could not load'}</h1><p>${e.code==='not_admin'?'This account is not an admin account.':e.code==='not_configured'?'Add SUPABASE_SERVICE_ROLE_KEY in Netlify and redeploy.':'Check your connection and try again.'}</p><button class="btn pri" id="rt">Try again</button><button class="btn ghost" id="so">Sign out</button></div></div>`;
+    $('#rt').onclick=()=>load();$('#so').onclick=()=>sb.auth.signOut();
+  }
+}
+(async()=>{
+  const {data}=await sb.auth.getSession();
+  sb.auth.onAuthStateChange((ev,s)=>{if(ev==='SIGNED_IN'&&s){history.replaceState(null,'',location.pathname);load()}else if(ev==='SIGNED_OUT'){USERS=[];loginView('')}});
+  if(data.session)load();else if(!new URLSearchParams(location.search).has('code'))loginView('');
+})();
+</script>
+</body>
+</html>
