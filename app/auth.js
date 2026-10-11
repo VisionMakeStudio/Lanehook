@@ -36,6 +36,7 @@ LH.auth = {
     LH.sync.start(this.sb, uid);
     (async () => { if (LH.disp) await LH.disp.start(); if (LH.plans) LH.plans.start(); })();
     this.tellOwner();
+    if (window.LHInstall) LHInstall.auto(() => !LH.plans || LH.plans.state() === 'open');
   },
 
   // Lets the owner know about a brand-new signup. Safe to call every time: the server only sends once per person.

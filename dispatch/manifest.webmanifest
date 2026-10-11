@@ -1,0 +1,30 @@
+{
+  "id": "/dispatch/",
+  "name": "LaneHook Dispatcher Portal",
+  "short_name": "LaneHook Dispatch",
+  "description": "Send loads to your drivers and see where every load stands.",
+  "start_url": "/dispatch/",
+  "scope": "/dispatch/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0B132B",
+  "theme_color": "#0B132B",
+  "icons": [
+    {
+      "src": "/dispatch/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/dispatch/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/dispatch/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -6,6 +6,10 @@
 <meta name="robots" content="noindex,nofollow">
 <title>LaneHook Dispatcher Portal</title>
 <meta name="theme-color" content="#0B132B">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="LaneHook Dispatch">
+<link rel="manifest" href="/dispatch/manifest.webmanifest"><link rel="icon" type="image/png" href="/dispatch/icons/icon-192.png"><link rel="apple-touch-icon" href="/dispatch/icons/apple-touch-icon.png">
+<script src="/install.js" data-portal="dispatcher" data-name="LaneHook Dispatch" data-icon="/dispatch/icons/icon-192.png"></script>
 <link rel="icon" type="image/png" href="../app/icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -270,7 +274,7 @@ function pageCompany(){
   <div class="panel"><h3>Company</h3><form id="rn"><label class="f"><span>Company name</span><input name="n" value="${esc(c.name)}" maxlength="80" required></label><button class="btn sm">Save name</button></form>
    <h3 style="margin-top:22px">Company code</h3><p class="sub">Drivers join with this code. Change it if it gets shared by mistake. Drivers already in stay in.</p><div class="code" style="font-size:28px">${esc(c.code)}</div><div style="margin-top:12px"><button class="btn sm" id="rot">Make a new code</button></div></div>
   <div class="panel"><h3>Plan</h3><p style="margin:0 0 4px"><b>${esc(cfgp?cfgp.name:p.plan==='comped'?'Complimentary':'No plan')}</b></p><p class="sub" style="margin:0 0 14px">${esc(line)}</p><div class="row2">${p.has_customer?'<button class="btn sm" id="mb">Manage billing</button>':''}${O.allowed&&p.sub_status?'':'<button class="btn sm pri" id="pl">Choose a plan</button>'}</div>
-   <h3 style="margin-top:22px">Driver Portal</h3><p class="sub">Your drivers use the Driver Portal on their phones.</p><a class="btn sm" href="../app/">Open Driver Portal</a></div></div>`;
+   <h3 style="margin-top:22px">Driver Portal</h3><p class="sub">Your drivers use the Driver Portal on their phones.</p><a class="btn sm" href="../app/">Open Driver Portal</a>${window.LHInstall&&LHInstall.canShow()?'<h3 style="margin-top:22px">Home screen</h3><p class="sub">Add the Dispatcher Portal to your phone like an app.</p><button class="btn sm" data-a2hs>Add to home screen</button>':''}</div></div>`;
 }
 /* ---------- events ---------- */
 function bind(){
@@ -293,6 +297,7 @@ function tellOwner(ses){try{const k='lh-told-'+ses.user.id;if(sessionStorage.get
   sb.auth.onAuthStateChange(async(ev,s)=>{if(ev==='SIGNED_IN'&&s){EMAIL=s.user.email||'';tellOwner(s);if(location.search||location.hash.indexOf('access_token')>-1)history.replaceState(null,'',location.pathname+location.hash);await load()}});
   if(!data.session){ if(new URLSearchParams(location.search).has('code')){$('#app').innerHTML='<div class="auth"><div class="auth-card"><p>Signing you in…</p></div></div>';await new Promise(r=>setTimeout(r,4000));if((await sb.auth.getSession()).data.session)return}return loginView('')}
   EMAIL=data.session.user.email||'';tellOwner(data.session);await load();
+  if(window.LHInstall)LHInstall.auto(()=>!!document.querySelector('.shell'));
 })();
 </script>
 </body>
