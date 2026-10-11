@@ -248,7 +248,7 @@ LH.acts.editMaint = el => maintSheet(LH.S.maint.find(x => x.id === el.dataset.id
 LH.pages.settings = () => {
   const s = LH.S.settings, f = (n, l, o = {}) => `<label class="f"><span>${l}</span><input name="${n}" value="${esc(s[n] === undefined || s[n] === 0 && !o.zero ? '' : s[n])}" ${o.mode ? `inputmode="${o.mode}"` : ''} ${o.type ? `type="${o.type}"` : ''} ${o.ph ? `placeholder="${o.ph}"` : ''}></label>`;
   return {
-    title: 'Settings', html: LH.accountCard() + `<form id="setForm"><div class="cols"><div><div class="card"><h3>Your business</h3>${f('bizName', 'Business name')}<div class="grid2">${f('mc', 'MC number', { mode: 'numeric' })}${f('dot', 'USDOT number', { mode: 'numeric' })}</div>${f('phone', 'Phone', { type: 'tel' })}${f('email', 'Email', { type: 'email' })}<label class="f"><span>Address</span><textarea name="address">${esc(s.address || '')}</textarea></label><label class="f"><span>Payment instructions on invoices</span><textarea name="payInfo" placeholder="Remit to, or factoring company details">${esc(s.payInfo || '')}</textarea></label></div></div>
+    title: 'Settings', html: LH.accountCard() + `<form id="setForm"><div class="cols"><div><div class="card"><h3>Your business</h3>${f('name', 'Your name')}${f('bizName', 'Business name')}<div class="grid2">${f('mc', 'MC number', { mode: 'numeric' })}${f('dot', 'USDOT number', { mode: 'numeric' })}</div>${f('phone', 'Phone', { type: 'tel' })}${f('email', 'Email', { type: 'email' })}<label class="f"><span>Address</span><textarea name="address">${esc(s.address || '')}</textarea></label><label class="f"><span>Payment instructions on invoices</span><textarea name="payInfo" placeholder="Remit to, or factoring company details">${esc(s.payInfo || '')}</textarea></label></div></div>
     <div><div class="card"><h3>Your numbers</h3><div class="grid2">${f('mpg', 'Truck MPG', { mode: 'decimal' })}${f('fuelPrice', 'Fuel price ($/gal)', { mode: 'decimal' })}</div>${f('costPerMile', 'Other running cost per mile ($)', { mode: 'decimal', ph: 'Tires, maintenance, insurance' })}<div class="grid2">${f('terms', 'Default payment terms (days)', { mode: 'numeric' })}${f('defFree', 'Default free hours', { mode: 'decimal', ph: '2' })}</div>${f('defDet', 'Default detention ($/hour)', { mode: 'decimal', zero: 1 })}</div>
     <button class="btn pri block" style="margin-bottom:12px">Save settings</button></div></div></form>
     <div class="card"><h3>Your data</h3><p class="muted" style="margin:0 0 12px;font-size:14px">Everything is stored on this device only. There is no account or sync yet. Make a backup now and then, and before you clear your browser data or change phones.</p>
@@ -259,7 +259,7 @@ LH.pages.settings = () => {
 };
 document.addEventListener('submit', e => {
   if (e.target.id !== 'setForm') return; e.preventDefault(); const o = LH.form(e.target), s = LH.S.settings;
-  ['bizName', 'mc', 'dot', 'phone', 'email', 'address', 'payInfo'].forEach(k => s[k] = o[k]);
+  ['name', 'bizName', 'mc', 'dot', 'phone', 'email', 'address', 'payInfo'].forEach(k => s[k] = o[k]);
   ['mpg', 'fuelPrice', 'costPerMile', 'terms', 'defFree', 'defDet'].forEach(k => s[k] = o[k] === '' ? '' : num(o[k]));
   s.terms = s.terms || 30; LH.save(); toast('Settings saved');
 });

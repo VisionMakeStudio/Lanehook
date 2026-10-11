@@ -24,17 +24,25 @@ LH.pages.home = () => {
   const first = S.loads.length === 0;
   const quick = `<div class="grid2" style="margin-bottom:12px"><a class="btn pri" href="#/load/new">${ic('plus', 18)}New load</a><a class="btn" href="#/guard">${ic('shield', 18)}Check a broker</a></div>`;
   let html = '';
-  html += `<div style="margin:2px 0 16px"><h1>${S.settings.bizName ? esc(S.settings.bizName) : 'Welcome'}</h1><div class="muted">${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div></div>`;
+  const nm = (S.settings.name || '').trim(), first1 = nm.split(/\s+/)[0], ini = nm ? nm.split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase() : (S.settings.bizName || 'LH').slice(0, 2).toUpperCase();
+  html += `<div class="ph-head"><div><div class="ph-sub">${S.settings.bizName ? 'Driver · ' + esc(S.settings.bizName) : esc(new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }))}</div><div class="ph-hey">${first1 ? 'Hey, ' + esc(first1) : 'Welcome'}</div></div><div class="ph-av">${esc(ini)}</div></div>`;
+  const cur = active.slice().sort((x, y) => (LH.stage(y) === 'picked') - (LH.stage(x) === 'picked'))[0];
+  html += cur ? `<a class="ph-status" style="display:block;text-decoration:none;color:inherit" href="#/load/${cur.id}"><div class="k">Status</div><div class="v">${LH.stage(cur) === 'picked' ? 'Loaded' : 'Booked'} · ${esc(LH.routeLabel(cur))}</div><p>${esc(LH.loadLabel(cur))}${cur.brokerName ? ' · ' + esc(cur.brokerName) : ''}</p></a>`
+    : `<div class="ph-status"><div class="k">Status</div><div class="v">Available</div><p>${first ? 'Add your first load to start tracking.' : 'No active loads. Add the next one the second it is booked.'}</p></div>`;
   if (ad) {
     const e = ad.ev;
     html += `<a class="card link" href="#/load/${ad.load.id}" style="border-color:var(--bad)"><div class="row"><span class="badge bad">Detention running</span><span class="sp"></span><span class="muted">${esc(LH.loadLabel(ad.load))}</span></div><div class="timer" data-tick="${e.arrive}" style="margin-top:6px">${clock(Date.now() - e.arrive)}</div><div class="muted">Since ${fmtDT(e.arrive)} at ${e.stop === 'pick' ? 'pickup' : 'delivery'}</div></a>`;
   }
   html += quick;
   if (needSetup) html += `<a class="alert" href="#/settings"><i></i><div><b>Add your business details</b><small>Your name, MC number, and payment info go on every invoice.</small></div></a>`;
-  html += `<div class="grid2 stats4" style="margin:8px 0 4px"><div class="stat"><span>Owed to you</span><b class="mono">${money0(outSum)}</b></div><div class="stat"><span>Overdue</span><b class="mono" style="${over.length ? 'color:var(--bad)' : ''}">${money0(overSum)}</b></div><div class="stat"><span>Active loads</span><b>${active.length}</b></div><div class="stat"><span>Paid this month</span><b class="mono">${money0(paidMo)}</b></div></div>`;
+  const wk0 = new Date(); wk0.setHours(0, 0, 0, 0); wk0.setDate(wk0.getDate() - ((wk0.getDay() + 6) % 7));
+  const inWk = S.loads.filter(l => { const t = Date.parse((l.deliv && l.deliv.time) || '') || l.created || 0; return t >= wk0.getTime() && LH.stage(l) !== 'booked'; });
+  const wkSum = inWk.reduce((s, l) => s + num(l.rate) + LH.extrasTotal(l), 0), wkMi = inWk.reduce((s, l) => s + num(l.miles), 0);
+  html += `<div class="ph-tiles"><div class="ph-tile"><span>This week</span><b>${money0(wkSum)}</b></div><div class="ph-tile"><span>Miles</span><b>${Math.round(wkMi).toLocaleString('en-US')}</b></div></div>`;
+  html += `<div class="ph-tiles"><div class="ph-tile"><span>Owed to you</span><b>${money0(outSum)}</b></div><div class="ph-tile"><span>Overdue</span><b style="${over.length ? 'color:var(--bad)' : ''}">${money0(overSum)}</b></div></div>`;
+  const recent = S.loads.slice().sort((x, y) => (y.created || 0) - (x.created || 0)).slice(0, 3);
+  if (recent.length) html += `<div class="ph-recent"><div class="k">Recent</div>${recent.map(l => { const st = LH.stage(l); return `<a href="#/load/${l.id}"><span>${esc(LH.routeLabel(l))}</span><span class="st ${st === 'delivered' ? 'warn' : ''}">${esc(LH.STAGE_LABEL[st])}</span></a>`; }).join('')}</div>`;
   if (alerts.length) html += `<div class="sec"><h2>Needs attention</h2><span class="muted">${alerts.length}</span></div>` + alerts.slice(0, 8).map(a => `<a class="alert ${a.cls}" href="${a.href}"><i></i><div><b>${esc(a.t)}</b><small>${esc(a.s)}</small></div></a>`).join('');
-  if (active.length) html += `<div class="sec"><h2>Active loads</h2><a href="#/loads">All loads</a></div><div class="list">${active.slice(0, 4).map(loadRow).join('')}</div>`;
-  if (first) html += LH.empty('No loads yet', 'Photograph a rate confirmation to add your first load. LaneHook checks the broker and starts tracking from there.', `<a class="btn pri" href="#/load/new">Add your first load</a>`);
   return { title: 'Home', logo: true, html, top: `<button class="icon-btn" data-act="toggleTheme" aria-label="Switch light or dark">${ic('sun')}</button>` };
 };
 
