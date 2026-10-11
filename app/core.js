@@ -191,7 +191,7 @@ LH.render = function () {
     return `<a href="#/${n.k}" class="${on ? 'on' : ''}" ${on ? 'aria-current="page"' : ''}>${ic(n.icon, 24)}${esc(n.short || n.label)}</a>`;
   }).join('');
   $('#app').innerHTML = `
-    <aside class="side"><img class="logo" src="${wordmark()}" alt="LaneHook">${sideLinks}</aside>
+    <aside class="side"><img class="logo" src="${wordmark()}" alt="LaneHook">${sideLinks}${LH.auth && LH.auth.user ? `<div class="side-me"><small>${esc(LH.auth.user.email || '')}</small><button class="btn sm" data-act="signOut">Sign out</button></div>` : ''}</aside>
     <div class="main">
       <header class="top">${out.back ? `<a class="back" href="#/${out.back}" aria-label="Back">${ic('back')}</a>` : ''}${out.logo ? `<img class="logo" src="${wordmark()}" alt="LaneHook">` : ''}
         <div class="ttl ${out.logo ? 'hp' : ''}">${esc(out.title)}</div>${out.top || ''}</header>
