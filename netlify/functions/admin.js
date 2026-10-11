@@ -15,7 +15,9 @@ exports.handler = async (event) => {
   if (!me.email || !admins.includes(me.email.toLowerCase()) || !(me.email_confirmed_at || me.confirmed_at)) return json(403, { error: 'not_admin' });
 
   let b; try { b = JSON.parse(event.body || '{}'); } catch (e) { return json(400, { error: 'bad_body' }); }
-  const H = { apikey: svc, authorization: 'Bearer ' + svc, 'content-type': 'application/json' };
+  // New-style secret keys (sb_secret_...) are not JWTs, so they go in the apikey header only.
+  const H = { apikey: svc, 'content-type': 'application/json' };
+  if (!svc.startsWith('sb_secret_')) H.authorization = 'Bearer ' + svc;
   const id = String(b.id || '');
   const needId = () => /^[0-9a-f-]{36}$/i.test(id);
 
