@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LaneHook — Dispatch and drivers, hooked together</title>
+<meta name="description" content="LaneHook is one app with two logins: a pocket toolkit for box truck drivers and a command center for dispatchers, linked by a company code.">
+<meta name="theme-color" content="#0B132B">
+<meta property="og:title" content="LaneHook — Dispatch and drivers, hooked together">
+<meta property="og:description" content="One app, two logins. Loads, detention, paperwork and fleet tracking for box truck owner-operators and small fleets.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='56' fill='%230B132B'/%3E%3Cg transform='translate(38 78)' fill='%232563EB'%3E%3Cpath d='M79 80C66 93 52 100 34 96C13 92 0 73 0 49C0 22 21 0 48 0C66 0 79 7 92 21L131 60H105L77 32C69 24 60 22 49 22C34 22 23 34 23 49C23 64 34 76 49 76C57 76 62 72 65 67Z'/%3E%3Cpath transform='translate(180 98) rotate(180)' d='M79 80C66 93 52 100 34 96C13 92 0 73 0 49C0 22 21 0 48 0C66 0 79 7 92 21L131 60H105L77 32C69 24 60 22 49 22C34 22 23 34 23 49C23 64 34 76 49 76C57 76 62 72 65 67Z'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B132B;--navy2:#111B3A;--navy3:#1A2547;--line-d:#1E2A4F;--line-d2:#2E3D6B;
+  --blue:#2563EB;--orange:#F59E0B;--off:#F8FAFC;--gray:#94A3B8;--muted:#475569;--line:#E2E8F0;--soft:#AAB6CB;
+  --pad:28px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html,body{overflow-x:clip}
+section{scroll-margin-top:72px}
+body{margin:0;background:var(--navy);color:var(--off);font-family:'IBM Plex Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+h1,h2,h3{margin:0;font-family:'Archivo',system-ui,sans-serif;font-stretch:112%;font-weight:800}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.wrap{max-width:1180px;margin:0 auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.light{background:var(--off);color:var(--navy)}
+.section{padding:110px var(--pad)}
+.eyebrow{font-size:13px;font-weight:600;margin-bottom:14px}
+.h2{font-size:clamp(32px,6.5vw,46px);line-height:1.05}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,158,11,.55)}70%{box-shadow:0 0 0 10px rgba(245,158,11,0)}100%{box-shadow:0 0 0 0 rgba(245,158,11,0)}}
+@keyframes drop{from{transform:translateY(-14px);opacity:0}to{transform:none;opacity:1}}
+@keyframes dash{from{background-position:0 0}to{background-position:0 64px}}
+.pulse{animation:pulse 1.8s infinite}
+.drop{animation:drop .35s ease-out}
+.road{position:absolute;left:50%;top:0;width:4px;margin-left:-2px;opacity:.5;background-image:linear-gradient(var(--orange) 50%,transparent 50%);background-size:4px 64px;animation:dash 1.6s linear infinite}
+@media (prefers-reduced-motion:reduce){.pulse,.drop,.road{animation:none}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:12px;padding:15px 26px;font-size:16px;font-weight:600;min-height:48px}
+.btn-o{background:var(--orange);color:var(--navy)}
+.btn-ghost{background:var(--navy2);color:var(--off);border:1px solid #22305A}
+input[type=range]{accent-color:var(--blue);width:100%;height:28px}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:50;background:rgba(11,19,43,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line-d)}
+.nav-in{max-width:1240px;margin:0 auto;padding:0 var(--pad);height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.nav-links{display:flex;align-items:center;gap:26px;font-size:14px;font-weight:500}
+.nav-links a{color:#CBD5E1}
+.nav-links a.cta{background:var(--orange);color:var(--navy);font-weight:600;padding:11px 20px;border-radius:10px}
+.burger{display:none;background:var(--navy2);border:1px solid #22305A;border-radius:10px;width:44px;height:44px;align-items:center;justify-content:center;color:var(--off)}
+
+/* HERO */
+.hero{position:relative;overflow:hidden;padding:84px var(--pad) 96px;background:radial-gradient(1100px 520px at 50% 115%,rgba(37,99,235,.28),transparent 70%),var(--navy)}
+.hero-copy{max-width:900px;margin:0 auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:22px;position:relative}
+.pill{display:inline-flex;align-items:center;gap:10px;border:1px solid #22305A;background:var(--navy2);border-radius:999px;padding:7px 14px 7px 8px;font-size:13px;color:#CBD5E1}
+.pill b{background:var(--blue);color:var(--off);font-weight:600;border-radius:999px;padding:3px 10px;font-size:12px}
+.hero h1{font-size:clamp(38px,8.4vw,64px);line-height:1.02;letter-spacing:-.01em;max-width:980px}
+.hero h1 span{color:var(--orange)}
+.hero p{margin:0;font-size:clamp(16px,2.4vw,19px);line-height:1.6;color:var(--soft);max-width:640px}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.hint{max-width:1180px;margin:64px auto 18px;display:flex;justify-content:center}
+.hint-box{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;background:var(--navy2);border:1px solid #22305A;border-radius:12px;padding:10px 16px;font-size:14px;color:#CBD5E1;text-align:center}
+.live{background:var(--orange);color:var(--navy);border-radius:6px;padding:2px 8px;font-size:12px}
+.hint-btn{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;min-height:36px}
+.hint-reset{background:none;border:1px solid var(--line-d2);color:var(--off);border-radius:8px;padding:6px 12px;font-size:13px;min-height:36px}
+.mobile-only{display:none}
+
+/* stage */
+.stage{max-width:1180px;margin:0 auto;display:flex;justify-content:center}
+.stage-inner{position:relative;width:1080px;height:640px;flex-shrink:0}
+.stage-inner .hero-mac{position:absolute;left:0;top:0}
+.stage-inner .hero-phone{position:absolute;right:0;top:56px}
+.stage.stacked .stage-inner{width:100%;height:auto;display:flex;flex-direction:column;align-items:center;gap:28px}
+.stage.stacked .hero-mac,.stage.stacked .hero-phone{position:static}
+.stage.stacked .hero-phone{order:-1}
+
+/* MacBook */
+.mac{width:900px}
+.mac-lid{background:#05080F;border-radius:22px 22px 0 0;padding:16px 16px 22px;border:1px solid #2A3350;box-shadow:0 40px 90px rgba(0,0,0,.55)}
+.mac-base{position:relative;height:18px;width:1000px;margin-left:-50px;background:linear-gradient(#D9DCE3,#9AA0AB);border-radius:0 0 18px 18px}
+.mac-base:after{content:"";position:absolute;left:50%;top:0;width:150px;height:8px;margin-left:-75px;background:#7D838E;border-radius:0 0 10px 10px}
+.stage.stacked .mac{padding-left:50px;padding-right:50px;width:1000px}
+.hm-screen{position:relative;width:866px;height:540px;border-radius:6px;overflow:hidden;background:var(--off);color:var(--navy);display:flex}
+.hm-side{width:178px;background:var(--navy);color:#CBD5E1;padding:18px 14px;display:flex;flex-direction:column;gap:4px;font-size:13px;flex-shrink:0}
+.hm-side .it{padding:9px 10px;border-radius:8px}
+.hm-side .it.on{background:var(--navy3);color:var(--off)}
+.hm-main{flex:1;padding:20px 22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12px}
+.kpi span{color:#64748B}
+.card-w{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.cap{font-size:12px;font-weight:600;color:#64748B;letter-spacing:.06em;text-transform:uppercase}
+.row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 10px}
+.row.hl{border-color:var(--blue);background:#EFF6FF}
+.av{width:30px;height:30px;border-radius:50%;background:var(--navy);color:var(--off);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.badge{font-size:11px;font-weight:600;border-radius:999px;padding:4px 9px;white-space:nowrap}
+.send{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:7px 11px;font-size:12px;font-weight:600}
+.feed{flex:1;background:var(--navy);color:#CBD5E1;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.fi{display:flex;gap:10px;font-size:12.5px;line-height:1.45;border-bottom:1px solid var(--line-d);padding-bottom:8px}
+.fi i{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+
+/* iPhone */
+.phone{width:290px;height:590px;background:#05080F;border-radius:52px;padding:11px;border:1px solid #3A4466;box-shadow:0 40px 80px rgba(0,0,0,.6);flex-shrink:0}
+.phone.lg{width:320px;height:660px;border-radius:56px;padding:12px;box-shadow:0 30px 70px rgba(11,19,43,.35);border:none}
+.screen{position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;background:var(--navy);color:var(--off);display:flex;flex-direction:column}
+.phone.lg .screen{border-radius:45px}
+.island{position:absolute;top:10px;left:50%;width:92px;height:26px;margin-left:-46px;background:#000;border-radius:20px;z-index:3}
+.phone.lg .island{width:100px;height:28px;margin-left:-50px;top:11px}
+.p-head{padding:52px 18px 12px;display:flex;justify-content:space-between;align-items:center}
+.p-body{padding:6px 16px;display:flex;flex-direction:column;gap:12px}
+.p-card{background:var(--navy2);border:1px solid #22305A;border-radius:16px;padding:16px}
+.p-tabs{margin-top:auto;display:flex;justify-content:space-around;padding:10px 8px 22px;border-top:1px solid var(--line-d);font-size:10px;color:#64748B}
+.p-title{font-family:'Archivo',sans-serif;font-weight:800;font-size:22px}
+.scr{padding:56px 18px 10px;display:none;flex-direction:column;gap:10px;flex:1}
+.scr.on{display:flex}
+.lcard{background:var(--navy2);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.lcard .a{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
+.lcard .b{display:flex;justify-content:space-between;font-size:11px;color:var(--gray)}
+.chip{background:var(--navy3);border-radius:999px;padding:5px 10px}
+.chip.on{background:var(--blue)}
+.dl{background:var(--navy2);border-radius:12px;padding:12px;display:flex;justify-content:space-between;font-size:13px}
+.bub{max-width:80%;border-radius:16px;padding:10px 12px;font-size:13px;line-height:1.4}
+.bub.in{align-self:flex-start;background:var(--navy3);border-bottom-left-radius:4px}
+.bub.out{align-self:flex-end;background:var(--blue);border-bottom-right-radius:4px}
+.sys{align-self:center;font-size:11px;color:var(--gray);background:var(--navy2);border-radius:999px;padding:5px 10px}
+.ptab{background:none;border:none;color:#64748B;font-size:11px;padding:8px 6px;min-height:36px}
+.ptab.on{color:var(--orange)}
+
+/* driver section */
+.split{display:flex;gap:72px;flex-wrap:wrap;align-items:center}
+.split > .txt{flex:1 1 420px;min-width:0}
+.feat{width:100%;text-align:left;display:flex;gap:14px;align-items:flex-start;background:transparent;border:1px solid var(--line);border-radius:14px;padding:16px 18px;color:var(--navy);transition:background .15s,border-color .15s}
+.feat svg{flex-shrink:0;margin-top:2px;stroke:#64748B}
+.feat.on{background:#fff;border-color:var(--blue)}
+.feat.on svg{stroke:var(--blue)}
+.feat b{display:block;font-size:16px}
+.feat small{display:block;font-size:14px;color:var(--muted);margin-top:3px;line-height:1.5}
+.feats{display:flex;flex-direction:column;gap:10px}
+.phone-col{flex:0 0 320px;margin:0 auto;position:relative}
+.phone-col:before{content:"";position:absolute;inset:40px -40px -20px -40px;background:radial-gradient(closest-side,rgba(37,99,235,.25),transparent)}
+.ring{margin:6px auto;width:200px;height:200px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.ring > div{width:168px;height:168px;border-radius:50%;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+
+/* dispatcher */
+.dp-head{display:flex;justify-content:space-between;gap:28px;flex-wrap:wrap;align-items:flex-end;margin-bottom:40px}
+.seg{display:flex;gap:6px;flex-wrap:wrap;background:var(--navy2);border:1px solid #22305A;border-radius:14px;padding:6px}
+.seg button{border:none;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;background:transparent;color:#CBD5E1;min-height:44px}
+.seg button.on{background:var(--orange);color:var(--navy)}
+.dmac-wrap{display:flex;justify-content:center}
+.dmac{width:1060px;flex-shrink:0}
+.dmac .mac-lid{margin:0 40px;border-radius:24px 24px 0 0;padding:16px 16px 24px}
+.dmac .mac-base{width:100%;margin:0;height:20px;border-radius:0 0 20px 20px}
+.dm-screen{width:946px;height:590px;border-radius:6px;overflow:hidden;background:#F1F5F9;color:var(--navy);display:flex;flex-direction:column}
+.bar{height:38px;background:var(--line);display:flex;align-items:center;gap:7px;padding:0 14px;flex-shrink:0}
+.bar i{width:11px;height:11px;border-radius:50%;background:var(--gray)}
+.url{margin-left:18px;background:var(--off);border-radius:6px;padding:4px 14px;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dm-body{flex:1;padding:22px 24px;min-height:0}
+.dv{display:none;height:100%}
+.dv.on{display:flex}
+.fleet{gap:16px;width:100%}
+.map{flex:1.6;position:relative;border-radius:14px;overflow:hidden;background:var(--navy);background-image:linear-gradient(#16224A 1px,transparent 1px),linear-gradient(90deg,#16224A 1px,transparent 1px);background-size:40px 40px;min-height:240px}
+.pin{position:absolute;display:flex;align-items:center;gap:6px}
+.pin i{width:14px;height:14px;border-radius:50%;border:3px solid var(--navy)}
+.pin span{background:var(--off);color:var(--navy);font-size:11px;font-weight:600;border-radius:6px;padding:3px 7px;white-space:nowrap}
+.legend{position:absolute;left:14px;bottom:14px;display:flex;gap:12px;font-size:11px;color:#CBD5E1;background:rgba(11,19,43,.85);border-radius:8px;padding:6px 10px}
+.side-list{flex:1;display:flex;flex-direction:column;gap:10px}
+.rc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+.rc .t{display:flex;justify-content:space-between;font-size:13px;font-weight:600;gap:8px}
+.rc .s{font-size:12px;color:var(--muted);margin-top:4px}
+.col-v{flex-direction:column;gap:14px;width:100%}
+.dhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.dhead h3{font-size:20px}
+.kan{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;flex:1}
+.kcol{background:var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.kc{background:#fff;border-radius:10px;padding:12px;font-size:12px;color:var(--muted)}
+.kc b{display:block;font-size:13px;color:var(--navy);margin-bottom:4px}
+.guard{gap:16px;width:100%}
+.gl{flex:1.2;background:#fff;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;border:1px solid var(--line)}
+.gr{flex:1;background:var(--navy);color:var(--off);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.chk{display:flex;justify-content:space-between;gap:10px;background:var(--off);border-radius:10px;padding:10px 12px;font-size:13px}
+.chk b{text-align:right}
+.tbl-box{background:#fff;border:1px solid var(--line);border-radius:14px;overflow-x:auto}
+.tbl{min-width:520px}
+.tr{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:14px 16px;font-size:13px;border-top:1px solid var(--line)}
+.tr.h{font-size:12px;font-weight:600;color:var(--muted);background:var(--off);border-top:none;padding:12px 16px}
+.stat{flex:1;border-radius:14px;padding:16px;min-width:180px}
+.dp-feats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:56px}
+.dp-feats > div{border-top:2px solid var(--blue);padding-top:16px}
+.dp-feats b{display:block;font-size:16px;margin-bottom:6px}
+.dp-feats p{margin:0;font-size:14px;line-height:1.55;color:var(--soft)}
+
+/* tools */
+.tools{display:flex;gap:24px;flex-wrap:wrap}
+.tool{flex:1 1 440px;min-width:0;border-radius:22px;padding:30px;display:flex;flex-direction:column;gap:22px}
+.tool h3{font-size:24px}
+.lbl{display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-bottom:8px}
+.free{display:flex;gap:8px}
+.free button{flex:1;border-radius:10px;padding:10px;font-size:14px;font-weight:600;border:1px solid #CBD5E1;background:#fff;color:var(--navy);min-height:44px}
+.free button.on{background:var(--navy);color:var(--off);border-color:var(--navy)}
+.owed{background:var(--navy);color:var(--off);border-radius:16px;padding:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.owed .v{font-size:40px;font-weight:600;color:var(--orange);line-height:1.1}
+.mc-row{display:flex;gap:10px;flex-wrap:wrap}
+.mc-row input{flex:1 1 200px;min-width:0;background:var(--navy2);border:1px solid var(--line-d2);color:var(--off);border-radius:12px;padding:14px 16px;font-size:16px}
+.gres{flex:1;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;min-height:200px}
+.gres.empty{border:1px dashed var(--line-d2);align-items:center;justify-content:center;text-align:center;font-size:14px;color:var(--gray)}
+.gres.full{background:var(--navy2);border:1px solid var(--blue)}
+.gline{display:flex;justify-content:space-between;font-size:14px;border-top:1px solid var(--line-d);padding-top:10px;gap:10px}
+.gline b{text-align:right}
+
+/* link */
+.link{background:var(--blue);padding:100px var(--pad)}
+.steps{display:flex;flex-direction:column;gap:12px;flex:1 1 460px;min-width:0}
+.step{display:flex;gap:16px;align-items:center;background:var(--navy);border-radius:16px;padding:18px 20px}
+.step .n{font-size:22px;color:var(--orange);font-weight:600}
+.step small{display:block;font-size:14px;color:var(--soft)}
+
+/* faq */
+.faq-i{border-top:1px solid #CBD5E1}
+.faq-q{width:100%;text-align:left;background:none;border:none;padding:22px 0;display:flex;justify-content:space-between;align-items:center;gap:16px;color:var(--navy);font-size:18px;font-weight:600}
+.faq-q .ic{width:32px;height:32px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.faq-i.open .ic{background:var(--orange)}
+.faq-a{display:none;padding:0 48px 24px 0;font-size:16px;line-height:1.65;color:var(--muted)}
+.faq-i.open .faq-a{display:block}
+
+/* join */
+.join{position:relative;overflow:hidden;padding:110px var(--pad) 60px}
+.roles{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+.roles button{border-radius:999px;padding:9px 18px;font-size:14px;font-weight:600;border:1px solid var(--line-d2);background:transparent;color:#CBD5E1;min-height:44px}
+.roles button.on{background:var(--off);color:var(--navy);border-color:var(--off)}
+.email-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:100%;max-width:480px}
+.email-row input{flex:1 1 240px;min-width:0;padding:15px 16px;border-radius:12px;border:1px solid var(--line-d2);background:var(--navy2);color:var(--off);font-size:16px}
+.email-row input.bad{border-color:var(--orange)}
+.foot{max-width:1180px;margin:90px auto 0;padding-top:28px;border-top:1px solid var(--line-d);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--gray)}
+.foot nav{display:flex;gap:22px;flex-wrap:wrap}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:1000px){
+  .dp-feats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .split{gap:48px}
+}
+@media (max-width:860px){
+  .nav-links{display:none;position:absolute;top:72px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:var(--navy);border-bottom:1px solid var(--line-d);padding:8px var(--pad) 18px}
+  .nav-links a{padding:14px 0;font-size:16px;border-bottom:1px solid var(--line-d)}
+  .nav-links a.cta{margin-top:14px;text-align:center;border-bottom:none}
+  .nav.open .nav-links{display:flex}
+  .burger{display:inline-flex}
+}
+@media (max-width:719px){
+  :root{--pad:18px}
+  .section{padding:72px var(--pad)}
+  .hero{padding:56px var(--pad) 64px}
+  .hint{margin-top:44px}
+  .mobile-only{display:inline-flex}
+  .hero-ctas .btn{flex:1 1 200px}
+  .phone-col{flex-basis:auto}
+  .tool{padding:22px;border-radius:18px}
+  .owed .v{font-size:34px}
+  .link{padding:72px var(--pad)}
+  .join{padding:72px var(--pad) 40px}
+  .faq-q{font-size:16px}
+  .faq-a{padding-right:0;font-size:15px}
+  .dp-feats{grid-template-columns:1fr;margin-top:40px}
+  .seg{width:100%}
+  .seg button{flex:1 1 40%;padding:10px 8px}
+  /* dispatcher laptop reflows instead of shrinking */
+  .dmac{width:100%}
+  .dmac .mac-lid{margin:0 10px;padding:8px 8px 12px;border-radius:16px 16px 0 0}
+  .dmac .mac-base{height:12px}
+  .dm-screen{width:100%;height:auto}
+  .dm-body{padding:14px}
+  .fleet,.guard{flex-direction:column}
+  .map{min-height:260px;flex:none}
+  .kan{grid-template-columns:1fr}
+  .url{margin-left:8px}
+  .road{display:none}
+  .strip{display:grid!important;grid-template-columns:1fr 1fr;gap:10px 14px}
+  .strip [aria-hidden]{display:none}
+  .mac-cap{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="hook" viewBox="0 0 180 98">
+      <g fill="#2563EB">
+        <path d="M79 80C66 93 52 100 34 96C13 92 0 73 0 49C0 22 21 0 48 0C66 0 79 7 92 21L131 60H105L77 32C69 24 60 22 49 22C34 22 23 34 23 49C23 64 34 76 49 76C57 76 62 72 65 67Z"/>
+        <path transform="translate(180 98) rotate(180)" d="M79 80C66 93 52 100 34 96C13 92 0 73 0 49C0 22 21 0 48 0C66 0 79 7 92 21L131 60H105L77 32C69 24 60 22 49 22C34 22 23 34 23 49C23 64 34 76 49 76C57 76 62 72 65 67Z"/>
+      </g>
+    </symbol>
+    <symbol id="wordmark" viewBox="0 0 860 100">
+      <path fill="#F8FAFC" d="M0 0H30V75H71L56 100H0Z"/>
+      <path fill="#F8FAFC" d="M62 100L126 0H155L216 100H182L140 23L96 100Z"/>
+      <path fill="#F59E0B" d="M137 37H143L146 49H134ZM132 56H148L152 70H128ZM126 78H154L159 100H121Z"/>
+      <path fill="#F8FAFC" d="M222 100V0H249L308 61V0H336V100H309L249 42V100Z"/>
+      <path fill="#F8FAFC" d="M344 0H438L421 24H344ZM344 37H432L417 61H371V76H435V100H361Q344 100 344 82Z"/>
+      <path fill="#F8FAFC" d="M444 0H472V38H510V0H538V100H510V62H472V100H444Z"/>
+      <g transform="translate(544 0) scale(1.1 1.0416667)" fill="#2563EB">
+        <path d="M79 80C66 93 52 100 34 96C13 92 0 73 0 49C0 22 21 0 48 0C66 0 79 7 92 21L131 60H105L77 32C69 24 60 22 49 22C34 22 23 34 23 49C23 64 34 76 49 76C57 76 62 72 65 67Z"/>
+        <path transform="translate(180 98) rotate(180)" d="M79 80C66 93 52 100 34 96C13 92 0 73 0 49C0 22 21 0 48 0C66 0 79 7 92 21L131 60H105L77 32C69 24 60 22 49 22C34 22 23 34 23 49C23 64 34 76 49 76C57 76 62 72 65 67Z"/>
+      </g>
+      <path fill="#F8FAFC" d="M748 0H776V42L821 0H860L805 49L860 100H821L776 58V100H748Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- NAV -->
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a href="#top" aria-label="LaneHook home"><svg width="172" height="20" aria-hidden="true"><use href="#wordmark"/></svg></a>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="nav-links" id="navLinks">
+      <a href="#driver">Driver app</a>
+      <a href="#dispatch">Dispatcher</a>
+      <a href="#tools">Try the tools</a>
+      <a href="#faq">FAQ</a>
+      <a href="#join" class="cta">Get early access</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section id="top" class="hero">
+  <div class="road" style="height:84px"></div>
+  <div class="hero-copy">
+    <div class="pill"><b>New</b>Built for box truck owner-operators &amp; small fleets</div>
+    <h1>Dispatch sends it.<br><span>The driver's already on it.</span></h1>
+    <p>LaneHook is one app with two logins. Drivers get a pocket toolkit for loads, detention, and paperwork. Dispatchers get a command center for the whole fleet. Share a company code and they're hooked together.</p>
+    <div class="hero-ctas">
+      <a href="#join" class="btn btn-o">Get early access</a>
+      <a href="#demo" class="btn btn-ghost">Try the live demo ↓</a>
+    </div>
+  </div>
+
+  <div id="demo" class="hint">
+    <div class="hint-box">
+      <span class="live mono">LIVE</span>
+      <span id="heroHint"></span>
+      <span id="heroHintBtns"></span>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="stage-inner" id="stageInner">
+      <!-- MacBook -->
+      <div class="hero-mac mac" id="heroMac">
+        <div class="mac-lid">
+          <div class="hm-screen">
+            <div class="hm-side">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;padding-left:4px">
+                <svg width="30" height="17" aria-hidden="true"><use href="#hook"/></svg>
+                <span style="font-family:'Archivo',sans-serif;font-weight:800;color:var(--off);font-size:14px">Dispatch</span>
+              </div>
+              <div class="it on">Fleet</div><div class="it">Loads</div><div class="it">Load Guard</div><div class="it">Settlements</div><div class="it">Messages</div>
+              <div style="margin-top:auto;background:var(--navy2);border-radius:10px;padding:10px;font-size:12px;line-height:1.5">
+                <div style="color:var(--gray)">Company code</div>
+                <div class="mono" style="color:var(--orange);font-size:14px">RMS-4471</div>
+              </div>
+            </div>
+            <div class="hm-main">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div><div style="font-size:12px;color:#64748B">Ramos Motor Services</div><div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:20px">Fleet today</div></div>
+                <div style="display:flex;gap:8px">
+                  <div class="kpi"><span>Rolling</span> <b class="mono" id="kpiRolling">2</b></div>
+                  <div class="kpi"><span>Need loads</span> <b class="mono" id="kpiNeed">2</b></div>
+                </div>
+              </div>
+              <div style="display:flex;gap:14px;flex:1;min-height:0">
+                <div class="card-w" style="flex:1.35">
+                  <div class="cap">Drivers</div>
+                  <div id="heroRoster" style="display:flex;flex-direction:column;gap:8px"></div>
+                </div>
+                <div class="feed">
+                  <div class="cap" style="color:var(--gray)">Live activity</div>
+                  <div id="heroFeed" style="display:flex;flex-direction:column;gap:8px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mac-base"></div>
+      </div>
+      <div class="mac-cap" style="display:none;font-size:12px;color:var(--gray);margin-top:-14px">↑ Dispatcher's laptop updates as Marcus taps</div>
+
+      <!-- iPhone -->
+      <div class="hero-phone phone">
+        <div class="screen">
+          <div class="island"></div>
+          <div class="p-head">
+            <div><div style="font-size:11px;color:var(--gray)">Driver · Unit 12</div><div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:18px">Hey, Marcus</div></div>
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--navy3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">MR</div>
+          </div>
+          <div id="heroPhone"></div>
+          <div class="p-tabs"><span style="color:var(--off)">Home</span><span>Loads</span><span>Docs</span><span>Chat</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRIP -->
+<div style="background:var(--orange);color:var(--navy)">
+  <div class="strip" style="max-width:1240px;margin:0 auto;padding:22px var(--pad);display:flex;justify-content:center;column-gap:22px;row-gap:6px;flex-wrap:wrap;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(14px,2.4vw,18px);font-stretch:115%;letter-spacing:.01em;text-align:center">
+    <span>TWO LOGINS</span><span aria-hidden="true">·</span><span>ONE COMPANY CODE</span><span aria-hidden="true">·</span><span>DETENTION, TRACKED</span><span aria-hidden="true">·</span><span>BROKERS, CHECKED</span>
+  </div>
+</div>
+
+<!-- DRIVER -->
+<section id="driver" class="section light">
+  <div class="wrap split">
+    <div class="txt">
+      <div class="eyebrow mono" style="color:var(--blue)">01 — DRIVER APP</div>
+      <h2 class="h2" style="margin-bottom:18px">Your whole truck business, in your pocket.</h2>
+      <p style="margin:0 0 30px;font-size:17px;line-height:1.6;color:var(--muted)">Run solo or link to a dispatcher. Either way, the money you're owed and the paperwork you need stop living in your text messages.</p>
+      <div class="feats">
+        <button class="feat" data-dt="loads">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h11v9H3z"/><path d="M14 9h4l3 3v3h-7z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+          <span><b>Load board &amp; self-dispatch</b><small>Filter by truck size and radius. See rate per mile before you call.</small></span>
+        </button>
+        <button class="feat" data-dt="det">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>
+          <span><b>Detention tracker</b><small>Check in at the dock and the clock starts itself. Billable time turns into dollars live.</small></span>
+        </button>
+        <button class="feat" data-dt="docs">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>
+          <span><b>Document vault</b><small>Rate cons, BOLs and PODs scanned and filed under the load they belong to.</small></span>
+        </button>
+        <button class="feat" data-dt="chat">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>
+          <span><b>Line to dispatch</b><small>One tap status updates. Messages live with the load, not in a group chat.</small></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="phone-col" id="driverPhoneCol">
+      <div class="phone lg" id="driverPhone" style="position:relative">
+        <div class="screen">
+          <div class="island"></div>
+
+          <div class="scr" data-dt-screen="loads">
+            <div class="p-title">Load board</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:11px"><span class="chip on">26' box</span><span class="chip">≤ 200 mi</span><span class="chip">From Newark</span></div>
+            <div class="lcard"><div class="a"><span>Newark → Allentown</span><span class="mono">$425</span></div><div class="b"><span>84 mi · today 10:30</span><span class="mono" style="color:var(--orange)">$5.06/mi</span></div></div>
+            <div class="lcard"><div class="a"><span>Edison → Hartford</span><span class="mono">$690</span></div><div class="b"><span>168 mi · today 1:00</span><span class="mono">$4.11/mi</span></div></div>
+            <div class="lcard"><div class="a"><span>Secaucus → Baltimore</span><span class="mono">$780</span></div><div class="b"><span>186 mi · tomorrow</span><span class="mono">$4.19/mi</span></div></div>
+            <div style="font-size:10px;color:#64748B;text-align:center">Sample loads for preview</div>
+          </div>
+
+          <div class="scr" data-dt-screen="det">
+            <div class="p-title">Detention</div>
+            <div style="font-size:12px;color:var(--gray)">Port Newark · Whse 4 · Dock 7</div>
+            <div class="ring" id="detRing"><div>
+              <div style="font-size:11px;color:var(--gray)">At the dock</div>
+              <div class="mono js-clock" style="font-size:28px;font-weight:600">2:14:30</div>
+              <div class="mono" style="font-size:15px;color:var(--orange)"><span class="js-owed">$12.08</span> owed</div>
+            </div></div>
+            <div class="dl"><span style="color:var(--gray)">Free time</span><span class="mono">2:00:00 used</span></div>
+            <div class="dl"><span style="color:var(--gray)">Rate</span><span class="mono">$50 / hr</span></div>
+            <div style="background:var(--orange);color:var(--navy);border-radius:12px;padding:12px;text-align:center;font-size:13px;font-weight:600">Send detention notice</div>
+          </div>
+
+          <div class="scr" data-dt-screen="docs">
+            <div class="p-title">Documents</div>
+            <div style="font-size:12px;color:var(--gray)">Load #LH-20418 · Newark → Allentown</div>
+            <div class="dl"><span>Rate confirmation</span><span style="color:#60A5FA">Signed</span></div>
+            <div class="dl"><span>Bill of lading</span><span style="color:#60A5FA">Scanned</span></div>
+            <div class="dl" style="border:1px solid var(--orange)"><span>Proof of delivery</span><span style="color:var(--orange)">Needed</span></div>
+            <div style="margin-top:6px;height:170px;border-radius:14px;background:var(--navy2);display:flex;align-items:center;justify-content:center">
+              <div style="width:120px;height:140px;border:2px dashed var(--orange);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--orange);text-align:center;padding:8px">Align POD<br>inside frame</div>
+            </div>
+            <div style="background:var(--blue);border-radius:12px;padding:12px;text-align:center;font-size:13px;font-weight:600">Scan POD</div>
+          </div>
+
+          <div class="scr" data-dt-screen="chat">
+            <div class="p-title">Dana · Dispatch</div>
+            <div style="font-size:11px;color:var(--gray)">Linked via RMS-4471</div>
+            <div class="bub in">Pickup moved to 10:30. Dock 7, ask for Luis.</div>
+            <div class="bub out">Copy. Rolling now.</div>
+            <div class="sys mono">STATUS → AT PICKUP · 10:24</div>
+            <div class="sys mono" style="color:var(--orange)">DETENTION STARTED · 12:24</div>
+            <div class="bub in">Saw the clock. I'll bill the broker for it.</div>
+            <div style="margin-top:auto;display:flex;gap:6px;flex-wrap:wrap;font-size:11px">
+              <span style="border:1px solid var(--line-d2);border-radius:999px;padding:6px 10px">Loaded</span>
+              <span style="border:1px solid var(--line-d2);border-radius:999px;padding:6px 10px">Running late</span>
+              <span style="border:1px solid var(--line-d2);border-radius:999px;padding:6px 10px">Delivered</span>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:space-around;padding:8px 8px 22px;border-top:1px solid var(--line-d)">
+            <button class="ptab" data-dt="loads">Loads</button>
+            <button class="ptab" data-dt="det">Detention</button>
+            <button class="ptab" data-dt="docs">Docs</button>
+            <button class="ptab" data-dt="chat">Chat</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DISPATCHER -->
+<section id="dispatch" class="section">
+  <div class="wrap">
+    <div class="dp-head">
+      <div style="max-width:620px">
+        <div class="eyebrow mono" style="color:var(--orange)">02 — DISPATCHER</div>
+        <h2 class="h2">See every truck. Send every load. From one screen.</h2>
+      </div>
+      <div class="seg" role="tablist" aria-label="Dispatcher screens">
+        <button data-dp="fleet">Fleet map</button>
+        <button data-dp="loads">Loads</button>
+        <button data-dp="guard">Load Guard</button>
+        <button data-dp="pay">Settlements</button>
+      </div>
+    </div>
+
+    <div class="dmac-wrap" id="dmacWrap">
+      <div class="dmac" id="dmac">
+        <div class="mac-lid">
+          <div class="dm-screen">
+            <div class="bar"><i></i><i></i><i></i><div class="url mono">app.lanehook.com/dispatch/<span id="dpPath">fleet</span></div></div>
+            <div class="dm-body">
+
+              <div class="dv fleet" data-dp-view="fleet">
+                <div class="map">
+                  <svg width="100%" height="100%" viewBox="0 0 560 500" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;inset:0">
+                    <path d="M60 420 C 160 360, 200 260, 300 230 S 470 120, 520 60" stroke="#2563EB" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <path d="M90 120 C 180 160, 260 200, 300 230" stroke="#2E3D6B" stroke-width="4" fill="none" stroke-dasharray="2 10" stroke-linecap="round"/>
+                    <path d="M300 230 C 340 300, 400 380, 480 440" stroke="#F59E0B" stroke-width="4" fill="none" stroke-linecap="round"/>
+                  </svg>
+                  <div class="pin" style="left:52%;top:43%"><i class="pulse" style="background:var(--orange)"></i><span>Unit 12 · Marcus</span></div>
+                  <div class="pin" style="left:72%;top:14%"><i style="background:var(--blue)"></i><span>Unit 07</span></div>
+                  <div class="pin" style="left:12%;top:76%"><i style="background:var(--blue)"></i><span>Unit 21</span></div>
+                  <div class="pin" style="left:12%;top:20%"><i style="background:var(--gray)"></i><span>Unit 03 · idle</span></div>
+                  <div class="legend"><span><b style="color:var(--blue)">●</b> Rolling</span><span><b style="color:var(--orange)">●</b> Detention</span><span><b style="color:var(--gray)">●</b> Idle</span></div>
+                </div>
+                <div class="side-list">
+                  <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:18px">Live roster</div>
+                  <div class="rc" style="border-color:var(--orange)"><div class="t"><span>Marcus R. · U12</span><span class="mono js-clock" style="color:#B45309">2:14:30</span></div><div class="s">Detention at Port Newark · <span class="js-owed">$12.08</span> accruing</div></div>
+                  <div class="rc"><div class="t"><span>Jay P. · U07</span><span style="color:var(--blue)">Rolling</span></div><div class="s">I-84 E · ETA Hartford 1:10 PM</div></div>
+                  <div class="rc"><div class="t"><span>Ana S. · U21</span><span style="color:var(--blue)">Rolling</span></div><div class="s">I-95 S · ETA Baltimore 3:40 PM</div></div>
+                  <div class="rc"><div class="t"><span>Devon T. · U03</span><span style="color:#64748B">Idle 2h</span></div><div class="s">Elizabeth, NJ · needs a load</div></div>
+                </div>
+              </div>
+
+              <div class="dv col-v" data-dp-view="loads">
+                <div class="dhead"><h3>Loads this week</h3><div style="background:var(--blue);color:#fff;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600">+ New load</div></div>
+                <div class="kan">
+                  <div class="kcol"><div class="cap" style="color:var(--muted)">Booked · 2</div>
+                    <div class="kc"><b>Linden → Scranton</b>Unassigned · $560<div style="margin-top:8px;font-size:11px;color:var(--blue);font-weight:600">Assign driver →</div></div>
+                    <div class="kc"><b>Kearny → Albany</b>Devon T. · $910</div>
+                  </div>
+                  <div class="kcol"><div class="cap" style="color:var(--muted)">In transit · 3</div>
+                    <div class="kc" style="box-shadow:inset 0 0 0 1px var(--orange)"><b>Newark → Allentown</b>Marcus R. · $425 + detention</div>
+                    <div class="kc"><b>Edison → Hartford</b>Jay P. · $690</div>
+                    <div class="kc"><b>Secaucus → Baltimore</b>Ana S. · $780</div>
+                  </div>
+                  <div class="kcol"><div class="cap" style="color:var(--muted)">Delivered · 2</div>
+                    <div class="kc"><b>Elizabeth → Trenton</b>POD in · ready to invoice</div>
+                    <div class="kc"><b>Paterson → Philly</b>Invoiced · $640</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dv guard" data-dp-view="guard">
+                <div class="gl">
+                  <div style="display:flex;align-items:center;gap:10px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M12 8v5M12 16h.01"/></svg><h3 style="font-size:20px">Check before you dispatch</h3></div>
+                  <div style="font-size:13px;color:var(--muted)">Linden → Scranton · posted by "Northline Freight LLC"</div>
+                  <div class="chk"><span>Broker authority on file</span><b style="color:var(--blue)">Looks active</b></div>
+                  <div class="chk"><span>Contact matches records</span><b style="color:#B45309">Email domain changed</b></div>
+                  <div class="chk"><span>Same load, other posters</span><b style="color:#B45309">Seen under 2 MCs</b></div>
+                  <div class="chk"><span>Your history with them</span><b style="color:var(--muted)">First load</b></div>
+                  <div style="margin-top:auto;background:#FEF3C7;color:#78350F;border-radius:10px;padding:12px;font-size:13px;line-height:1.5"><b>Verify before you send a truck.</b> Call the broker on the number from their official listing, not the one in the email.</div>
+                </div>
+                <div class="gr">
+                  <div style="font-size:12px;color:var(--gray);letter-spacing:.06em">RECENT CHECKS</div>
+                  <div class="gline" style="border-top:none;padding-top:0"><span>Northline Freight</span><b style="color:var(--orange)">Flagged</b></div>
+                  <div class="gline"><span>Atlas Lane Logistics</span><b style="color:#60A5FA">Clear</b></div>
+                  <div class="gline"><span>Keystone Brokerage</span><b style="color:#60A5FA">Clear</b></div>
+                  <div class="gline"><span>Harbor Point Freight</span><b style="color:#60A5FA">Clear</b></div>
+                  <div style="margin-top:auto;font-size:11px;color:#64748B">Sample brokers for preview</div>
+                </div>
+              </div>
+
+              <div class="dv col-v" data-dp-view="pay">
+                <div class="dhead"><h3>Settlements · Oct 5 – 11</h3><div style="background:var(--navy);color:var(--off);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600">Export PDFs</div></div>
+                <div class="tbl-box"><div class="tbl">
+                  <div class="tr h"><span>Driver</span><span>Loads</span><span>Gross</span><span>Fuel + fees</span><span>Net pay</span></div>
+                  <div class="tr mono"><b style="font-family:'IBM Plex Sans'">Marcus R.</b><span>5</span><span>$2,840</span><span>−$612</span><b>$2,228</b></div>
+                  <div class="tr mono"><b style="font-family:'IBM Plex Sans'">Jay P.</b><span>4</span><span>$2,610</span><span>−$540</span><b>$2,070</b></div>
+                  <div class="tr mono"><b style="font-family:'IBM Plex Sans'">Ana S.</b><span>4</span><span>$2,955</span><span>−$688</span><b>$2,267</b></div>
+                  <div class="tr mono"><b style="font-family:'IBM Plex Sans'">Devon T.</b><span>3</span><span>$1,790</span><span>−$401</span><b>$1,389</b></div>
+                </div></div>
+                <div style="display:flex;gap:14px;flex-wrap:wrap">
+                  <div class="stat" style="background:var(--navy);color:var(--off)"><div style="font-size:12px;color:var(--gray)">Detention recovered this week</div><div class="mono" style="font-size:24px;font-weight:600;color:var(--orange)">$310</div></div>
+                  <div class="stat" style="background:#fff;border:1px solid var(--line)"><div style="font-size:12px;color:var(--muted)">Docs missing before invoicing</div><div class="mono" style="font-size:24px;font-weight:600">1 POD</div></div>
+                </div>
+                <div style="font-size:11px;color:#64748B">Sample figures for preview</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="mac-base"></div>
+      </div>
+    </div>
+
+    <div class="dp-feats">
+      <div><b>Fleet roster</b><p>Every driver on your code with live status, location, and the load they're on.</p></div>
+      <div><b>Send &amp; track loads</b><p>Push a load to a driver's phone and watch it move from booked to delivered.</p></div>
+      <div style="border-color:var(--orange)"><b>Load Guard</b><p>A quick broker check for double-brokering red flags before a truck rolls.</p></div>
+      <div><b>Settlements</b><p>Driver pay sheets built from the loads, fuel, and fees already in the app.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section id="tools" class="section light">
+  <div class="wrap">
+    <div style="max-width:680px;margin-bottom:44px">
+      <div class="eyebrow mono" style="color:var(--blue)">03 — TRY IT</div>
+      <h2 class="h2">Two tools you can use right now.</h2>
+    </div>
+    <div class="tools">
+      <div class="tool" style="background:#fff;border:1px solid var(--line)">
+        <div><h3>Detention calculator</h3><div style="font-size:14px;color:var(--muted);margin-top:6px">How much did that dock wait cost you?</div></div>
+        <div>
+          <label for="hours" class="lbl"><span>Time at the dock</span><span class="mono" id="hoursLbl">4h 30m</span></label>
+          <input id="hours" type="range" min="0" max="8" step="0.25" value="4.5">
+        </div>
+        <div>
+          <div class="lbl"><span>Free time on the rate con</span></div>
+          <div class="free" id="free">
+            <button data-free="1">1 hr</button><button data-free="2" class="on">2 hr</button><button data-free="3">3 hr</button>
+          </div>
+        </div>
+        <div>
+          <label for="rate" class="lbl"><span>Detention rate</span><span class="mono" id="rateLbl">$50/hr</span></label>
+          <input id="rate" type="range" min="25" max="100" step="5" value="50">
+        </div>
+        <div class="owed">
+          <div><div style="font-size:13px;color:var(--gray)">You're owed</div><div class="v mono" id="owed">$125.00</div></div>
+          <div style="font-size:13px;color:#CBD5E1;max-width:240px;line-height:1.5" id="owedNote"></div>
+        </div>
+      </div>
+
+      <div class="tool" style="background:var(--navy);color:var(--off)">
+        <div><h3>Load Guard check</h3><div style="font-size:14px;color:var(--soft);margin-top:6px">Type a broker MC number and run a sample check.</div></div>
+        <form class="mc-row" id="mcForm">
+          <label for="mc" class="sr">Broker MC number</label>
+          <input id="mc" class="mono" type="text" inputmode="numeric" autocomplete="off" placeholder="MC number, e.g. 482910">
+          <button type="submit" class="btn btn-o" style="padding:14px 22px;font-size:15px">Run check</button>
+        </form>
+        <div class="gres empty" id="gres" aria-live="polite">Results show up here: authority, contact match, duplicate postings, and your history with this broker.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPANY LINK -->
+<section class="link">
+  <div class="wrap split" style="gap:56px">
+    <div class="txt" style="flex-basis:380px">
+      <div class="eyebrow mono" style="color:var(--off);opacity:.8">04 — COMPANY LINK</div>
+      <h2 class="h2">The hook in LaneHook.</h2>
+      <p style="margin:18px 0 0;font-size:17px;line-height:1.6;color:#DBEAFE">Driving solo? The driver app works on its own. Running a fleet? Share one company code and both sides lock together: loads go out, statuses come back, and everyone's looking at the same truth.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="n mono">01</span><div><b>Dispatcher creates the company</b><small>Gets a code like <span class="mono" style="color:var(--orange)">RMS-4471</span></small></div></div>
+      <div class="step"><span class="n mono">02</span><div><b>Drivers enter the code once</b><small>They show up on the roster instantly</small></div></div>
+      <div class="step"><span class="n mono">03</span><div><b>Loads, updates &amp; docs sync both ways</b><small>Unlink anytime. The driver keeps their own records.</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section light">
+  <div style="max-width:820px;margin:0 auto">
+    <h2 class="h2" style="margin-bottom:34px">Questions drivers ask</h2>
+    <div id="faqList"></div>
+    <div style="border-top:1px solid #CBD5E1"></div>
+  </div>
+</section>
+
+<!-- JOIN -->
+<section id="join" class="join">
+  <div class="road" style="height:110px"></div>
+  <div style="max-width:640px;margin:0 auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:20px;position:relative">
+    <svg width="96" height="52" aria-hidden="true"><use href="#hook"/></svg>
+    <h2 class="h2" style="font-size:clamp(34px,7vw,48px)">Get hooked up early.</h2>
+    <p style="margin:0;font-size:17px;line-height:1.6;color:var(--soft)">We're opening LaneHook to drivers and dispatch teams in small batches.</p>
+    <form id="joinForm" style="width:100%;display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div class="roles" id="roles">
+        <span style="font-size:14px;color:var(--gray);margin-right:4px">I'm a</span>
+        <button type="button" data-role="driver" class="on">Driver</button>
+        <button type="button" data-role="dispatcher">Dispatcher</button>
+        <button type="button" data-role="fleet owner">Fleet owner</button>
+      </div>
+      <div class="email-row">
+        <label for="email" class="sr">Email</label>
+        <input id="email" type="email" placeholder="you@email.com" autocomplete="email">
+        <button type="submit" class="btn btn-o" style="padding:15px 24px;font-size:15px">Join the list</button>
+      </div>
+    </form>
+    <div id="joined" class="drop" style="display:none;background:var(--navy2);border:1px solid var(--blue);border-radius:16px;padding:20px 24px;font-size:15px;line-height:1.6" aria-live="polite"></div>
+  </div>
+
+  <footer class="foot">
+    <svg width="140" height="17" aria-hidden="true"><use href="#wordmark"/></svg>
+    <nav><a href="#driver">Driver app</a><a href="#dispatch">Dispatcher</a><a href="#tools">Tools</a><a href="#faq">FAQ</a></nav>
+    <div>© 2026 LaneHook · lanehook.com</div>
+  </footer>
+</section>
+</main>
+
+<script>
+(function(){
+  var NAVY='#0B132B',BLUE='#2563EB',ORANGE='#F59E0B',OFF='#F8FAFC';
+  var $=function(id){return document.getElementById(id)};
+  var $$=function(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))};
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function money(n){return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+  function pad(n){return (n<10?'0':'')+n}
+  function now(){try{return new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}catch(e){return 'now'}}
+
+  /* ---------- NAV ---------- */
+  var nav=$('nav'),burger=$('burger');
+  burger.addEventListener('click',function(){var o=nav.classList.toggle('open');burger.setAttribute('aria-expanded',o?'true':'false')});
+  $$('#navLinks a').forEach(function(a){a.addEventListener('click',function(){nav.classList.remove('open');burger.setAttribute('aria-expanded','false')})});
+
+  /* ---------- HERO DEMO ---------- */
+  var H={step:0,status:0,feed:[
+    {t:'Jay P. marked Loaded at Edison, NJ',time:'9:58 AM',dot:BLUE},
+    {t:'Ana S. checked in at Secaucus',time:'9:41 AM',dot:BLUE},
+    {t:'Load Guard flagged Northline Freight',time:'9:12 AM',dot:ORANGE}]};
+  var STAT=['Accepted','At pickup','Loaded','Delivered'];
+  function push(t,dot){H.feed.unshift({t:t,time:now(),dot:dot});H.feed=H.feed.slice(0,5)}
+  var hookSvg='<svg width="18" height="10" aria-hidden="true"><use href="#hook"/></svg>';
+
+  function renderHero(){
+    var s=H.step,st=H.status;
+    var m={status:'Available',c:'#475569',bg:'#F1F5F9',where:'Newark, NJ · ready'};
+    if(s===1)m={status:'Offer sent',c:'#B45309',bg:'#FEF3C7',where:'Waiting on Marcus…'};
+    if(s===2)m={status:STAT[st],c:st===3?'#fff':'#1D4ED8',bg:st===3?BLUE:'#DBEAFE',where:'Newark → Allentown · $425'};
+    var rows=[
+      {i:'MR',n:'Marcus R.',u:'U12',w:m.where,st:m.status,c:m.c,bg:m.bg,send:s===0},
+      {i:'JP',n:'Jay P.',u:'U07',w:'Edison → Hartford',st:'Loaded',c:'#1D4ED8',bg:'#DBEAFE'},
+      {i:'AS',n:'Ana S.',u:'U21',w:'Secaucus → Baltimore',st:'Rolling',c:'#1D4ED8',bg:'#DBEAFE'},
+      {i:'DT',n:'Devon T.',u:'U03',w:'Elizabeth, NJ',st:'Idle 2h',c:'#475569',bg:'#F1F5F9'}];
+    $('heroRoster').innerHTML=rows.map(function(r){
+      return '<div class="row'+(r.send?' hl':'')+'"><div class="av">'+r.i+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">'+r.n+' <span style="color:#94A3B8;font-weight:500">· '+r.u+'</span></div><div style="font-size:12px;color:#64748B">'+esc(r.w)+'</div></div><span class="badge" style="color:'+r.c+';background:'+r.bg+'">'+r.st+'</span>'+(r.send?'<button class="send pulse" data-act="send">Send load</button>':'')+'</div>';
+    }).join('');
+    $('heroFeed').innerHTML=H.feed.map(function(f,i){
+      return '<div class="fi'+(i===0?' drop':'')+'"><i style="background:'+f.dot+'"></i><div style="flex:1"><div style="color:var(--off)">'+esc(f.t)+'</div><div class="mono" style="color:#64748B;font-size:11px">'+f.time+'</div></div></div>';
+    }).join('');
+    $('kpiRolling').textContent=2+(s===2&&st>=1&&st<3?1:0);
+    $('kpiNeed').textContent=s===0?2:1;
+
+    var p='';
+    if(s===0){
+      p='<div class="p-body"><div class="p-card"><div style="font-size:12px;color:var(--gray)">Status</div><div style="font-size:16px;font-weight:600;margin-top:2px">Available · Newark, NJ</div><div style="font-size:12px;color:var(--gray);margin-top:8px">Waiting on dispatch. New loads land here the second they\'re sent.</div></div>'+
+        '<div style="display:flex;gap:10px"><div style="flex:1;background:var(--navy2);border-radius:14px;padding:12px"><div style="font-size:11px;color:var(--gray)">This week</div><div class="mono" style="font-size:17px;font-weight:600">$2,840</div></div><div style="flex:1;background:var(--navy2);border-radius:14px;padding:12px"><div style="font-size:11px;color:var(--gray)">Miles</div><div class="mono" style="font-size:17px;font-weight:600">1,126</div></div></div>'+
+        '<div style="border:1px dashed var(--line-d2);border-radius:14px;padding:22px 14px;text-align:center;color:#64748B;font-size:12px">No active load</div></div>';
+    } else if(s===1){
+      p='<div class="p-body"><div class="drop" style="background:var(--off);color:var(--navy);border-radius:16px;padding:12px 14px;display:flex;gap:10px;align-items:center"><div style="width:28px;height:28px;border-radius:8px;background:var(--navy);display:flex;align-items:center;justify-content:center">'+hookSvg+'</div><div style="font-size:12px;line-height:1.35"><b>New load from Dana</b><br>Newark → Allentown · $425</div></div>'+
+        '<div class="p-card" style="border-color:var(--blue);border-radius:18px;display:flex;flex-direction:column;gap:10px"><div style="font-size:11px;color:var(--orange);font-weight:600;letter-spacing:.08em">LOAD OFFER</div><div style="font-size:17px;font-weight:600;line-height:1.3">Newark, NJ<br>→ Allentown, PA</div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--soft)"><span>84 mi · 26\' box</span><span>Pickup 10:30</span></div><div style="display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid #22305A;padding-top:10px"><span style="font-size:12px;color:var(--gray)">Rate</span><span class="mono" style="font-size:22px;font-weight:600">$425</span></div>'+
+        '<div style="display:flex;gap:8px"><button data-act="decline" style="flex:1;background:var(--navy3);color:var(--off);border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;min-height:44px">Decline</button><button data-act="accept" class="pulse" style="flex:1.4;background:var(--orange);color:var(--navy);border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;min-height:44px">Accept</button></div></div></div>';
+    } else {
+      var steps=STAT.map(function(l,i){
+        var dot=i<st?BLUE:(i===st?ORANGE:'transparent'),ring=i<st?BLUE:(i===st?ORANGE:'#2E3D6B');
+        return '<div style="display:flex;align-items:center;gap:10px;font-size:13px;color:'+(i<=st?OFF:'#64748B')+'"><span style="width:12px;height:12px;border-radius:50%;background:'+dot+';border:2px solid '+ring+';flex-shrink:0"></span>'+l+'</div>';
+      }).join('');
+      p='<div class="p-body"><div style="background:var(--navy2);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:var(--orange);font-weight:600;letter-spacing:.08em">ACTIVE LOAD</span><span class="mono" style="font-size:13px">$425</span></div><div style="font-size:15px;font-weight:600">Newark → Allentown</div><div style="display:flex;flex-direction:column;gap:9px">'+steps+'</div></div>'+
+        (st<3?'<button data-act="next" class="pulse" style="background:var(--orange);color:var(--navy);border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:600;min-height:48px">Update status → '+STAT[st+1]+'</button>':'<div class="drop" style="background:var(--blue);border-radius:14px;padding:14px;font-size:13px;line-height:1.5"><b>Delivered.</b> POD uploaded and sent to dispatch. Nice run.</div>')+'</div>';
+    }
+    $('heroPhone').innerHTML=p;
+
+    var hint='Tap "Send load" on the laptop to dispatch Marcus.',btns='';
+    if(s===0)btns='<button class="hint-btn mobile-only" data-act="send">Send load</button>';
+    if(s===1)hint='Now accept the load on Marcus\'s phone.';
+    if(s===2&&st<3)hint='Tap the status button on the phone. Watch the laptop update.';
+    if(s===2&&st===3)hint='Delivered. That\'s the whole loop, no texts needed.';
+    if(s>0)btns='<button class="hint-reset" data-act="reset">Reset</button>';
+    $('heroHint').textContent=hint;$('heroHintBtns').innerHTML=btns;
+  }
+  var ACT={
+    send:function(){H.step=1;push('Dana sent Newark → Allentown to Marcus',BLUE)},
+    accept:function(){H.step=2;H.status=0;push('Marcus accepted Newark → Allentown',BLUE)},
+    decline:function(){H.step=0;push('Marcus passed on the load','#94A3B8')},
+    next:function(){H.status=Math.min(3,H.status+1);var m=['','Marcus arrived at pickup · Newark','Marcus is loaded and rolling','Marcus delivered · POD uploaded'];push(m[H.status],H.status===3?ORANGE:BLUE)},
+    reset:function(){H.step=0;H.status=0}
+  };
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-act]');if(!b)return;
+    var a=ACT[b.getAttribute('data-act')];if(a){a();renderHero()}
+  });
+  renderHero();
+
+  /* ---------- DETENTION TICKER ---------- */
+  var t0=Date.now();
+  function tick(){
+    var el=8070+Math.floor((Date.now()-t0)/1000);
+    var clock=Math.floor(el/3600)+':'+pad(Math.floor(el%3600/60))+':'+pad(el%60);
+    var owed=money(Math.max(0,el-7200)/3600*50);
+    $$('.js-clock').forEach(function(n){n.textContent=clock});
+    $$('.js-owed').forEach(function(n){n.textContent=owed});
+    var deg=Math.min(360,el/(4*3600)*360);
+    $('detRing').style.background='conic-gradient('+ORANGE+' '+deg.toFixed(1)+'deg,#1A2547 0)';
+  }
+  tick();setInterval(tick,1000);
+
+  /* ---------- DRIVER TABS ---------- */
+  function setDt(k){
+    $$('[data-dt]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-dt')===k)});
+    $$('[data-dt-screen]').forEach(function(s){s.classList.toggle('on',s.getAttribute('data-dt-screen')===k)});
+  }
+  $$('[data-dt]').forEach(function(b){b.addEventListener('click',function(){setDt(b.getAttribute('data-dt'))})});
+  setDt('det');
+
+  /* ---------- DISPATCH TABS ---------- */
+  var paths={fleet:'fleet',loads:'loads',guard:'load-guard',pay:'settlements'};
+  function setDp(k){
+    $$('[data-dp]').forEach(function(b){var on=b.getAttribute('data-dp')===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false')});
+    $$('[data-dp-view]').forEach(function(v){v.classList.toggle('on',v.getAttribute('data-dp-view')===k)});
+    $('dpPath').textContent=paths[k];
+    fit();
+  }
+  $$('[data-dp]').forEach(function(b){b.setAttribute('role','tab');b.addEventListener('click',function(){setDp(b.getAttribute('data-dp'))})});
+
+  /* ---------- CALCULATOR ---------- */
+  var C={hours:4.5,free:2,rate:50};
+  function calc(){
+    var bill=Math.max(0,C.hours-C.free),h=Math.floor(C.hours),m=Math.round((C.hours-h)*60);
+    $('hoursLbl').textContent=h+'h '+pad(m)+'m';
+    $('rateLbl').textContent='$'+C.rate+'/hr';
+    $('owed').textContent=money(bill*C.rate);
+    $('owedNote').textContent=bill>0?(+bill.toFixed(2))+' billable hrs after '+C.free+' hr free. LaneHook logs the timestamps for the invoice.':'Still inside free time. The clock keeps watching so you don\'t have to.';
+    $$('#free button').forEach(function(b){b.classList.toggle('on',+b.getAttribute('data-free')===C.free)});
+  }
+  $('hours').addEventListener('input',function(e){C.hours=parseFloat(e.target.value);calc()});
+  $('rate').addEventListener('input',function(e){C.rate=parseInt(e.target.value,10);calc()});
+  $$('#free button').forEach(function(b){b.addEventListener('click',function(){C.free=+b.getAttribute('data-free');calc()})});
+  calc();
+
+  /* ---------- LOAD GUARD ---------- */
+  $('mcForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var v=($('mc').value||'').replace(/\D/g,'')||'482910';$('mc').value=v;
+    var flagged=parseInt(v.slice(-1),10)%2===0;
+    var rows=flagged?[['Broker authority','Active','#60A5FA'],['Contact info','Changed in last 30 days',ORANGE],['Duplicate postings','Same load under 2 MCs',ORANGE],['Your history','No past loads','#CBD5E1']]
+      :[['Broker authority','Active','#60A5FA'],['Contact info','Matches records','#60A5FA'],['Duplicate postings','None found','#60A5FA'],['Your history','3 paid loads','#60A5FA']];
+    var g=$('gres');g.className='gres full drop';g.style.borderColor=flagged?ORANGE:BLUE;
+    g.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span class="mono" style="font-size:15px">MC-'+esc(v)+'</span><span style="background:'+(flagged?ORANGE:'#60A5FA')+';color:'+NAVY+';border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600">'+(flagged?'Verify first':'Looks clear')+'</span></div>'+
+      rows.map(function(r){return '<div class="gline"><span style="color:#CBD5E1">'+r[0]+'</span><b style="color:'+r[2]+'">'+r[1]+'</b></div>'}).join('')+
+      '<div style="font-size:12px;color:#64748B;margin-top:4px">Sample result for preview. The real check pulls from public carrier and broker records.</div>';
+  });
+
+  /* ---------- FAQ ---------- */
+  var FAQ=[
+    ['Is LaneHook a dispatch service or a broker?','Neither. LaneHook is software. You and your dispatcher keep booking loads your way. We never sit in the middle of your payments and we don\'t broker freight.'],
+    ['Do I need a dispatcher to use the driver app?','No. The driver app works on its own for independent owner-operators. Company Link is optional for when you want a dispatcher connected.'],
+    ['Who makes the final call on a rate or a load?','You do, every time. Tools like the rate assistant draft counters inside a floor you set. Nothing gets booked or accepted on its own.'],
+    ['What happens to my records if I unlink from a company?','Your loads, documents, and mileage stay with you. The dispatcher keeps the records for loads they sent you.']];
+  $('faqList').innerHTML=FAQ.map(function(f,i){
+    return '<div class="faq-i'+(i===0?' open':'')+'"><button class="faq-q" aria-expanded="'+(i===0)+'" aria-controls="fa'+i+'"><span>'+f[0]+'</span><span class="ic" aria-hidden="true">'+(i===0?'−':'+')+'</span></button><div class="faq-a" id="fa'+i+'">'+f[1]+'</div></div>';
+  }).join('');
+  $$('.faq-q').forEach(function(q){q.addEventListener('click',function(){
+    var item=q.parentNode,open=!item.classList.contains('open');
+    $$('.faq-i').forEach(function(x){x.classList.remove('open');x.querySelector('.faq-q').setAttribute('aria-expanded','false');x.querySelector('.ic').textContent='+'});
+    if(open){item.classList.add('open');q.setAttribute('aria-expanded','true');q.querySelector('.ic').textContent='−'}
+  })});
+
+  /* ---------- JOIN ---------- */
+  var role='driver';
+  $$('#roles button').forEach(function(b){b.addEventListener('click',function(){role=b.getAttribute('data-role');$$('#roles button').forEach(function(x){x.classList.toggle('on',x===b)})})});
+  $('joinForm').addEventListener('submit',function(e){
+    e.preventDefault();var em=$('email');
+    if(!/^\S+@\S+\.\S+$/.test(em.value)){em.classList.add('bad');em.focus();em.placeholder='Enter a valid email';return}
+    $('joinForm').style.display='none';var j=$('joined');j.style.display='block';
+    j.innerHTML='You\'re on the list as a <b style="color:var(--orange)">'+role+'</b>. We\'ll reach out when your spot opens.';
+  });
+
+  /* ---------- FIT DEVICES TO SCREEN ---------- */
+  function fit(){
+    var stage=$('stage'),inner=$('stageInner'),mac=$('heroMac'),w=stage.clientWidth;
+    if(w>=720){
+      stage.classList.remove('stacked');mac.style.zoom='';
+      inner.style.zoom=Math.min(1,w/1080);
+    } else {
+      stage.classList.add('stacked');inner.style.zoom='';
+      mac.style.zoom=Math.min(1,w/1000);
+    }
+    var dw=$('dmacWrap').clientWidth,d=$('dmac');
+    d.style.zoom=dw>=720?Math.min(1,dw/1060):'';
+    var pc=$('driverPhoneCol'),ph=$('driverPhone'),pw=pc.parentNode.clientWidth;
+    ph.style.zoom=pw<330?pw/330:'';
+  }
+  window.addEventListener('resize',fit);
+  setDp('fleet');
+})();
+</script>
+</body>
+</html>
