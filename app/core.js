@@ -181,6 +181,7 @@ LH.go = p => { if (location.hash === '#/' + p) LH.render(); else location.hash =
 let tickTimer = null;
 LH.render = function () {
   if (LH.auth && !LH.auth.local && !LH.auth.user) { if (!document.querySelector('.auth')) LH.auth.showLogin(); return; }
+  if (LH.plans && LH.auth && !LH.auth.local && LH.auth.user && LH.plans.gate()) return;
   closeMenu();
   const r = LH.route(), pg = LH.pages[r.name] || LH.pages.home;
   const out = pg(r) || { title: 'LaneHook', html: '' };

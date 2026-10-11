@@ -10,16 +10,16 @@ const PLANS = ['free', 'solo', 'crew', 'fleet', 'comped'];
 
 const str = (v, n) => String(v == null ? '' : v).replace(/[<>]/g, '').trim().slice(0, n);
 function cleanSettings(d) {
-  const out = { earlyAccess: !!d.earlyAccess, freeLoadLimit: Math.max(0, Math.min(1000, parseInt(d.freeLoadLimit, 10) || 0)), plans: {} };
+  const out = { earlyAccess: !!d.earlyAccess, trialDays: Math.max(0, Math.min(30, parseInt(d.trialDays, 10) || 0)), plans: {} };
   let pop = false;
-  ['free', 'solo', 'crew', 'fleet'].forEach(k => {
+  ['solo', 'crew', 'fleet'].forEach(k => {
     const p = (d.plans || {})[k] || {};
     const feats = (Array.isArray(p.features) ? p.features : []).map(f => str(f, 80)).filter(Boolean).slice(0, 10);
-    const popular = !!p.popular && !pop && k !== 'free'; if (popular) pop = true;
+    const popular = !!p.popular && !pop; if (popular) pop = true;
     out.plans[k] = {
       name: str(p.name, 24) || k[0].toUpperCase() + k.slice(1),
-      price: k === 'free' ? 0 : Math.max(1, Math.min(9999, Math.round(Number(p.price) || 1))),
-      tagline: str(p.tagline, 60), available: k === 'free' ? true : !!p.available, popular, features: feats
+      price: Math.max(1, Math.min(9999, Math.round(Number(p.price) || 1))),
+      tagline: str(p.tagline, 60), available: !!p.available, popular, features: feats
     };
   });
   return out;

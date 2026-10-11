@@ -20,10 +20,11 @@ exports.handler = async (event) => {
       if (s.earlyAccess) return json(400, { error: 'early_access' });
       if (!p || plan === 'free' || !p.available || !(p.price > 0)) return json(400, { error: 'bad_plan' });
       if (row && ['active', 'trialing', 'past_due'].includes(row.sub_status)) return json(409, { error: 'already_subscribed' });
+      const trial = (!row || !row.stripe_subscription_id) ? Math.max(0, Math.min(30, parseInt(s.trialDays, 10) || 0)) : 0; // one trial per person
       const params = {
         mode: 'subscription', client_reference_id: user.id, allow_promotion_codes: true,
         line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: Math.round(p.price * 100), recurring: { interval: 'month' }, product_data: { name: 'LaneHook ' + p.name } } }],
-        metadata: { uid: user.id, plan }, subscription_data: { metadata: { uid: user.id, plan } },
+        metadata: { uid: user.id, plan }, subscription_data: Object.assign({ metadata: { uid: user.id, plan } }, trial ? { trial_period_days: trial } : {}),
         success_url: origin + '/app/?billing=success#/settings', cancel_url: origin + '/app/#/settings'
       };
       if (row && row.stripe_customer_id) params.customer = row.stripe_customer_id; else params.customer_email = user.email;

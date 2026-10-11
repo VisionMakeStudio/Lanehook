@@ -102,7 +102,7 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-b
 const $=(s,r=document)=>r.querySelector(s), esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const C=window.LH_CONFIG, sb=window.supabase.createClient(C.supabaseUrl,C.supabaseKey,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 let D={users:[],payments:[],settings:null,stripe:{},me:''}, Q='', FILT='all', SORT='new', DRAFT=null, DIRTY=false;
-const PAID=['active','trialing','past_due'];
+const PAID=['active','past_due'];
 const $$=n=>(n<0?'-':'')+'$'+(Math.abs(n)/100).toLocaleString('en-US',{minimumFractionDigits:n%100?2:0,maximumFractionDigits:2});
 const day=s=>s?new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Never';
 const ago=s=>{if(!s)return 'Never';const d=(Date.now()-Date.parse(s))/864e5;return d<1?'Today':d<2?'Yesterday':Math.floor(d)+' days ago'};
@@ -139,7 +139,7 @@ function stats(){
   const months=[];for(let i=5;i>=0;i--){const d=new Date();d.setDate(1);d.setHours(0,0,0,0);d.setMonth(d.getMonth()-i);months.push({k:d.getFullYear()*12+d.getMonth(),label:d.toLocaleDateString('en-US',{month:'short'}),v:0})}
   P.forEach(p=>{const d=new Date(p.created_at),k=d.getFullYear()*12+d.getMonth(),m=months.find(x=>x.k===k);if(m)m.v+=p.amount});
   const mix={};U.forEach(u=>{const k=u.disabled?'disabled':u.plan;mix[k]=(mix[k]||0)+1});
-  return{mrr,rev30,revAll,total:U.length,paid:paidUsers.length,wk:U.filter(u=>now-Date.parse(u.created)<7*DAY).length,act:U.filter(u=>u.last&&now-Date.parse(u.last)<7*DAY).length,signups,months,mix,
+  return{mrr,rev30,revAll,total:U.length,paid:paidUsers.length,trials:U.filter(u=>u.status==='trialing').length,wk:U.filter(u=>now-Date.parse(u.created)<7*DAY).length,act:U.filter(u=>u.last&&now-Date.parse(u.last)<7*DAY).length,signups,months,mix,
     attention:U.filter(u=>u.status==='past_due'||(u.cancels&&PAID.includes(u.status)))};
 }
 function barChart(vals,labels,fmt,h=150){
@@ -168,7 +168,7 @@ function stripeBanner(){
 /* ---------- pages ---------- */
 function pageOverview(){
   const t=stats(),S=D.settings||{};
-  const kp=[['MRR',$$(t.mrr),'Monthly recurring'],['Revenue, 30 days',$$(t.rev30),'After refunds'],['Subscribers',t.total,'All accounts'],['Paid',t.paid,'Active plans'],['New this week',t.wk,''],['Active, 7 days',t.act,'Signed in']];
+  const kp=[['MRR',$$(t.mrr),'Monthly recurring'],['Revenue, 30 days',$$(t.rev30),'After refunds'],['Subscribers',t.total,'All accounts'],['Paying',t.paid,'Active plans'],['On trial',t.trials,'Free trial'],['New this week',t.wk,'']];
   const mixMax=Math.max(...Object.values(t.mix),1);
   const recentU=D.users.slice().sort((a,b)=>Date.parse(b.created)-Date.parse(a.created)).slice(0,5);
   const emailOf=id=>(D.users.find(u=>u.id===id)||{}).email||'Deleted account';
@@ -203,22 +203,22 @@ function rowHtml(u){
 function pageSubscribers(){
   const L=filtered();
   return `<div class="head"><div><h1>Subscribers</h1><p>Everyone who has signed up for LaneHook.</p></div><button class="btn sm" id="rf">Refresh</button></div>
-  <div class="tools"><input id="q" type="search" placeholder="Search email, business, MC" value="${esc(Q)}" aria-label="Search"><select id="fl" aria-label="Filter">${[['all','All'],['active','Active 7 days'],['paid','Paying'],['free','Free'],['comped','Comped'],['attention','Needs attention'],['disabled','Disabled']].map(o=>`<option value="${o[0]}" ${FILT===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select><select id="so3" aria-label="Sort">${[['new','Newest'],['last','Last active'],['loads','Most loads'],['email','Email A to Z']].map(o=>`<option value="${o[0]}" ${SORT===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
+  <div class="tools"><input id="q" type="search" placeholder="Search email, business, MC" value="${esc(Q)}" aria-label="Search"><select id="fl" aria-label="Filter">${[['all','All'],['active','Active 7 days'],['paid','Paying'],['free','No plan'],['comped','Comped'],['attention','Needs attention'],['disabled','Disabled']].map(o=>`<option value="${o[0]}" ${FILT===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select><select id="so3" aria-label="Sort">${[['new','Newest'],['last','Last active'],['loads','Most loads'],['email','Email A to Z']].map(o=>`<option value="${o[0]}" ${SORT===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
   <div class="card"><div class="cols"><span>Subscriber</span><span>Plan</span><span>Loads</span><span>Joined</span><span>Last active</span><span></span></div><div class="rows">${L.length?L.map(rowHtml).join(''):'<div class="empty">'+(D.users.length?'No one matches that search.':'No subscribers yet. They show up here after they sign in for the first time.')+'</div>'}</div></div>`;
 }
-const PN=['free','solo','crew','fleet'];
-function draft(){ if(!DRAFT)DRAFT=JSON.parse(JSON.stringify(D.settings)); return DRAFT }
+const PN=['solo','crew','fleet'];
+function draft(){ if(!DRAFT){DRAFT=JSON.parse(JSON.stringify(D.settings));if(DRAFT.trialDays==null)DRAFT.trialDays=7;DRAFT.plans=DRAFT.plans||{}} return DRAFT }
 function pagePlans(){
   const d=draft();
   return `<div class="head"><div><h1>Plans & pricing</h1><p>What you change here shows on lanehook.com and in the portal after you save.</p></div></div>
-  <div class="panel"><div class="trow"><div><b>Early access (everything free)</b><p>When on, everyone gets every feature free and nobody is charged. Turn it off to start charging for plans.</p></div><button class="sw ${d.earlyAccess?'on':''}" id="ea" role="switch" aria-checked="${d.earlyAccess}" aria-label="Early access"></button></div>
-  <label class="f" style="margin:14px 0 0;max-width:260px"><span>Free plan: loads per month (0 = unlimited)</span><input id="fll" type="number" min="0" max="1000" value="${esc(d.freeLoadLimit)}"></label>
-  <p style="font-size:13px;color:var(--muted);margin:10px 0 0;line-height:1.5">When early access is off: the free plan is limited to this many new loads a month, and the rate-con scanner and live broker checks need a paid plan.</p></div>
+  <div class="panel"><div class="trow"><div><b>Early access (everything free)</b><p>When on, everyone uses every feature free and nobody is charged. Turn it off and new people must start a free trial with a card before they can use LaneHook.</p></div><button class="sw ${d.earlyAccess?'on':''}" id="ea" role="switch" aria-checked="${d.earlyAccess}" aria-label="Early access"></button></div>
+  <label class="f" style="margin:14px 0 0;max-width:260px"><span>Free trial length (days, 0 = no trial)</span><input id="td" type="number" min="0" max="30" value="${esc(d.trialDays)}"></label>
+  <p style="font-size:13px;color:var(--muted);margin:10px 0 0;line-height:1.5">With early access off there is no free plan. New people enter a card, get this many free days, and are charged after unless they cancel. Each person gets one trial.</p></div>
   <div class="plans4" style="margin-top:14px">${PN.map(k=>{const p=d.plans[k];return `<div class="plan" data-plan="${k}"><h3>${esc(k[0].toUpperCase()+k.slice(1))}</h3>
-    <div class="two"><label class="f"><span>Name</span><input data-f="name" value="${esc(p.name)}" maxlength="24"></label><label class="f"><span>Price per month ($)</span><input data-f="price" type="number" min="1" step="1" value="${esc(p.price)}" ${k==='free'?'disabled':''}></label></div>
+    <div class="two"><label class="f"><span>Name</span><input data-f="name" value="${esc(p.name)}" maxlength="24"></label><label class="f"><span>Price per month ($)</span><input data-f="price" type="number" min="1" step="1" value="${esc(p.price)}"  ></label></div>
     <label class="f"><span>One-line description</span><input data-f="tagline" value="${esc(p.tagline)}" maxlength="60"></label>
     <label class="f"><span>Features (one per line)</span><textarea data-f="features" rows="6">${esc((p.features||[]).join('\n'))}</textarea></label>
-    ${k==='free'?'':`<div class="trow"><div><b>Available to buy</b><p>Off shows "Coming soon" on the site.</p></div><button class="sw ${p.available?'on':''}" data-t="available" role="switch" aria-checked="${!!p.available}" aria-label="Available"></button></div>
+    ${`<div class="trow"><div><b>Available to buy</b><p>Off shows "Coming soon" on the site.</p></div><button class="sw ${p.available?'on':''}" data-t="available" role="switch" aria-checked="${!!p.available}" aria-label="Available"></button></div>
     <div class="trow"><div><b>Most popular badge</b></div><button class="sw ${p.popular?'on':''}" data-t="popular" role="switch" aria-checked="${!!p.popular}" aria-label="Most popular"></button></div>`}</div>`}).join('')}</div>
   <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:14px 2px 0">A price change applies to new subscribers. People already subscribed keep the price they signed up at until they cancel and re-subscribe.</p>
   <div class="savebar"><span id="dirty">${DIRTY?'Unsaved changes':''}</span><a class="btn" href="../#pricing" target="_blank" rel="noopener">View on site</a><button class="btn pri" id="sv" ${DIRTY?'':'disabled'}>Save changes</button></div>`;
@@ -254,14 +254,14 @@ function mark(){DIRTY=true;const d=$('#dirty'),b=$('#sv');if(d)d.textContent='Un
 function wirePlans(){
   const d=draft();
   $('#ea').onclick=()=>{d.earlyAccess=!d.earlyAccess;mark();draw()};
-  $('#fll').oninput=e=>{d.freeLoadLimit=e.target.value;mark()};
+  $('#td').oninput=e=>{d.trialDays=e.target.value;mark()};
   document.querySelectorAll('.plan').forEach(box=>{
     const k=box.dataset.plan,p=d.plans[k];
     box.querySelectorAll('[data-f]').forEach(i=>i.oninput=()=>{const f=i.dataset.f;p[f]=f==='features'?i.value.split('\n'):i.value;mark()});
     box.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const f=b.dataset.t;p[f]=!p[f];if(f==='popular'&&p[f])PN.forEach(o=>{if(o!==k)d.plans[o].popular=false});mark();draw()});
   });
   $('#sv').onclick=async()=>{
-    const bad=PN.filter(k=>k!=='free').find(k=>!(Number(d.plans[k].price)>=1));
+    const bad=PN.find(k=>!(Number(d.plans[k].price)>=1));
     if(bad){toast('Every paid plan needs a price of at least $1.');return}
     $('#sv').disabled=true;
     try{const r=await api({action:'settings_save',settings:d});D.settings=r.settings;DRAFT=null;DIRTY=false;toast('Saved. The site and portal now show these plans.');draw()}
@@ -282,7 +282,7 @@ function sheet(html){const s=document.createElement('div');s.className='scrim';s
 async function call(body,ok){try{await api(body);if(ok)toast(ok);await load(true)}catch(e){toast(e.code==='self'?'You cannot do that to your own account.':e.code==='stripe_not_configured'?'Stripe is not connected yet.':'That did not work. Try again.')}}
 function act(a,u){
   if(a==='view'){const s=sheet(`<h2>${esc(u.email)}</h2><div>${planPill(u)}</div><dl class="kv"><dt>Business</dt><dd>${esc(u.biz||'Not set')}</dd><dt>MC number</dt><dd>${esc(u.mc||'Not set')}</dd><dt>Joined</dt><dd>${day(u.created)}</dd><dt>Last sign in</dt><dd>${day(u.last)}</dd><dt>Last synced</dt><dd>${day(u.synced)}</dd><dt>Loads</dt><dd class="mono">${u.loads}</dd><dt>Documents</dt><dd class="mono">${u.docs}</dd>${u.amount?`<dt>Pays</dt><dd class="mono">${$$(u.amount)} / month</dd>`:''}${u.renews?`<dt>${u.cancels?'Ends':'Renews'}</dt><dd>${day(u.renews)}</dd>`:''}</dl>${u.notes?'<p style="color:var(--muted);font-size:14px;white-space:pre-wrap">'+esc(u.notes)+'</p>':''}<button class="btn" style="width:100%" id="x">Close</button>`);$('#x',s).onclick=()=>s.remove()}
-  if(a==='plan'){const s=sheet(`<h2>Change access</h2><p style="color:var(--muted);font-size:14px;margin:4px 0 14px">${esc(u.email)}. "Comped" gives free access to paid features. Paying plans are managed by Stripe.</p><label class="f"><span>Access</span><select id="pl" ${PAID.includes(u.status)?'disabled':''}><option value="free" ${u.plan!=='comped'?'selected':''}>Free</option><option value="comped" ${u.plan==='comped'?'selected':''}>Comped (free paid access)</option></select></label><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn pri" id="ok" style="flex:1" ${PAID.includes(u.status)?'disabled':''}>Save</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{const p=$('#pl',s).value;s.remove();call({action:'plan',id:u.id,plan:p},'Access updated')}}
+  if(a==='plan'){const s=sheet(`<h2>Change access</h2><p style="color:var(--muted);font-size:14px;margin:4px 0 14px">${esc(u.email)}. "Comped" gives free access to paid features. Paying plans are managed by Stripe.</p><label class="f"><span>Access</span><select id="pl" ${PAID.includes(u.status)?'disabled':''}><option value="free" ${u.plan!=='comped'?'selected':''}>No plan</option><option value="comped" ${u.plan==='comped'?'selected':''}>Comped (free paid access)</option></select></label><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn pri" id="ok" style="flex:1" ${PAID.includes(u.status)?'disabled':''}>Save</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{const p=$('#pl',s).value;s.remove();call({action:'plan',id:u.id,plan:p},'Access updated')}}
   if(a==='note'){const s=sheet(`<h2>Note</h2><p style="color:var(--muted);font-size:14px;margin:4px 0 14px">Only you can see this.</p><label class="f"><span>${esc(u.email)}</span><textarea id="nt" rows="5" maxlength="2000">${esc(u.notes)}</textarea></label><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Cancel</button><button class="btn pri" id="ok" style="flex:1">Save</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{const n=$('#nt',s).value;s.remove();call({action:'note',id:u.id,notes:n},'Note saved')}}
   if(a==='mail')call({action:'mail',id:u.id,email:u.email},'Sign-in email sent');
   if(a==='cancel'){const s=sheet(`<h2>Cancel this subscription?</h2><p style="color:var(--muted)">${esc(u.email)} keeps their plan until ${day(u.renews)} and is not charged again. To refund a payment, use Stripe.</p><div style="display:flex;gap:10px"><button class="btn" id="x" style="flex:1">Keep it</button><button class="btn bad" id="ok" style="flex:1">Cancel plan</button></div>`);$('#x',s).onclick=()=>s.remove();$('#ok',s).onclick=()=>{s.remove();call({action:'cancel_sub',id:u.id},'Subscription will end at the period end')}}

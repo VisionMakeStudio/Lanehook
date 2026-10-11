@@ -1,9 +1,8 @@
 // Server-side Supabase helpers (service key). Never import this from browser code.
 const SB = 'https://hsjmtkqzdkcpyfaygxpb.supabase.co';
 const DEFAULTS = {
-  earlyAccess: true, freeLoadLimit: 5,
+  earlyAccess: true, trialDays: 7,
   plans: {
-    free: { name: 'Free', price: 0, tagline: 'To try it out', available: true, popular: false, features: ['5 loads a month', 'Detention timer and claims', 'Profit calculator', 'Sync across your devices'] },
     solo: { name: 'Solo', price: 19, tagline: 'For the owner-operator', available: true, popular: true, features: ['Unlimited loads', 'Rate con scanner', 'Load Guard broker checks', 'Invoices and expenses', 'Document vault'] },
     crew: { name: 'Crew', price: 49, tagline: 'Dispatcher plus drivers', available: false, popular: false, features: ['Everything in Solo', 'Dispatcher dashboard', 'Up to 5 drivers', 'Company Link'] },
     fleet: { name: 'Fleet', price: 99, tagline: 'For growing fleets', available: false, popular: false, features: ['Everything in Crew', 'Up to 15 trucks', 'Driver settlements', 'Priority support'] }
