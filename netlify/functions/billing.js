@@ -12,6 +12,7 @@ exports.handler = async (event) => {
   let b; try { b = JSON.parse(event.body || '{}'); } catch (e) { return json(400, { error: 'bad_body' }); }
   const host = event.headers.host || event.headers.Host || 'lanehook.com';
   const origin = 'https://' + host.replace(/^localhost.*/, 'lanehook.com');
+  const home = b.ret === 'dispatch' ? { ok: origin + '/dispatch/?billing=success', back: origin + '/dispatch/' } : { ok: origin + '/app/?billing=success#/settings', back: origin + '/app/#/settings' };
   try {
     const row = await accountRow(user.id);
     if (b.action === 'checkout') {
@@ -25,7 +26,7 @@ exports.handler = async (event) => {
         mode: 'subscription', client_reference_id: user.id, allow_promotion_codes: true,
         line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: Math.round(p.price * 100), recurring: { interval: 'month' }, product_data: { name: 'LaneHook ' + p.name } } }],
         metadata: { uid: user.id, plan }, subscription_data: Object.assign({ metadata: { uid: user.id, plan } }, trial ? { trial_period_days: trial } : {}),
-        success_url: origin + '/app/?billing=success#/settings', cancel_url: origin + '/app/#/settings'
+        success_url: home.ok, cancel_url: home.back
       };
       if (row && row.stripe_customer_id) params.customer = row.stripe_customer_id; else params.customer_email = user.email;
       const sess = await stripe.call('POST', 'checkout/sessions', params);
@@ -33,11 +34,12 @@ exports.handler = async (event) => {
     }
     if (b.action === 'portal') {
       if (!row || !row.stripe_customer_id) return json(400, { error: 'no_customer' });
-      const sess = await stripe.call('POST', 'billing_portal/sessions', { customer: row.stripe_customer_id, return_url: origin + '/app/#/settings' });
+      const sess = await stripe.call('POST', 'billing_portal/sessions', { customer: row.stripe_customer_id, return_url: home.back });
       return json(200, { url: sess.url });
     }
     return json(400, { error: 'bad_action' });
   } catch (e) {
-    return json(e.status === 503 ? 503 : 502, { error: e.message === 'not_configured' ? 'not_configured' : 'billing_failed' });
+    console.error('billing failed', e.status, e.message);
+    return json(e.status === 503 ? 503 : 502, { error: e.message === 'not_configured' ? 'not_configured' : 'billing_failed', detail: e.message === 'not_configured' ? undefined : String(e.message || '').slice(0, 140) });
   }
 };

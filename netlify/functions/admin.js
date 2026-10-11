@@ -76,6 +76,24 @@ exports.handler = async (event) => {
       const r = await fetch(SB + '/rest/v1/site_settings?on_conflict=id', { method: 'POST', headers: { ...H, prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ id: 1, data: c, updated_at: new Date().toISOString() }) });
       return r.ok ? json(200, { ok: true, settings: c }) : json(502, { error: 'db_' + r.status });
     }
+    if (b.action === 'gift') {
+      const em = String(b.email || '').trim().toLowerCase();
+      if (!/^\S+@\S+\.\S+$/.test(em) || em.length > 120) return json(400, { error: 'bad_email' });
+      let uid = null;
+      const cr = await fetch(SB + '/auth/v1/admin/users', { method: 'POST', headers: H, body: JSON.stringify({ email: em, email_confirm: true }) });
+      if (cr.ok) { const u = await cr.json(); uid = u.id; }
+      else {
+        for (let page = 1; page <= 10 && !uid; page++) {
+          const lr = await fetch(SB + '/auth/v1/admin/users?page=' + page + '&per_page=200', { headers: H }); if (!lr.ok) break;
+          const lj = await lr.json(); const u = (lj.users || []).find(x => (x.email || '').toLowerCase() === em); if (u) uid = u.id; if (!(lj.users || []).length) break;
+        }
+      }
+      if (!uid) return json(502, { error: 'gift_failed' });
+      const r = await fetch(SB + '/rest/v1/account_admin?on_conflict=user_id', { method: 'POST', headers: { ...H, prefer: 'resolution=merge-duplicates' }, body: JSON.stringify({ user_id: uid, plan: 'comped', updated_at: new Date().toISOString() }) });
+      if (!r.ok) return json(502, { error: 'db_' + r.status });
+      if (b.send) await fetch(SB + '/auth/v1/otp', { method: 'POST', headers: { apikey: process.env.SUPABASE_ANON_KEY || 'sb_publishable_a0uKjOLnATsVJ4G-Iti7Cg_jbVgHcxZ', 'content-type': 'application/json' }, body: JSON.stringify({ email: em, create_user: false }) }).catch(() => {});
+      return json(200, { ok: true, id: uid });
+    }
     if (!needId()) return json(400, { error: 'bad_id' });
 
     if (b.action === 'plan') {

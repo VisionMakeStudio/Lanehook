@@ -169,6 +169,7 @@ const NAV = [
   { k: 'money', label: 'Money', icon: 'money', tab: 1 },
   { k: 'more', label: 'More', icon: 'more', tab: 1, noside: 1 },
   { sep: 1 },
+  { k: 'dispatch', label: 'Dispatch', icon: 'users', side: 1 },
   { k: 'vault', label: 'Documents', icon: 'doc', side: 1 },
   { k: 'brokers', label: 'Brokers', icon: 'users', side: 1 },
   { k: 'calc', label: 'Profit calculator', icon: 'calc', side: 1 },
@@ -185,10 +186,10 @@ LH.render = function () {
   closeMenu();
   const r = LH.route(), pg = LH.pages[r.name] || LH.pages.home;
   const out = pg(r) || { title: 'LaneHook', html: '' };
-  const group = { loads: 'loads', load: 'loads', guard: 'guard', money: 'money', vault: 'vault', brokers: 'brokers', calc: 'calc', maint: 'maint', settings: 'settings', home: 'home', more: 'more' }[r.name] || 'home';
+  const group = { loads: 'loads', load: 'loads', guard: 'guard', money: 'money', vault: 'vault', brokers: 'brokers', dispatch: 'dispatch', calc: 'calc', maint: 'maint', settings: 'settings', home: 'home', more: 'more' }[r.name] || 'home';
   const sideLinks = NAV.map(n => n.sep ? '<hr>' : (n.noside ? '' : `<a href="#/${n.k}" class="${group === n.k ? 'on' : ''}">${ic(n.icon)}${esc(n.label)}</a>`)).join('');
   const tabLinks = NAV.filter(n => n.tab).map(n => {
-    const on = group === n.k || (n.k === 'more' && ['vault', 'brokers', 'calc', 'maint', 'settings'].includes(group));
+    const on = group === n.k || (n.k === 'more' && ['vault', 'brokers', 'dispatch', 'calc', 'maint', 'settings'].includes(group));
     return `<a href="#/${n.k}" class="${on ? 'on' : ''}" ${on ? 'aria-current="page"' : ''}>${ic(n.icon, 24)}${esc(n.short || n.label)}</a>`;
   }).join('');
   $('#app').innerHTML = `

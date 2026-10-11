@@ -34,7 +34,7 @@ LH.auth = {
     if (location.search || location.hash.indexOf('access_token') > -1) history.replaceState(null, '', location.pathname + '#/home');
     if (!first) LH.render();
     LH.sync.start(this.sb, uid);
-    if (LH.plans) LH.plans.start();
+    (async () => { if (LH.disp) await LH.disp.start(); if (LH.plans) LH.plans.start(); })();
   },
 
   async signOut() {

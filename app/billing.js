@@ -27,7 +27,7 @@
     return c === '1' ? 'open' : 'unknown';
   };
   P.settle = () => {
-    P.known = (!P.cfg || P.early() || P.paid()) ? 'open' : 'locked';
+    P.known = (!P.cfg || P.early() || P.paid() || (P.mine && P.mine.covered)) ? 'open' : 'locked';
     try { if (P.known === 'open') localStorage.setItem(ckey(), '1'); else localStorage.removeItem(ckey()); } catch (e) { }
   };
 
@@ -56,6 +56,7 @@
       const res = await fetch('/.netlify/functions/billing', { method: 'POST', headers: Object.assign({ 'content-type': 'application/json' }, await LH.auth.headers()), body: JSON.stringify({ action, plan }) });
       const j = await res.json().catch(() => ({}));
       if (res.ok && j.url) { location.href = j.url; return; }
+      if (j.detail) { LH.toast('Billing problem: ' + j.detail, 8000); return; }
       LH.toast({ already_subscribed: 'You already have a plan. Use Manage billing.', early_access: 'Everything is free right now.', not_configured: 'Billing is not set up yet.', no_customer: 'No billing account yet.' }[j.error] || 'Could not open billing. Try again in a minute.', 4500);
     } catch (e) { LH.toast('You appear to be offline.', 3500); }
   };
@@ -90,13 +91,14 @@
       <p class="muted" style="margin:0 0 18px">${trial ? `Try LaneHook free for ${td} days. You enter a card now and are charged after the trial. Cancel any time before then and you pay nothing.` : 'Pick a plan to use LaneHook. Cancel any time.'}</p>
       ${list || '<div class="card"><b>Plans are not open yet.</b><p class="muted" style="margin:6px 0 0">Check back soon.</p></div>'}
       <p class="muted" style="font-size:13px;margin:4px 0 14px">Secure payment by Stripe. Signed in as ${esc((LH.auth.user && LH.auth.user.email) || '')}.</p>
+      <form class="row" onsubmit="event.preventDefault();LH.acts.joinCode()" style="margin:0 0 14px"><input id="wallCode" autocomplete="off" autocapitalize="characters" maxlength="10" placeholder="Have a company code?" aria-label="Company code" style="letter-spacing:.12em;text-transform:uppercase"><button class="btn" type="submit">Join</button></form>
       <div class="row wrap">${ended ? '<button class="btn sm" data-act="manageBilling">Manage billing</button>' : ''}<button class="btn sm" data-act="signOut">Sign out</button></div>`);
   };
   /* called at the top of LH.render: returns true when it drew a screen instead of the portal */
   P.gate = function () {
     const s = P.state();
     if (s === 'open') return false;
-    if (s === 'unknown') { P.showLoading(); if (!P.loaded) P.load(); return true; }
+    if (s === 'unknown') { P.showLoading(); if (!P.loaded && !(LH.disp && LH.disp.joining)) P.load(); return true; }
     P.showWall(); return true;
   };
 
@@ -109,7 +111,8 @@
     if (!LH.auth || LH.auth.local || !LH.auth.user || !P.cfg) return '';
     const m = P.mine || {}, plans = P.cfg.plans || {}, key = m.plan || 'free', p = plans[key] || { name: key === 'comped' ? 'Complimentary' : 'No plan' };
     let line, badge = '';
-    if (key === 'comped') { line = 'Full access, on us.'; badge = '<span class="badge ok">Active</span>'; }
+    if (m.covered && !P.paid()) { line = 'Covered by your company\'s plan.'; badge = '<span class="badge ok">Company plan</span>'; }
+    else if (key === 'comped') { line = 'Full access, on us.'; badge = '<span class="badge ok">Active</span>'; }
     else if (m.sub_status === 'trialing') { line = (m.cancel_at_period_end ? 'Your trial ends ' : 'Free trial ends ') + when(m.period_end) + (m.cancel_at_period_end ? '. You will not be charged.' : '. Then ' + money(p.price) + ' a month.'); badge = '<span class="badge blue">Free trial</span>'; }
     else if (!m.sub_status || key === 'free') { line = P.early() ? 'Everything is free while LaneHook is in early access.' : 'No plan yet.'; }
     else if (m.cancel_at_period_end) { line = 'Cancels on ' + when(m.period_end) + '. You keep access until then.'; badge = '<span class="badge warn">Canceling</span>'; }

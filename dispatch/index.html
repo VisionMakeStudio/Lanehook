@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>LaneHook Dispatcher Portal</title>
+<meta name="theme-color" content="#0B132B">
+<link rel="icon" type="image/png" href="../app/icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B132B;--navy2:#111C3B;--navy3:#18264C;--line:#22305A;--blue:#2563EB;--orange:#F59E0B;--off:#F8FAFC;--gray:#94A3B8;--muted:#5B6B86;--bd:#E2E8F0;--ok:#16A34A;--bad:#DC2626;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{background:var(--off);color:var(--navy);font:16px/1.45 'IBM Plex Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Archivo',system-ui,sans-serif;font-weight:800;margin:0;line-height:1.15}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer;background:none;border:0;padding:0}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.btn{color:var(--navy);display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;background:#fff;border:1px solid var(--bd);font-weight:600;font-size:15px;white-space:nowrap}
+.btn.pri{background:var(--orange);border-color:var(--orange)}.btn.dark{background:var(--navy);color:var(--off);border-color:var(--navy)}
+.btn.bad{background:var(--bad);border-color:var(--bad);color:#fff}.auth .btn.ghost{color:var(--off)}.btn.sm{min-height:38px;padding:0 14px;font-size:14px}.btn[disabled]{opacity:.55}
+input,select,textarea{width:100%;min-height:46px;padding:10px 12px;border-radius:12px;background:#fff;border:1px solid #CBD5E1;font-size:16px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.18)}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:12px}label.f>*:last-child{margin-top:6px}
+.shell{display:flex;min-height:100vh}
+.side{display:none;width:236px;flex-shrink:0;background:var(--navy);color:#CBD5E1;padding:22px 16px;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.side .brand{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:18px;padding:0 4px}.side .brand img{height:20px;max-width:100%}
+.side .brand b{font-family:'Archivo',sans-serif;color:var(--off);font-size:14px}
+.side a{padding:11px 12px;border-radius:10px;text-decoration:none;color:#CBD5E1;font-weight:600;font-size:15px}.side a.on{background:var(--navy3);color:var(--off)}
+.side .me{margin-top:auto;font-size:13px;line-height:1.5;background:var(--navy2);border-radius:12px;padding:12px;word-break:break-all}
+.main{flex:1;min-width:0}
+.top{position:sticky;top:0;z-index:10;background:var(--navy);color:var(--off);display:flex;align-items:center;gap:10px;padding:calc(10px + var(--sat)) 16px 10px}
+.top img{height:20px}.top b{font-family:'Archivo',sans-serif;font-size:14px;flex:1}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px calc(40px + var(--sab))}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.head p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:12px 14px}.kpi span{display:block;font-size:13px;color:var(--muted)}.kpi b{display:block;font-size:24px;margin-top:2px}
+.tools{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px}
+.card{background:#fff;border:1px solid var(--bd);border-radius:16px;overflow:hidden}
+.rows{display:flex;flex-direction:column}
+.r{display:grid;grid-template-columns:1fr auto;gap:6px 10px;padding:14px 16px;border-top:1px solid var(--bd);align-items:center}.r:first-child{border-top:0}
+.r .who b{display:block;word-break:break-all;font-weight:600}.r .who small{display:block;color:var(--muted);font-size:13px}
+.r .meta{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+.cols{display:none}
+.pill{white-space:nowrap;display:inline-block;font-size:12px;font-weight:600;border-radius:99px;padding:3px 10px;background:#EEF2F7;color:#475569;text-transform:capitalize}
+.pill.solo,.pill.crew,.pill.fleet{background:#DBEAFE;color:#1D4ED8}.pill.comped{background:#FEF3C7;color:#92400E}.pill.off{background:#FEE2E2;color:var(--bad)}.pill.ok{background:#DCFCE7;color:var(--ok)}
+.dots{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--muted)}.dots:hover{background:#EEF2F7}
+.menu{position:fixed;z-index:60;background:#fff;border:1px solid var(--bd);border-radius:14px;box-shadow:0 16px 40px rgba(11,19,43,.22);padding:6px;min-width:220px}
+.menu button{display:block;width:100%;text-align:start;padding:12px 14px;border-radius:10px;font-size:15px;font-weight:500}.menu button:hover{background:#EEF2F7}.menu .danger{color:var(--bad)}.menu hr{border:0;border-top:1px solid var(--bd);margin:4px 0}
+.scrim{position:fixed;inset:0;background:rgba(11,19,43,.55);z-index:70;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#fff;width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 18px calc(22px + var(--sab))}
+.sheet h2{font-size:20px;margin-bottom:4px;word-break:break-all}.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:15px;margin:14px 0}.kv dt{color:var(--muted)}.kv dd{margin:0;text-align:end;font-weight:600;word-break:break-word}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + var(--sab));transform:translateX(-50%);background:var(--navy);color:var(--off);padding:12px 18px;border-radius:12px;z-index:90;font-size:14px;max-width:90vw}
+.auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--navy);color:var(--off)}
+.auth-card{width:100%;max-width:400px}.auth-card h1{font-size:28px;margin:18px 0 8px}.auth-card p{color:var(--gray);margin:0 0 18px}.auth-card img{height:22px}
+.auth input{background:var(--navy2);border-color:var(--line);color:var(--off)}.auth label.f{color:var(--gray)}.auth .msg{min-height:20px;color:var(--orange);font-size:14px;margin:6px 0 10px}
+.auth .btn{width:100%}.auth .btn.ghost{background:transparent;color:var(--off);border-color:var(--line);margin-top:10px}
+@media(min-width:600px){.kpis{grid-template-columns:repeat(4,1fr)}.tools{grid-template-columns:1fr 180px 180px}.scrim{align-items:center}.sheet{border-radius:22px}}
+@media(min-width:900px){.side{display:flex}.top{display:none}.wrap{padding:30px 28px 50px}
+  .cols,.r{display:grid;grid-template-columns:minmax(0,2.4fr) 90px 70px 120px 130px 48px;gap:10px;align-items:center}
+  .cols{padding:11px 16px;font-size:12px;font-weight:600;color:var(--muted);background:#F1F5F9;border-bottom:1px solid var(--bd);text-transform:uppercase;letter-spacing:.05em}
+  .r .dots{order:9}.r .meta{display:contents}.r .meta span{font-size:14px;color:var(--navy)}.r .m-hide{display:none}}
+@media(max-width:899px){.r .d-only{display:none}}
+
+.nav2{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:var(--navy);scrollbar-width:none}.nav2::-webkit-scrollbar{display:none}
+.nav2 a{flex-shrink:0;padding:9px 16px;border-radius:99px;text-decoration:none;color:#CBD5E1;font-weight:600;font-size:14px;border:1px solid var(--line)}.nav2 a.on{background:var(--orange);border-color:var(--orange);color:var(--navy)}
+.grid{display:grid;gap:14px;margin-bottom:14px}.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr}
+.panel{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:16px 18px}.panel h3{font-size:16px;margin-bottom:12px}
+.panel .sub{font-size:13px;color:var(--muted);margin:-6px 0 12px}
+.kpis.six{grid-template-columns:repeat(2,1fr)}.kpi small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.banner{border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:14px;line-height:1.5}.banner.warn{background:#FEF3C7;color:#78350F}.banner.info{background:#DBEAFE;color:#1E3A8A}.banner b{display:block;margin-bottom:2px}
+.chart{width:100%;height:auto;display:block}.chart text{font-family:'IBM Plex Sans',sans-serif;fill:#64748B;font-size:12px}
+.bar{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:14px}.bar span.n{width:70px;text-transform:capitalize;flex-shrink:0}.bar .t{flex:1;min-width:0}.bar i{display:block;height:12px;border-radius:6px;background:var(--blue);min-width:3px}.bar b{font-family:'IBM Plex Mono',monospace;font-size:13px}
+.li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--bd);font-size:14px}.li:first-of-type{border-top:0}.li .e{word-break:break-all;min-width:0}.li small{display:block;color:var(--muted);font-size:12px}.li .a{font-family:'IBM Plex Mono',monospace;font-weight:600;white-space:nowrap}.li .a.neg{color:var(--bad)}
+.empty.sm{padding:18px 8px}.li .pill{align-self:center}
+.pill.past_due,.pill.canceled{background:#FEE2E2;color:var(--bad)}.pill.cancels{background:#FEF3C7;color:#92400E}
+.sw{position:relative;width:48px;height:28px;border-radius:99px;background:#CBD5E1;flex-shrink:0;transition:background .2s}.sw:after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}.sw.on{background:var(--blue)}.sw.on:after{transform:translateX(20px)}
+.trow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 0}.trow p{margin:2px 0 0;font-size:13px;color:var(--muted);line-height:1.45}
+.plan{border:1px solid var(--bd);border-radius:16px;padding:16px;background:#fff}.plan h3{font-size:18px;margin-bottom:10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.savebar{position:sticky;bottom:0;background:rgba(248,250,252,.94);backdrop-filter:blur(8px);padding:12px 0 calc(12px + var(--sab));display:flex;gap:10px;align-items:center;justify-content:flex-end;border-top:1px solid var(--bd);margin-top:14px}
+.savebar span{margin-right:auto;font-size:13px;color:var(--muted)}
+.copy{font-family:'IBM Plex Mono',monospace;font-size:13px;background:#F1F5F9;border-radius:10px;padding:10px 12px;word-break:break-all}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:10px 14px;background:#F1F5F9}.tbl td{padding:12px 14px;border-top:1px solid var(--bd)}.tbl td.a{font-family:'IBM Plex Mono',monospace;text-align:right;font-weight:600}.tbl th.a{text-align:right}
+.ptable{display:none}.plist{display:block}
+@media(min-width:600px){.kpis.six{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:1fr 1fr}}
+@media(min-width:900px){.nav2{display:none}.g3{grid-template-columns:1.2fr 1fr 1fr}.ptable{display:table}.plist{display:none}.plans4{display:grid;grid-template-columns:1fr 1fr;gap:14px}}
+@media(min-width:1200px){.kpis.six{grid-template-columns:repeat(6,1fr)}}
+.plans4{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:900px){.plans4{grid-template-columns:1fr 1fr}}
+
+.stat{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;border-radius:99px;padding:3px 10px;background:#EEF2F7;color:#475569;white-space:nowrap}
+.stat.open{background:#FEF3C7;color:#92400E}.stat.assigned{background:#DBEAFE;color:#1D4ED8}.stat.accepted{background:#E0E7FF;color:#4338CA}.stat.picked_up{background:#FFEDD5;color:#C2410C}.stat.delivered{background:#DCFCE7;color:#15803D}.stat.canceled{background:#FEE2E2;color:#B91C1C}
+.chips{display:flex;gap:8px;overflow-x:auto;margin:0 0 14px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;min-height:40px;padding:0 14px;border-radius:99px;border:1px solid var(--bd);background:#fff;font-weight:600;font-size:14px;color:var(--navy);display:inline-flex;align-items:center;gap:8px}
+.chip.on{background:var(--navy);border-color:var(--navy);color:var(--off)}.chip i{font-style:normal;font-size:12px;opacity:.75}
+.board{display:block}.col{display:none}.col.show{display:block}
+.col h3{display:none;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px}
+.lc{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;display:block;width:100%;text-align:start}
+.lc:hover{border-color:#CBD5E1}.lc .t1{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.lc b{font-weight:600;word-break:break-word}
+.lc small{display:block;color:var(--muted);font-size:13px;margin-top:3px}.lc .ft{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px}
+.lc .dots{width:36px;height:36px;margin:-6px -8px -6px 0}
+.who2{display:flex;align-items:center;gap:10px}.av{width:38px;height:38px;border-radius:50%;background:var(--navy);color:var(--off);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.code{font-family:'IBM Plex Mono',monospace;font-size:34px;font-weight:600;letter-spacing:.18em;color:var(--navy)}
+.row2{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.drv{display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:1px solid var(--bd)}.drv:first-child{border-top:0}.drv .g{flex:1;min-width:0}.drv .g b{display:block;word-break:break-word}.drv .g small{display:block;color:var(--muted);font-size:13px}
+.plancard{border:1px solid var(--bd);border-radius:16px;padding:18px;background:#fff;margin-bottom:12px}.plancard ul{margin:10px 0 14px;padding-left:18px;color:var(--muted);font-size:14px;line-height:1.7}
+.hero2{max-width:560px;margin:40px auto;padding:0 16px}
+.ft2{font-size:13px;color:var(--muted);line-height:1.55}
+@media(min-width:900px){.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:start}.col{display:block}.col h3{display:block}.chips.m{display:none}
+ .col .lc{margin-bottom:10px}}
+@media(max-width:480px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app"><div class="auth"><div class="auth-card"><p>Loading…</p></div></div></div>
+<script src="../app/config.js"></script>
+<script src="../app/vendor/supabase.js"></script>
+<script>
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const C=window.LH_CONFIG, sb=window.supabase.createClient(C.supabaseUrl,C.supabaseKey,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const ST={open:'Open',assigned:'Sent',accepted:'Accepted',picked_up:'Picked up',delivered:'Delivered',canceled:'Canceled'};
+const ERR={plan_required:'Your plan is not active. Choose a plan to keep sending loads.',bad_driver:'That driver is not in your company.',not_found:'That load was not found.',name_required:'Enter a name.',exists:'You already have a company.',is_driver:'This account is a driver. Leave the company in the Driver Portal first.',no_company:'Set up your company first.',sign_in:'Please sign in again.'};
+let O=null, PLAN=null, CFG=null, VIEW='loads', TAB='open', Q='', FIRST=true;
+const billingBack=new URLSearchParams(location.search).get('billing')==='success';
+const money=n=>'$'+(Number(n)%1?Number(n).toFixed(2):(Number(n)||0));
+const when=s=>{const d=s?new Date(s):null;return d&&!isNaN(d)?d.toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):''};
+const day=s=>s?new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'';
+function toast(t,ms){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),ms||3200)}
+const msg=e=>ERR[(e&&e.message)||'']||'Something went wrong. Try again.';
+async function rpc(name,args){try{const r=await sb.rpc(name,args||{});if(r.error){toast(msg(r.error),4000);return null}return r.data}catch(e){toast('You appear to be offline.');return null}}
+async function load(){
+  const [o,p,s]=await Promise.all([sb.rpc('company_overview'),sb.rpc('my_plan'),sb.from('site_settings').select('data').eq('id',1).maybeSingle()]);
+  if(o.error){if(/sign_in/.test(o.error.message))return loginView('');toast('Could not load. Pull to refresh.');return}
+  O=o.data; PLAN=Array.isArray(p.data)?p.data[0]:p.data; if(s.data&&s.data.data)CFG=s.data.data; draw();
+}
+/* ---------- sign in ---------- */
+function loginView(email,stage,msg2){
+  $('#app').innerHTML=`<div class="auth"><div class="auth-card"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><h1>Dispatcher sign in</h1><div id="ab"></div></div></div>`;
+  const b=$('#ab');
+  if(stage==='code'){
+    b.innerHTML=`<p>We sent a sign-in link to <b>${esc(email)}</b>. Open it, or type the code from the email here.</p><form id="cf"><label class="f"><span>Code</span><input name="c" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required></label><div class="msg" id="m">${esc(msg2||'')}</div><button class="btn pri">Sign in</button></form><button class="btn ghost" id="bk">Use another email</button>`;
+    $('#cf').onsubmit=async e=>{e.preventDefault();const t=e.target.c.value.replace(/\D/g,'');const {error}=await sb.auth.verifyOtp({email,token:t,type:'email'});if(error)$('#m').textContent='That code did not work. It may have expired.'};
+    $('#bk').onclick=()=>loginView('');
+  }else{
+    b.innerHTML=`<p>Send loads to your drivers and see where every load stands. No password, just your email.</p><form id="ef"><label class="f"><span>Email</span><input name="e" type="email" autocomplete="email" value="${esc(email||'')}" required></label><div class="msg" id="m">${esc(msg2||'')}</div><button class="btn pri" id="go">Email me a sign-in link</button></form><p style="margin-top:16px;font-size:14px">Driving for a company? <a href="../app/" style="color:var(--orange)">Open the Driver Portal</a></p>`;
+    $('#ef').onsubmit=async e=>{e.preventDefault();const em=e.target.e.value.trim().toLowerCase();$('#go').disabled=true;
+      const {error}=await sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin+'/dispatch/',shouldCreateUser:true}});
+      if(error){$('#go').disabled=false;$('#m').textContent=/rate|limit|seconds/i.test(error.message)?'Too many emails right now. Wait a minute and try again.':'Could not send. Check the address.';return}loginView(em,'code')};
+  }
+}
+/* ---------- shell ---------- */
+const NAV=[['loads','Loads'],['drivers','Drivers'],['company','Company']];
+function shell(inner){
+  const nav=NAV.map(n=>`<a href="#/${n[0]}" class="${VIEW===n[0]?'on':''}">${n[1]}</a>`).join('');
+  $('#app').innerHTML=`<div class="shell"><aside class="side"><div class="brand"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Dispatcher Portal</b></div>${nav}<div class="me">${esc((O&&O.company&&O.company.name)||'')}<br><span style="color:#94A3B8">${esc(me())}</span><br><button class="btn sm" id="so" style="margin-top:10px;width:100%">Sign out</button></div></aside>
+  <div class="main"><div class="top"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Dispatcher</b><button class="btn sm" id="so2">Sign out</button></div><div class="nav2">${nav}</div><div class="wrap">${inner}</div></div></div>`;
+  ['so','so2'].forEach(i=>{const b=$('#'+i);if(b)b.onclick=async()=>{await sb.auth.signOut();loginView('')}});
+}
+let EMAIL='';const me=()=>EMAIL;
+function route(){const h=location.hash.replace(/^#\/?/,'').split('/')[0];return NAV.some(n=>n[0]===h)?h:'loads'}
+window.addEventListener('hashchange',()=>{VIEW=route();if(O&&O.company)draw()});
+/* ---------- screens before a company exists ---------- */
+function planCards(){
+  const ps=CFG&&CFG.plans?['crew','fleet'].filter(k=>CFG.plans[k]&&CFG.plans[k].available&&CFG.plans[k].price>0):[];
+  const td=CFG&&CFG.trialDays>0&&!(PLAN&&PLAN.has_customer)?CFG.trialDays:0;
+  return ps.length?ps.map(k=>{const p=CFG.plans[k];return `<div class="plancard"><div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline"><h3>${esc(p.name)}</h3><b style="font-size:22px">${money(p.price)}<span style="font-size:13px;font-weight:500;color:var(--muted)">/mo</span></b></div><p style="margin:4px 0 0;color:var(--muted);font-size:14px">${esc(p.tagline||'')}</p><ul>${(p.features||[]).map(f=>`<li>${esc(f)}</li>`).join('')}</ul><button class="btn pri" style="width:100%" data-plan="${k}">${td?`Start ${td}-day free trial`:'Subscribe to '+esc(p.name)}</button></div>`}).join(''):`<div class="plancard"><b>Dispatcher plans are not open yet.</b><p style="margin:6px 0 0;color:var(--muted);font-size:14px">Check back soon.</p></div>`;
+}
+function bindPlans(){document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>checkout(b.dataset.plan))}
+async function checkout(plan){
+  toast('One moment…',6000);
+  try{const {data}=await sb.auth.getSession();const r=await fetch('/.netlify/functions/billing',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+data.session.access_token},body:JSON.stringify({action:'checkout',plan,ret:'dispatch'})});const j=await r.json().catch(()=>({}));
+    if(r.ok&&j.url){location.href=j.url;return}if(j.detail){toast('Billing problem: '+j.detail,8000);return}toast({already_subscribed:'You already have a plan. Use Manage billing.',early_access:'Everything is free right now.',not_configured:'Billing is not set up yet.'}[j.error]||'Could not open billing. Try again in a minute.',4500)}catch(e){toast('You appear to be offline.')}
+}
+async function portal(){
+  try{const {data}=await sb.auth.getSession();const r=await fetch('/.netlify/functions/billing',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+data.session.access_token},body:JSON.stringify({action:'portal',ret:'dispatch'})});const j=await r.json().catch(()=>({}));if(r.ok&&j.url)location.href=j.url;else toast('Could not open billing. Try again in a minute.',4000)}catch(e){toast('You appear to be offline.')}
+}
+function gate(inner){$('#app').innerHTML=`<div class="hero2"><img src="../app/icons/wordmark-nav-dark.svg" alt="LaneHook" style="height:22px;margin-bottom:24px">${inner}<p style="margin-top:20px"><button class="btn sm" id="so">Sign out</button></p></div>`;$('#so').onclick=async()=>{await sb.auth.signOut();loginView('')}}
+function draw(){
+  VIEW=route();
+  if(!O)return;
+  if(!O.company){
+    if(O.is_driver)return gate(`<h1 style="font-size:26px">This account is a driver</h1><p style="color:var(--muted)">You joined a company as a driver, so this account cannot also run one. Leave the company in the Driver Portal, or sign in here with a different email.</p><a class="btn pri" href="../app/#/dispatch">Open the Driver Portal</a>`);
+    if(!O.allowed){
+      if(billingBack&&FIRST){FIRST=false;gate(`<h1 style="font-size:26px">Setting up your plan</h1><p style="color:var(--muted)">This takes a few seconds.</p>`);let n=0;const t=setInterval(async()=>{n++;await load();if((O&&O.allowed)||n>12)clearInterval(t)},3000);return}
+      gate(`<h1 style="font-size:26px">Run your fleet from one screen</h1><p style="color:var(--muted)">Create a company, share a code with your drivers, and send them loads. Pick a plan to start.</p>${planCards()}<p class="ft2">Secure payment by Stripe. Cancel any time.</p>`);return bindPlans()}
+    gate(`<h1 style="font-size:26px">Name your company</h1><p style="color:var(--muted)">Drivers will see this name when they join.</p><form id="cf" style="max-width:420px"><label class="f"><span>Company name</span><input name="n" maxlength="80" required autocomplete="organization"></label><button class="btn pri" style="width:100%">Create company</button></form>`);
+    return $('#cf').onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector('button');b.disabled=true;const r=await rpc('create_company',{p_name:e.target.n.value});if(r){O=r;toast('Company created');draw()}else b.disabled=false}
+  }
+  shell((O.allowed?'':`<div class="banner warn"><b>Your plan is not active.</b>You can look around, but you cannot send loads or add drivers until you choose a plan. <button class="btn sm" id="fixplan" style="margin-top:8px">Fix my plan</button></div>`)+({loads:pageLoads,drivers:pageDrivers,company:pageCompany}[VIEW])());
+  const fp=$('#fixplan');if(fp)fp.onclick=()=>PLAN&&PLAN.has_customer?portal():(O.company&&openPlans());
+  bind();
+}
+function openPlans(){const s=sheet(`<h2>Choose a plan</h2>${planCards()}`);s.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>checkout(b.dataset.plan))}
+/* ---------- helpers ---------- */
+const drv=id=>(O.members||[]).find(m=>m.user_id===id);
+const dname=m=>m?(m.name||m.email):'Unassigned';
+const ini=m=>(dname(m)||'?').trim().slice(0,1).toUpperCase();
+function sheet(html){closeSheet();const s=document.createElement('div');s.className='scrim';s.innerHTML=`<div class="sheet">${html}</div>`;s.addEventListener('mousedown',e=>{if(e.target===s)closeSheet()});document.body.appendChild(s);return s}
+function closeSheet(){document.querySelectorAll('.scrim').forEach(s=>s.remove())}
+function closeMenu(){document.querySelectorAll('.menu').forEach(m=>m.remove())}
+document.addEventListener('click',e=>{if(!e.target.closest('.menu')&&!e.target.closest('.dots'))closeMenu()});
+function menu(btn,items){closeMenu();const m=document.createElement('div');m.className='menu';m.innerHTML=items.filter(Boolean).map((i,n)=>i==='-'?'<hr>':`<button data-i="${n}" class="${i.bad?'danger':''}">${esc(i.t)}</button>`).join('');document.body.appendChild(m);
+  const r=btn.getBoundingClientRect(),w=m.offsetWidth,h=m.offsetHeight;m.style.left=Math.max(8,Math.min(innerWidth-w-8,r.right-w))+'px';m.style.top=(r.bottom+6+h>innerHeight?Math.max(8,r.top-h-6):r.bottom+6)+'px';
+  const list=items.filter(Boolean);m.querySelectorAll('button').forEach(b=>b.onclick=()=>{closeMenu();list[+b.dataset.i].f()})}
+function confirmBox(title,text,ok,fn){const s=sheet(`<h2>${esc(title)}</h2><p style="color:var(--muted);margin:6px 0 18px">${esc(text)}</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn" id="n">Cancel</button><button class="btn bad" id="y">${esc(ok)}</button></div>`);$('#n',s).onclick=closeSheet;$('#y',s).onclick=()=>{closeSheet();fn()}}
+async function act(name,args,okMsg){const r=await rpc(name,args);if(r){O=r;if(okMsg)toast(okMsg);draw()}return r}
+/* ---------- loads ---------- */
+const COLS=[['open','Open',['open']],['sent','Sent to drivers',['assigned','accepted']],['road','On the road',['picked_up']],['done','Delivered',['delivered','canceled']]];
+function pageLoads(){
+  const all=(O.loads||[]).filter(l=>{if(!Q)return true;const d=l.data||{};return [d.ref,d.broker,d.pickCity,d.delivCity,dname(drv(l.driver_id))].join(' ').toLowerCase().includes(Q.toLowerCase())});
+  const cnt=k=>all.filter(l=>COLS.find(c=>c[0]===k)[2].includes(l.status)).length;
+  if(!COLS.some(c=>c[0]===TAB))TAB='open';
+  return `<div class="head"><div><h1>Loads</h1><p>${(O.loads||[]).length?'Send a load to a driver and watch it move.':'Create your first load.'}</p></div><div class="row2"><input id="q" type="search" placeholder="Search loads" value="${esc(Q)}" style="width:200px" aria-label="Search loads"><button class="btn pri" id="nl">New load</button></div></div>
+  <div class="chips m" role="tablist">${COLS.map(c=>`<button class="chip ${TAB===c[0]?'on':''}" data-tab="${c[0]}">${c[1]} <i>${cnt(c[0])}</i></button>`).join('')}</div>
+  <div class="board">${COLS.map(c=>{const ls=all.filter(l=>c[2].includes(l.status));return `<section class="col ${TAB===c[0]?'show':''}"><h3>${c[1]} · ${ls.length}</h3>${ls.length?ls.map(loadCard).join(''):`<div class="empty sm">${c[0]==='open'?'No open loads.':'Nothing here.'}</div>`}</section>`}).join('')}</div>`;
+}
+function loadCard(l){const d=l.data||{},m=drv(l.driver_id),route=[d.pickCity,d.delivCity].filter(Boolean).join(' → ');
+  return `<div class="lc" data-l="${esc(l.id)}" role="button" tabindex="0"><div class="t1"><div><b>${esc(route||'Load')}</b>${d.ref?` <span style="color:var(--muted)">#${esc(d.ref)}</span>`:''}</div><button class="dots" data-m="${esc(l.id)}" aria-label="Load actions">⋯</button></div>
+  <small>${esc([d.broker,d.rate?money(d.rate):''].filter(Boolean).join(' · '))}${d.pickTime?'<br>Pickup '+esc(when(d.pickTime)):''}</small>
+  <div class="ft"><span class="stat ${esc(l.status)}">${esc(ST[l.status]||l.status)}</span><span style="font-size:13px;color:var(--muted)">${m?esc(dname(m)):'No driver'}</span></div></div>`}
+function loadForm(l,presetDriver){
+  const d=(l&&l.data)||{},did=l?l.driver_id:presetDriver||'';
+  const f=(n,lab,v,o={})=>`<label class="f"><span>${lab}</span><input name="${n}" value="${esc(v==null?'':v)}" ${o.t?`type="${o.t}"`:''} ${o.m?`inputmode="${o.m}"`:''} ${o.max?`maxlength="${o.max}"`:''}></label>`;
+  const s=sheet(`<h2>${l?'Edit load':'New load'}</h2><form id="lf" style="margin-top:12px">
+   <div class="two">${f('ref','Load #',d.ref,{max:40})}${f('rate','Rate ($)',d.rate||'',{m:'decimal'})}</div>
+   <div class="two">${f('broker','Broker',d.broker,{max:80})}${f('brokerPhone','Broker phone',d.brokerPhone,{t:'tel',max:30})}</div>
+   <div class="two">${f('pickCity','Pickup city',d.pickCity,{max:80})}${f('pickTime','Pickup time',d.pickTime,{t:'datetime-local'})}</div>${f('pickAddr','Pickup address',d.pickAddr,{max:160})}
+   <div class="two">${f('delivCity','Delivery city',d.delivCity,{max:80})}${f('delivTime','Delivery time',d.delivTime,{t:'datetime-local'})}</div>${f('delivAddr','Delivery address',d.delivAddr,{max:160})}
+   ${f('miles','Miles',d.miles||'',{m:'decimal'})}
+   <label class="f"><span>Notes for the driver</span><textarea name="notes" rows="3" maxlength="1000">${esc(d.notes||'')}</textarea></label>
+   <label class="f"><span>Driver</span><select name="driver"><option value="">Not assigned yet</option>${(O.members||[]).map(m=>`<option value="${esc(m.user_id)}" ${m.user_id===did?'selected':''}>${esc(dname(m))}</option>`).join('')}</select></label>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px"><button class="btn" type="button" id="cx">Cancel</button><button class="btn pri" id="sv">${l?'Save':'Save load'}</button></div></form>`);
+  $('#cx',s).onclick=closeSheet;
+  $('#lf',s).onsubmit=async e=>{e.preventDefault();const o=Object.fromEntries(new FormData(e.target));const drvId=o.driver||null;delete o.driver;$('#sv',s).disabled=true;
+    const r=await rpc('save_company_load',{p_id:l?l.id:null,p_data:o,p_driver:drvId});if(r){O=r;closeSheet();toast(drvId?'Load sent to '+dname(drv(drvId)):'Load saved');draw()}else $('#sv',s).disabled=false};
+}
+function assignSheet(l){
+  const ms=O.members||[];const s=sheet(`<h2>Send to a driver</h2><div style="margin:12px 0">${ms.length?ms.map(m=>`<button class="drv" style="width:100%;text-align:start;border:1px solid var(--bd);border-radius:14px;margin-bottom:8px" data-d="${esc(m.user_id)}"><span class="av">${esc(ini(m))}</span><span class="g"><b>${esc(dname(m))}</b><small>${m.active_loads} active load${m.active_loads==1?'':'s'}</small></span></button>`).join(''):'<div class="empty sm">No drivers yet. Share your company code from the Drivers page.</div>'}</div><button class="btn" id="cx" style="width:100%">Cancel</button>`);
+  $('#cx',s).onclick=closeSheet;s.querySelectorAll('[data-d]').forEach(b=>b.onclick=async()=>{closeSheet();await act('save_company_load',{p_id:l.id,p_data:l.data,p_driver:b.dataset.d},'Sent to '+dname(drv(b.dataset.d)))});
+}
+function loadMenu(btn,l){
+  const setS=(st,t)=>({t,f:()=>act('set_company_load_status',{p_id:l.id,p_status:st})});
+  menu(btn,[{t:'Edit',f:()=>loadForm(l)},{t:l.driver_id?'Send to a different driver':'Send to a driver',f:()=>assignSheet(l)},
+    l.driver_id&&['assigned','accepted','picked_up'].includes(l.status)?{t:'Take back (make open)',f:()=>act('set_company_load_status',{p_id:l.id,p_status:'open'},'Load is open again')}:null,
+    ['accepted','assigned','picked_up'].includes(l.status)&&l.driver_id?setS('delivered','Mark delivered'):null,
+    l.status==='canceled'||l.status==='delivered'?setS(l.driver_id?'assigned':'open','Reopen'):null,
+    l.status!=='canceled'&&l.status!=='delivered'?setS('canceled','Cancel load'):null,'-',
+    {t:'Delete',bad:1,f:()=>confirmBox('Delete this load?','This removes it for you and for the driver. It cannot be undone.','Delete',()=>act('delete_company_load',{p_id:l.id}))}]);
+}
+/* ---------- drivers ---------- */
+function status(m){const a=(O.loads||[]).find(l=>l.driver_id===m.user_id&&['picked_up','accepted','assigned'].includes(l.status));if(!a)return 'Available';const d=a.data||{};return (a.status==='picked_up'?'On the road':a.status==='accepted'?'Accepted':'Load sent')+(d.delivCity?' · to '+d.delivCity:'')}
+function pageDrivers(){
+  const c=O.company,ms=O.members||[],lim=O.limit||0,link=location.origin+'/app/?join='+c.code;
+  return `<div class="head"><div><h1>Drivers</h1><p>${ms.length} of ${lim} driver seats used.</p></div></div>
+  <div class="panel" style="margin-bottom:14px"><h3>Invite drivers</h3><p class="sub">Give drivers this code. They enter it in the Driver Portal under Dispatch, or open the link below.</p>
+   <div class="code" id="cd">${esc(c.code)}</div><div class="copy" style="margin:12px 0">${esc(link)}</div>
+   <div class="row2"><button class="btn sm" id="cpc">Copy code</button><button class="btn sm" id="cpl">Copy link</button><button class="btn sm" id="shr">Share…</button></div></div>
+  <div class="panel" style="padding:0"><div style="padding:16px 18px 6px"><h3 style="margin:0">Live roster</h3></div>${ms.length?ms.map(m=>`<div class="drv"><span class="av">${esc(ini(m))}</span><div class="g"><b>${esc(dname(m))}</b><small>${esc(m.name?m.email+' · ':'')}${esc(status(m))}</small></div><button class="dots" data-dm="${esc(m.user_id)}" aria-label="Driver actions">⋯</button></div>`).join(''):'<div class="empty">No drivers yet.<br>Share the code above and they will show up here.</div>'}</div>`;
+}
+/* ---------- company ---------- */
+function pageCompany(){
+  const c=O.company,p=PLAN||{},cfgp=CFG&&CFG.plans&&CFG.plans[p.plan];
+  const line=p.plan==='comped'?'Full access, on us.':p.sub_status==='trialing'?`Free trial ends ${day(p.period_end)}.`:p.sub_status==='active'?(p.cancel_at_period_end?`Cancels ${day(p.period_end)}.`:`Renews ${day(p.period_end)}.`):p.sub_status==='past_due'?'Your last payment did not go through.':(CFG&&CFG.earlyAccess!==false?'Free during early access.':'No active plan.');
+  return `<div class="head"><div><h1>Company</h1><p>Your company details and plan.</p></div></div><div class="grid g2">
+  <div class="panel"><h3>Company</h3><form id="rn"><label class="f"><span>Company name</span><input name="n" value="${esc(c.name)}" maxlength="80" required></label><button class="btn sm">Save name</button></form>
+   <h3 style="margin-top:22px">Company code</h3><p class="sub">Drivers join with this code. Change it if it gets shared by mistake. Drivers already in stay in.</p><div class="code" style="font-size:28px">${esc(c.code)}</div><div style="margin-top:12px"><button class="btn sm" id="rot">Make a new code</button></div></div>
+  <div class="panel"><h3>Plan</h3><p style="margin:0 0 4px"><b>${esc(cfgp?cfgp.name:p.plan==='comped'?'Complimentary':'No plan')}</b></p><p class="sub" style="margin:0 0 14px">${esc(line)}</p><div class="row2">${p.has_customer?'<button class="btn sm" id="mb">Manage billing</button>':''}${O.allowed&&p.sub_status?'':'<button class="btn sm pri" id="pl">Choose a plan</button>'}</div>
+   <h3 style="margin-top:22px">Driver Portal</h3><p class="sub">Your drivers use the Driver Portal on their phones.</p><a class="btn sm" href="../app/">Open Driver Portal</a></div></div>`;
+}
+/* ---------- events ---------- */
+function bind(){
+  const q=$('#q');if(q)q.oninput=()=>{Q=q.value;const pos=q.selectionStart;draw();const n=$('#q');n.focus();n.setSelectionRange(pos,pos)};
+  const nl=$('#nl');if(nl)nl.onclick=()=>loadForm(null);
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{TAB=b.dataset.tab;draw()});
+  document.querySelectorAll('.lc').forEach(c=>{const l=(O.loads||[]).find(x=>x.id===c.dataset.l);c.onclick=e=>{if(e.target.closest('.dots'))return;loadForm(l)}});
+  document.querySelectorAll('[data-m]').forEach(b=>b.onclick=e=>{e.stopPropagation();loadMenu(b,(O.loads||[]).find(x=>x.id===b.dataset.m))});
+  document.querySelectorAll('[data-dm]').forEach(b=>b.onclick=()=>{const m=drv(b.dataset.dm);menu(b,[{t:'Send a load',f:()=>loadForm(null,m.user_id)},'-',{t:'Remove from company',bad:1,f:()=>confirmBox('Remove '+dname(m)+'?','They lose access to your loads. Loads they have not finished go back to Open.','Remove',()=>act('remove_driver',{p_user:m.user_id},'Driver removed'))}])});
+  const cp=(id,txt,ok)=>{const b=$('#'+id);if(b)b.onclick=async()=>{try{await navigator.clipboard.writeText(txt);toast(ok)}catch(e){toast('Copy it by hand: '+txt,5000)}}};
+  if(O.company){cp('cpc',O.company.code,'Code copied');cp('cpl',location.origin+'/app/?join='+O.company.code,'Link copied')}
+  const sh=$('#shr');if(sh)sh.onclick=async()=>{const t=`Join ${O.company.name} on LaneHook: ${location.origin}/app/?join=${O.company.code} (code ${O.company.code})`;try{if(navigator.share)await navigator.share({text:t});else{await navigator.clipboard.writeText(t);toast('Invite copied')}}catch(e){}};
+  const rn=$('#rn');if(rn)rn.onsubmit=async e=>{e.preventDefault();await act('rename_company',{p_name:rn.n.value},'Saved')};
+  const rot=$('#rot');if(rot)rot.onclick=()=>confirmBox('Make a new code?','The old code stops working for new drivers.','Make new code',()=>act('rotate_company_code',{},'New code ready'));
+  const mb=$('#mb');if(mb)mb.onclick=portal;const pl=$('#pl');if(pl)pl.onclick=openPlans;
+}
+(async function(){
+  const {data}=await sb.auth.getSession();
+  sb.auth.onAuthStateChange(async(ev,s)=>{if(ev==='SIGNED_IN'&&s){EMAIL=s.user.email||'';if(location.search||location.hash.indexOf('access_token')>-1)history.replaceState(null,'',location.pathname+location.hash);await load()}});
+  if(!data.session){ if(new URLSearchParams(location.search).has('code')){$('#app').innerHTML='<div class="auth"><div class="auth-card"><p>Signing you in…</p></div></div>';await new Promise(r=>setTimeout(r,4000));if((await sb.auth.getSession()).data.session)return}return loginView('')}
+  EMAIL=data.session.user.email||'';await load();
+})();
+</script>
+</body>
+</html>
