@@ -4,14 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LaneHook — Dispatch and drivers, hooked together</title>
-<meta name="description" content="LaneHook is a portal with two logins: a pocket toolkit for drivers and a command center for dispatchers, linked by a company code.">
+<meta name="description" content="LaneHook is trucking software for owner-operators and small fleets: track loads, check brokers, scan rate confirmations, log expenses and invoices, and connect drivers with a dispatcher by company code.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://lanehook.com/">
+<meta name="application-name" content="LaneHook">
+<link rel="apple-touch-icon" href="/app/icons/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="LaneHook">
+<meta property="og:url" content="https://lanehook.com/">
+<meta property="og:image" content="https://lanehook.com/og-image.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="LaneHook. Dispatch sends it. The driver's already on it.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LaneHook — Dispatch and drivers, hooked together">
+<meta name="twitter:description" content="Loads, paperwork and dispatch for owner-operators and small fleets.">
+<meta name="twitter:image" content="https://lanehook.com/og-image.png">
 <meta name="theme-color" content="#0B132B">
 <meta property="og:title" content="LaneHook — Dispatch and drivers, hooked together">
-<meta property="og:description" content="One portal, two logins. Loads, detention, paperwork and fleet tracking for owner-operators and small fleets.">
+<meta property="og:description" content="Loads, broker checks, rate confirmations, invoices and paperwork for owner-operators and small fleets. Dispatchers and drivers connect with a company code.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='56' fill='%230B132B'/%3E%3Cg transform='translate(38 78)' fill='%232563EB'%3E%3Cpath d='M79 80C66 93 52 100 34 96C13 92 0 73 0 49C0 22 21 0 48 0C66 0 79 7 92 21L131 60H105L77 32C69 24 60 22 49 22C34 22 23 34 23 49C23 64 34 76 49 76C57 76 62 72 65 67Z'/%3E%3Cpath transform='translate(180 98) rotate(180)' d='M79 80C66 93 52 100 34 96C13 92 0 73 0 49C0 22 21 0 48 0C66 0 79 7 92 21L131 60H105L77 32C69 24 60 22 49 22C34 22 23 34 23 49C23 64 34 76 49 76C57 76 62 72 65 67Z'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://lanehook.com/#org","name":"LaneHook","url":"https://lanehook.com/","logo":"https://lanehook.com/app/icons/icon-512.png","email":"info@visionmakestudio.com","parentOrganization":{"@type":"Organization","name":"Vision Make Studio","url":"https://visionmakestudio.com/"}},{"@type":"WebSite","@id":"https://lanehook.com/#site","url":"https://lanehook.com/","name":"LaneHook","publisher":{"@id":"https://lanehook.com/#org"},"inLanguage":"en"},{"@type":"SoftwareApplication","name":"LaneHook","applicationCategory":"BusinessApplication","operatingSystem":"Web, iOS, Android","url":"https://lanehook.com/","image":"https://lanehook.com/og-image.png","description":"LaneHook is trucking software for owner-operators and small fleets: track loads, check brokers, scan rate confirmations, log expenses and invoices, and connect drivers with a dispatcher by company code.","publisher":{"@id":"https://lanehook.com/#org"},"offers":{"@type":"Offer","name":"Solo","price":"19","priceCurrency":"USD","url":"https://lanehook.com/#pricing"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is LaneHook a dispatch service or a broker?","acceptedAnswer":{"@type":"Answer","text":"Neither. LaneHook is software. You and your dispatcher keep booking loads your way. We never sit in the middle of your payments and we don't broker freight."}},{"@type":"Question","name":"Do I need a dispatcher to use the driver portal?","acceptedAnswer":{"@type":"Answer","text":"No. The driver portal works on its own for independent owner-operators. Company Link is optional for when you want a dispatcher connected."}},{"@type":"Question","name":"Who makes the final call on a rate or a load?","acceptedAnswer":{"@type":"Answer","text":"You do, every time. Tools like the rate assistant draft counters inside a floor you set. Nothing gets booked or accepted on its own."}},{"@type":"Question","name":"How do I log in?","acceptedAnswer":{"@type":"Answer","text":"Enter your email and we send you a sign-in link. If the link opens in a different app, type the 6-digit code from the same email instead. No password to remember."}},{"@type":"Question","name":"What happens to my records if I unlink from a company?","acceptedAnswer":{"@type":"Answer","text":"Your loads, documents, and mileage stay with you. The dispatcher keeps the records for loads they sent you."}}]}]}</script>
 <script>document.documentElement.classList.add('js')</script>
 <style>
 :root{
@@ -282,6 +297,7 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
 .email-row input.bad{border-color:var(--orange)}
 .foot{max-width:1180px;margin:90px auto 0;padding-top:28px;border-top:1px solid var(--line-d);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--gray)}
 .foot nav{display:flex;gap:22px;flex-wrap:wrap}
+.foot a.legal{text-decoration:underline;text-underline-offset:3px}.foot a.legal:hover{color:var(--off)}
 
 /* language switcher */
 .nav-r{display:flex;align-items:center;gap:14px}
@@ -488,7 +504,7 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
   <div class="road" style="height:84px"></div>
   <div class="hero-copy">
     <div class="pill"><b>New</b>Built for owner-operators &amp; small fleets</div>
-    <h1 id="h1" translate="no"></h1>
+    <h1 id="h1" translate="no">Dispatch sends it.<br>The driver's already on it.</h1>
     <p>LaneHook puts your loads, detention, broker checks, invoices, and paperwork in one place on your phone. Sign in with your email and start free. Dispatch tools for fleets are on the way.</p>
     <div class="hero-ctas">
       <a href="/app/" class="btn btn-o">Start free</a>
@@ -909,7 +925,7 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
   <footer class="foot">
     <svg width="140" height="17" aria-hidden="true"><use href="#wordmark"/></svg>
     <nav><a href="#driver">Driver Portal</a><a href="#dispatch">Dispatcher</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="/app/">Log in</a></nav>
-    <div>© 2026 LaneHook · lanehook.com</div>
+    <div>© 2026 LaneHook · lanehook.com · <a href="/terms/" class="legal">Terms of Service</a> · <a href="/privacy/" class="legal">Privacy Policy</a></div>
   </footer>
 </section>
 </main>
@@ -918,6 +934,7 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
   <div style="display:flex;align-items:center;gap:10px"><svg width="34" height="19" aria-hidden="true"><use href="#hook"/></svg><span style="font-size:14px;font-weight:600">Free to start</span></div>
   <a href="/app/" class="btn btn-o" style="padding:10px 18px;min-height:42px;font-size:14px">Start free</a>
 </div>
+<script src="/analytics.js" defer></script>
 <div class="toast" id="toast" role="status" aria-live="polite"><i></i><span id="toastTxt"></span></div>
 
 <script>
@@ -1193,6 +1210,8 @@ var R=[
 ["Pick a plan. Cancel any time.", "Elige un plan. Cancela cuando quieras.", "Выберите тариф. Отмена в любой момент.", "Оберіть тариф. Скасування будь-коли.", "ਪਲਾਨ ਚੁਣੋ। ਕਦੇ ਵੀ ਰੱਦ ਕਰੋ।", "Tarifni tanlang. Istalgan vaqtda bekor qiling.", "اختر خطة. ألغِ في أي وقت."],
 ["Features", "Funciones", "Возможности", "Можливості", "ਫੀਚਰ", "Imkoniyatlar", "المزايا"],
 ["Pricing", "Precios", "Цены", "Ціни", "ਕੀਮਤਾਂ", "Narxlar", "الأسعار"],
+["Terms of Service", "Términos del servicio", "Условия использования", "Умови використання", "ਸੇਵਾ ਦੀਆਂ ਸ਼ਰਤਾਂ", "Foydalanish shartlari", "شروط الخدمة"],
+["Privacy Policy", "Política de privacidad", "Политика конфиденциальности", "Політика конфіденційності", "ਪਰਦੇਦਾਰੀ ਨੀਤੀ", "Maxfiylik siyosati", "سياسة الخصوصية"],
 ["Log in", "Iniciar sesión", "Войти", "Увійти", "ਲੌਗਇਨ", "Kirish", "تسجيل الدخول"],
 ["Start free", "Empieza gratis", "Начать бесплатно", "Почати безкоштовно", "ਮੁਫ਼ਤ ਸ਼ੁਰੂ ਕਰੋ", "Bepul boshlash", "ابدأ مجانًا"],
 ["LaneHook puts your loads, detention, broker checks, invoices, and paperwork in one place on your phone. Sign in with your email and start free. Dispatch tools for fleets are on the way.", "LaneHook reúne tus cargas, demoras, verificación de brokers, facturas y documentos en una sola app en tu teléfono. Entra con tu correo y empieza gratis. Las herramientas de despacho para flotas están en camino.", "LaneHook собирает ваши рейсы, простой, проверку брокеров, счета и документы в одном приложении на телефоне. Войдите по email и начните бесплатно. Инструменты диспетчера для автопарков скоро появятся.", "LaneHook збирає ваші рейси, простої, перевірку брокерів, рахунки та документи в одному застосунку на телефоні. Увійдіть через email і почніть безкоштовно. Інструменти диспетчера для автопарків уже скоро.", "LaneHook ਤੁਹਾਡੇ ਲੋਡ, ਡਿਟੈਂਸ਼ਨ, ਬ੍ਰੋਕਰ ਚੈੱਕ, ਇਨਵੌਇਸ ਅਤੇ ਕਾਗਜ਼ਾਤ ਨੂੰ ਫ਼ੋਨ ਦੀ ਇੱਕ ਐਪ ਵਿੱਚ ਲਿਆਉਂਦਾ ਹੈ। ਈਮੇਲ ਨਾਲ ਸਾਈਨ ਇਨ ਕਰੋ ਅਤੇ ਮੁਫ਼ਤ ਸ਼ੁਰੂ ਕਰੋ। ਫਲੀਟਾਂ ਲਈ ਡਿਸਪੈਚ ਟੂਲ ਆ ਰਹੇ ਹਨ।", "LaneHook yuklar, kutish vaqti, broker tekshiruvi, hisob-fakturalar va hujjatlaringizni telefondagi bitta ilovada jamlaydi. Email orqali kiring va bepul boshlang. Parklar uchun dispetcher vositalari tez orada.", "يجمع LaneHook شحناتك ووقت الانتظار وفحص الوسطاء والفواتير والأوراق في تطبيق واحد على هاتفك. سجّل الدخول ببريدك وابدأ مجانًا. أدوات الإرسال للأساطيل قادمة قريبًا."],

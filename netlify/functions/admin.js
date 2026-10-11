@@ -22,6 +22,7 @@ function cleanSettings(d) {
       tagline: str(p.tagline, 60), available: !!p.available, popular, features: feats
     };
   });
+  const ga = String(d.gaId || '').trim().toUpperCase(); out.gaId = /^G-[A-Z0-9]{6,14}$/.test(ga) ? ga : '';
   return out;
 }
 
@@ -56,7 +57,7 @@ exports.handler = async (event) => {
       const now = Date.now();
       const out = {
         me: me.email,
-        stripe: { key: !!process.env.STRIPE_SECRET_KEY, webhook: !!process.env.STRIPE_WEBHOOK_SECRET, test: /^sk_test_/.test(process.env.STRIPE_SECRET_KEY || '') },
+        alerts: !!process.env.RESEND_API_KEY, stripe: { key: !!process.env.STRIPE_SECRET_KEY, webhook: !!process.env.STRIPE_WEBHOOK_SECRET, test: /^(sk|rk)_test_/.test(process.env.STRIPE_SECRET_KEY || '') },
         users: users.map(u => { const o = map[u.id] || {}; return {
           id: u.id, email: u.email, created: u.created_at, last: u.last_sign_in_at, confirmed: !!u.email_confirmed_at,
           disabled: !!(u.banned_until && Date.parse(u.banned_until) > now),
@@ -80,7 +81,7 @@ exports.handler = async (event) => {
       const em = String(b.email || '').trim().toLowerCase();
       if (!/^\S+@\S+\.\S+$/.test(em) || em.length > 120) return json(400, { error: 'bad_email' });
       let uid = null;
-      const cr = await fetch(SB + '/auth/v1/admin/users', { method: 'POST', headers: H, body: JSON.stringify({ email: em, email_confirm: true }) });
+      const cr = await fetch(SB + '/auth/v1/admin/users', { method: 'POST', headers: H, body: JSON.stringify({ email: em, email_confirm: true, app_metadata: { signup_notified: true } }) });
       if (cr.ok) { const u = await cr.json(); uid = u.id; }
       else {
         for (let page = 1; page <= 10 && !uid; page++) {

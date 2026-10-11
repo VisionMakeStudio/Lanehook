@@ -147,7 +147,7 @@ function loginView(email,stage,msg2){
     $('#cf').onsubmit=async e=>{e.preventDefault();const t=e.target.c.value.replace(/\D/g,'');const {error}=await sb.auth.verifyOtp({email,token:t,type:'email'});if(error)$('#m').textContent='That code did not work. It may have expired.'};
     $('#bk').onclick=()=>loginView('');
   }else{
-    b.innerHTML=`<p>Send loads to your drivers and see where every load stands. No password, just your email.</p><form id="ef"><label class="f"><span>Email</span><input name="e" type="email" autocomplete="email" value="${esc(email||'')}" required></label><div class="msg" id="m">${esc(msg2||'')}</div><button class="btn pri" id="go">Email me a sign-in link</button></form><p style="margin-top:16px;font-size:14px">Driving for a company? <a href="../app/" style="color:var(--orange)">Open the Driver Portal</a></p>`;
+    b.innerHTML=`<p>Send loads to your drivers and see where every load stands. No password, just your email.</p><form id="ef"><label class="f"><span>Email</span><input name="e" type="email" autocomplete="email" value="${esc(email||'')}" required></label><div class="msg" id="m">${esc(msg2||'')}</div><button class="btn pri" id="go">Email me a sign-in link</button></form><p style="margin-top:16px;font-size:14px">Driving for a company? <a href="../app/" style="color:var(--orange)">Open the Driver Portal</a></p><p style="margin-top:10px;font-size:13px;color:var(--muted)">By continuing you agree to the <a href="/terms/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">Terms of Service</a> and <a href="/privacy/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">Privacy Policy</a>.</p>`;
     $('#ef').onsubmit=async e=>{e.preventDefault();const em=e.target.e.value.trim().toLowerCase();$('#go').disabled=true;
       const {error}=await sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin+'/dispatch/',shouldCreateUser:true}});
       if(error){$('#go').disabled=false;$('#m').textContent=/rate|limit|seconds/i.test(error.message)?'Too many emails right now. Wait a minute and try again.':'Could not send. Check the address.';return}loginView(em,'code')};
@@ -287,11 +287,12 @@ function bind(){
   const rot=$('#rot');if(rot)rot.onclick=()=>confirmBox('Make a new code?','The old code stops working for new drivers.','Make new code',()=>act('rotate_company_code',{},'New code ready'));
   const mb=$('#mb');if(mb)mb.onclick=portal;const pl=$('#pl');if(pl)pl.onclick=openPlans;
 }
+function tellOwner(ses){try{const k='lh-told-'+ses.user.id;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');fetch('/.netlify/functions/notify',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+ses.access_token},body:JSON.stringify({portal:'dispatcher'})}).catch(()=>{})}catch(e){}}
 (async function(){
   const {data}=await sb.auth.getSession();
-  sb.auth.onAuthStateChange(async(ev,s)=>{if(ev==='SIGNED_IN'&&s){EMAIL=s.user.email||'';if(location.search||location.hash.indexOf('access_token')>-1)history.replaceState(null,'',location.pathname+location.hash);await load()}});
+  sb.auth.onAuthStateChange(async(ev,s)=>{if(ev==='SIGNED_IN'&&s){EMAIL=s.user.email||'';tellOwner(s);if(location.search||location.hash.indexOf('access_token')>-1)history.replaceState(null,'',location.pathname+location.hash);await load()}});
   if(!data.session){ if(new URLSearchParams(location.search).has('code')){$('#app').innerHTML='<div class="auth"><div class="auth-card"><p>Signing you in…</p></div></div>';await new Promise(r=>setTimeout(r,4000));if((await sb.auth.getSession()).data.session)return}return loginView('')}
-  EMAIL=data.session.user.email||'';await load();
+  EMAIL=data.session.user.email||'';tellOwner(data.session);await load();
 })();
 </script>
 </body>

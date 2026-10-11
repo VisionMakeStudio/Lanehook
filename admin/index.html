@@ -153,9 +153,9 @@ const ROUTES=[['overview','Overview'],['subscribers','Subscribers'],['plans','Pl
 const route=()=>{const r=location.hash.replace('#/','').replace('#','');return ROUTES.some(x=>x[0]===r)?r:'overview'};
 function shell(inner){
   const r=route();
-  return `<div class="shell"><aside class="side"><div class="brand"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Admin</b></div>${ROUTES.map(x=>`<a class="${r===x[0]?'on':''}" href="#/${x[0]}">${x[1]}</a>`).join('')}<a href="../app/">Open the portal</a><a href="../">Main site</a><div class="me">Signed in as<br>${esc(D.me)}<br><button class="btn sm" style="margin-top:10px;width:100%" id="so">Sign out</button></div></aside>
+  return `<div class="shell"><aside class="side"><div class="brand"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Admin</b></div>${ROUTES.map(x=>`<a class="${r===x[0]?'on':''}" href="#/${x[0]}">${x[1]}</a>`).join('')}<a href="../app/" target="_blank" rel="noopener">Driver Portal ↗</a><a href="../dispatch/" target="_blank" rel="noopener">Dispatcher Portal ↗</a><a href="../" target="_blank" rel="noopener">Main site ↗</a><div class="me">Signed in as<br>${esc(D.me)}<br><button class="btn sm" style="margin-top:10px;width:100%" id="so">Sign out</button></div></aside>
   <div class="main"><div class="top"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Admin</b><button class="btn sm" id="so2">Sign out</button></div>
-  <nav class="nav2">${ROUTES.map(x=>`<a class="${r===x[0]?'on':''}" href="#/${x[0]}">${x[1]}</a>`).join('')}</nav>
+  <nav class="nav2">${ROUTES.map(x=>`<a class="${r===x[0]?'on':''}" href="#/${x[0]}">${x[1]}</a>`).join('')}<a href="../app/" target="_blank" rel="noopener">Driver Portal</a><a href="../dispatch/" target="_blank" rel="noopener">Dispatcher</a><a href="../" target="_blank" rel="noopener">Site</a></nav>
   <div class="wrap">${inner}</div></div></div>`;
 }
 function stripeBanner(){
@@ -214,6 +214,8 @@ function pagePlans(){
   <div class="panel"><div class="trow"><div><b>Early access (everything free)</b><p>When on, everyone uses every feature free and nobody is charged. Turn it off and new people must start a free trial with a card before they can use LaneHook.</p></div><button class="sw ${d.earlyAccess?'on':''}" id="ea" role="switch" aria-checked="${d.earlyAccess}" aria-label="Early access"></button></div>
   <label class="f" style="margin:14px 0 0;max-width:260px"><span>Free trial length (days, 0 = no trial)</span><input id="td" type="number" min="0" max="30" value="${esc(d.trialDays)}"></label>
   <p style="font-size:13px;color:var(--muted);margin:10px 0 0;line-height:1.5">With early access off there is no free plan. New people enter a card, get this many free days, and are charged after unless they cancel. Each person gets one trial.</p></div>
+  <div class="panel" style="margin-top:14px"><h3>Google Analytics</h3><p style="font-size:13px;color:var(--muted);margin:0 0 10px;line-height:1.5">Paste your GA4 Measurement ID (looks like G-ABC123XYZ). It turns on visitor stats for lanehook.com after you save. Leave it empty to turn analytics off.</p>
+  <label class="f" style="margin:0;max-width:260px"><span>Measurement ID</span><input id="ga" value="${esc(d.gaId||'')}" maxlength="20" placeholder="G-XXXXXXXXXX" autocapitalize="characters" spellcheck="false"></label></div>
   <div class="plans4" style="margin-top:14px">${PN.map(k=>{const p=d.plans[k];return `<div class="plan" data-plan="${k}"><h3>${esc(k[0].toUpperCase()+k.slice(1))}</h3>
     <div class="two"><label class="f"><span>Name</span><input data-f="name" value="${esc(p.name)}" maxlength="24"></label><label class="f"><span>Price per month ($)</span><input data-f="price" type="number" min="1" step="1" value="${esc(p.price)}"  ></label></div>
     <label class="f"><span>One-line description</span><input data-f="tagline" value="${esc(p.tagline)}" maxlength="60"></label>
@@ -233,7 +235,7 @@ function pagePayments(){
   <div class="kpis"><div class="kpi"><span>Revenue, all time</span><b class="mono">${$$(t.revAll)}</b></div><div class="kpi"><span>Last 30 days</span><b class="mono">${$$(t.rev30)}</b></div><div class="kpi"><span>MRR</span><b class="mono">${$$(t.mrr)}</b></div><div class="kpi"><span>Payments</span><b class="mono">${P.filter(p=>p.amount>0).length}</b></div></div>
   <div class="card" style="margin-bottom:14px">${P.length?`<table class="tbl ptable"><thead><tr><th>Date</th><th>Subscriber</th><th>Type</th><th class="a">Amount</th></tr></thead><tbody>${P.map(p=>`<tr><td>${day(p.created_at)}</td><td style="word-break:break-all">${esc(emailOf(p.user_id))}</td><td style="text-transform:capitalize">${esc(p.kind)}</td><td class="a" style="${p.amount<0?'color:var(--bad)':''}">${$$(p.amount)}</td></tr>`).join('')}</tbody></table>
   <div class="plist" style="padding:4px 16px">${P.map(p=>`<div class="li"><span class="e">${esc(emailOf(p.user_id))}<small>${day(p.created_at)} · ${esc(p.kind)}</small></span><span class="a ${p.amount<0?'neg':''}">${$$(p.amount)}</span></div>`).join('')}</div>`:'<div class="empty">No payments yet. They appear here as soon as someone pays.</div>'}</div>
-  <div class="panel"><h3>Stripe setup checklist</h3>${ck(s.key,'Secret key added in Netlify (STRIPE_SECRET_KEY)')}${ck(s.webhook,'Webhook secret added in Netlify (STRIPE_WEBHOOK_SECRET)')}${ck(D.settings&&!D.settings.earlyAccess,'Early access turned off on the Plans & pricing page')}
+  <div class="panel"><h3>Stripe setup checklist</h3>${ck(s.key,'Secret key added in Netlify (STRIPE_SECRET_KEY)')}${ck(s.webhook,'Webhook secret added in Netlify (STRIPE_WEBHOOK_SECRET)')}${ck(D.alerts,'Email alerts on (RESEND_API_KEY in Netlify)')}${ck(D.settings&&!D.settings.earlyAccess,'Early access turned off on the Plans & pricing page')}
   <p style="font-size:13px;color:var(--muted);margin:12px 0 6px">Webhook address to give Stripe:</p><div class="copy">${esc(hook)}</div>
   <p style="font-size:13px;color:var(--muted);margin:10px 0 0;line-height:1.5">Events to send: checkout.session.completed, customer.subscription.created, customer.subscription.updated, customer.subscription.deleted, invoice.paid, invoice.payment_failed, charge.refunded.</p></div>`;
 }
@@ -258,6 +260,7 @@ function wirePlans(){
   const d=draft();
   $('#ea').onclick=()=>{d.earlyAccess=!d.earlyAccess;mark();draw()};
   $('#td').oninput=e=>{d.trialDays=e.target.value;mark()};
+  $('#ga').oninput=e=>{d.gaId=e.target.value.trim();mark()};
   document.querySelectorAll('.plan').forEach(box=>{
     const k=box.dataset.plan,p=d.plans[k];
     box.querySelectorAll('[data-f]').forEach(i=>i.oninput=()=>{const f=i.dataset.f;p[f]=f==='features'?i.value.split('\n'):i.value;mark()});
@@ -266,6 +269,7 @@ function wirePlans(){
   $('#sv').onclick=async()=>{
     const bad=PN.find(k=>!(Number(d.plans[k].price)>=1));
     if(bad){toast('Every paid plan needs a price of at least $1.');return}
+    if(d.gaId&&!/^G-[A-Za-z0-9]{6,14}$/.test(d.gaId)){toast('That Analytics ID should look like G-ABC123XYZ.');return}
     $('#sv').disabled=true;
     try{const r=await api({action:'settings_save',settings:d});D.settings=r.settings;DRAFT=null;DIRTY=false;toast('Saved. The site and portal now show these plans.');draw()}
     catch(e){$('#sv').disabled=false;toast('Could not save. Try again.')}

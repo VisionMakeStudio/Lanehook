@@ -35,6 +35,16 @@ LH.auth = {
     if (!first) LH.render();
     LH.sync.start(this.sb, uid);
     (async () => { if (LH.disp) await LH.disp.start(); if (LH.plans) LH.plans.start(); })();
+    this.tellOwner();
+  },
+
+  // Lets the owner know about a brand-new signup. Safe to call every time: the server only sends once per person.
+  async tellOwner() {
+    try {
+      const k = 'lh-told-' + this.user.id; if (sessionStorage.getItem(k)) return; sessionStorage.setItem(k, '1');
+      const { data } = await this.sb.auth.getSession(); if (!data.session) return;
+      fetch('/.netlify/functions/notify', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + data.session.access_token }, body: JSON.stringify({ portal: 'driver' }) }).catch(() => { });
+    } catch (e) { }
   },
 
   async signOut() {
@@ -57,7 +67,7 @@ LH.auth = {
     app.innerHTML = `<div class="auth"><div class="auth-card">
       <img class="auth-logo" src="${logo}" alt="LaneHook">
       <div id="authBody"></div>
-      <p class="auth-fine">By continuing you agree to use LaneHook for lawful trucking business. <a href="../" >Back to lanehook.com</a></p></div></div>`;
+      <p class="auth-fine">By continuing you agree to the <a href="/terms/" target="_blank" rel="noopener">Terms of Service</a> and <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>. <a href="../">Back to lanehook.com</a></p></div></div>`;
     stage === 'code' ? this.codeStep(prefill) : this.emailStep(prefill);
   },
   emailStep(email, msg) {

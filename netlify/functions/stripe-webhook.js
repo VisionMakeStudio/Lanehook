@@ -3,6 +3,7 @@
 const crypto = require('crypto');
 const { rest, accountRow, upsertAccount } = require('./lib/sb');
 const stripe = require('./lib/stripe');
+const { alertAdmin } = require('./lib/mail');
 const ok = (b) => ({ statusCode: 200, body: JSON.stringify(b || { received: true }) });
 
 function verify(raw, header, secret, tol = 300) {
@@ -42,6 +43,11 @@ async function addPayment(row) {
   if (!r.ok) throw new Error('db_' + r.status);
 }
 
+
+const money = c => '$' + ((c || 0) / 100).toFixed(2).replace(/\.00$/, '');
+async function emailOf(c) { try { const id = custId(c); if (!id) return ''; const cu = await stripe.call('GET', 'customers/' + id); return (cu && cu.email) || ''; } catch (e) { return ''; } }
+async function tell(subject, headline, rows) { try { await alertAdmin(subject, rows, headline); } catch (e) { } }
+
 async function handle(ev) {
   const o = ev.data.object;
   switch (ev.type) {
@@ -49,7 +55,11 @@ async function handle(ev) {
       if (o.mode !== 'subscription' || !o.subscription) return;
       const uid = o.client_reference_id || (o.metadata && o.metadata.uid); if (!uid) return;
       const sub = await stripe.call('GET', 'subscriptions/' + o.subscription);
-      await upsertAccount(uid, subFields(sub, (o.metadata && o.metadata.plan) || (sub.metadata && sub.metadata.plan)));
+      const plan = (o.metadata && o.metadata.plan) || (sub.metadata && sub.metadata.plan);
+      await upsertAccount(uid, subFields(sub, plan));
+      const f = subFields(sub, plan), email = (o.customer_details && o.customer_details.email) || o.customer_email || '';
+      const trial = sub.status === 'trialing' && sub.trial_end ? 'Free trial until ' + new Date(sub.trial_end * 1000).toLocaleDateString('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', year: 'numeric' }) : '';
+      await tell('New LaneHook subscriber: ' + (email || plan), sub.status === 'trialing' ? 'New trial started' : 'New paid subscriber', [['Email', email], ['Plan', plan ? plan[0].toUpperCase() + plan.slice(1) : ''], ['Price', money(f.plan_amount) + ' / month'], ['Status', sub.status], ['Trial', trial]]);
       return;
     }
     case 'customer.subscription.created':
@@ -57,11 +67,17 @@ async function handle(ev) {
       const uid = (o.metadata && o.metadata.uid) || await uidByCustomer(custId(o.customer)); if (!uid) return;
       if (['canceled', 'incomplete_expired'].includes(o.status)) { await upsertAccount(uid, { ...subFields(o), plan: 'free', sub_status: 'canceled', plan_amount: 0, cancel_at_period_end: false }); return; }
       await upsertAccount(uid, subFields(o, o.metadata && o.metadata.plan));
+      const was = ev.data.previous_attributes;
+      if (ev.type === 'customer.subscription.updated' && o.cancel_at_period_end && was && was.cancel_at_period_end === false) {
+        const email = await emailOf(o.customer);
+        await tell('LaneHook cancellation scheduled: ' + email, 'Subscriber is cancelling', [['Email', email], ['Plan', (o.metadata && o.metadata.plan) || ''], ['Ends', o.current_period_end ? new Date(o.current_period_end * 1000).toLocaleDateString('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', year: 'numeric' }) : '']]);
+      }
       return;
     }
     case 'customer.subscription.deleted': {
       const uid = (o.metadata && o.metadata.uid) || await uidByCustomer(custId(o.customer)); if (!uid) return;
       await upsertAccount(uid, { plan: 'free', sub_status: 'canceled', plan_amount: 0, cancel_at_period_end: false });
+      { const email = await emailOf(o.customer); await tell('LaneHook subscription ended: ' + email, 'Subscription ended', [['Email', email], ['Plan', (o.metadata && o.metadata.plan) || '']]); }
       return;
     }
     case 'invoice.paid': {
@@ -70,16 +86,19 @@ async function handle(ev) {
       const line = o.lines && o.lines.data && o.lines.data[0];
       const when = (o.status_transitions && o.status_transitions.paid_at) || o.created;
       await addPayment({ id: o.id, user_id: uid, amount: o.amount_paid, currency: o.currency || 'usd', kind: 'payment', note: (line && line.description) || 'Subscription', created_at: new Date(when * 1000).toISOString() });
+      if (o.billing_reason === 'subscription_create' || o.billing_reason === 'subscription_cycle') await tell('LaneHook payment received: ' + money(o.amount_paid), 'Payment received', [['Email', o.customer_email], ['Amount', money(o.amount_paid)], ['For', (line && line.description) || 'Subscription'], ['Type', o.billing_reason === 'subscription_create' ? 'First payment' : 'Renewal']]);
       return;
     }
     case 'invoice.payment_failed': {
       const uid = await uidByCustomer(custId(o.customer)); if (!uid) return;
       const row = await accountRow(uid); if (row && row.sub_status !== 'canceled') await upsertAccount(uid, { sub_status: 'past_due' });
+      await tell('LaneHook payment failed: ' + (o.customer_email || ''), 'Payment failed', [['Email', o.customer_email], ['Amount', money(o.amount_due)]]);
       return;
     }
     case 'charge.refunded': {
       const uid = await uidByCustomer(custId(o.customer));
       await addPayment({ id: 'refund_' + o.id, user_id: uid, amount: -(o.amount_refunded || 0), currency: o.currency || 'usd', kind: 'refund', note: 'Refund', created_at: new Date((o.created || Date.now() / 1000) * 1000).toISOString() });
+      await tell('LaneHook refund: ' + money(o.amount_refunded), 'Refund issued', [['Email', (o.billing_details && o.billing_details.email) || ''], ['Amount', money(o.amount_refunded)]]);
       return;
     }
   }
