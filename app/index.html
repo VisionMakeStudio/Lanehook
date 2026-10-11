@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LaneHook</title>
+<meta name="theme-color" content="#0B132B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LaneHook">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+<script>
+try{var t=localStorage.getItem('lh-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}
+</script>
+</head>
+<body>
+<div id="app"></div>
+<noscript>LaneHook needs JavaScript to run.</noscript>
+<script src="config.js"></script>
+<script src="vendor/supabase.js"></script>
+<script src="core.js"></script>
+<script src="logic.js"></script>
+<script src="sync.js"></script>
+<script src="auth.js"></script>
+<script src="pages-loads.js"></script>
+<script src="pages-more.js"></script>
+</body>
+</html>

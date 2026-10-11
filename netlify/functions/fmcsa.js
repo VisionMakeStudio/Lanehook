@@ -1,8 +1,10 @@
 // Looks up a carrier or broker by MC (docket) number in FMCSA's public QCMobile service.
 // Needs a free FMCSA web key in the FMCSA_WEBKEY environment variable (Netlify site settings).
+const { signedInUser } = require('./lib/auth');
 const json = (status, body) => ({ statusCode: status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' }, body: JSON.stringify(body) });
 
 exports.handler = async (event) => {
+  if (!(await signedInUser(event))) return json(401, { error: 'sign_in' });
   const mc = String((event.queryStringParameters || {}).mc || '').replace(/\D/g, '').replace(/^0+/, '');
   if (!mc || mc.length > 9) return json(400, { error: 'bad_mc' });
   const key = process.env.FMCSA_WEBKEY;

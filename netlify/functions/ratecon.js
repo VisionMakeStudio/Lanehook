@@ -1,5 +1,6 @@
 // Reads a rate confirmation (photo or PDF) and returns the fields LaneHook needs.
 // Needs ANTHROPIC_API_KEY in the Netlify environment. Optional: RATECON_MODEL.
+const { signedInUser } = require('./lib/auth');
 const json = (status, body) => ({ statusCode: status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' }, body: JSON.stringify(body) });
 
 const PROMPT = `You are reading a freight rate confirmation for a trucking company. Extract the fields below. Use null for anything not clearly printed. Do not guess. Return only one JSON object with these keys:
@@ -11,6 +12,7 @@ payment_terms_days (number), notes (short: lumper, TONU, layover, appointment ru
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return json(405, { error: 'method' });
+  if (!(await signedInUser(event))) return json(401, { error: 'sign_in' });
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) return json(503, { error: 'not_configured' });
   // Only accept calls from this site.
