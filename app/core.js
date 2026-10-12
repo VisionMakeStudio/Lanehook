@@ -201,6 +201,7 @@ LH.render = function () {
     </div>
     <nav class="tabs" aria-label="Main">${tabLinks}</nav>`;
   LH.hydrateBlobs($('#content'));
+  if (LH.disp && LH.disp.paintNb) LH.disp.paintNb();
   if (out.after) out.after();
   window.scrollTo(0, 0);
   clearInterval(tickTimer);

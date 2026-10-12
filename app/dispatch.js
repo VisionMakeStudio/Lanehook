@@ -4,7 +4,7 @@
   try { const c = new URLSearchParams(location.search).get('join'); if (/^[A-Za-z0-9]{4,10}$/.test(c || '')) localStorage.setItem('lh-join-code', c.toUpperCase()); } catch (e) { }
   const D = LH.disp = { data: null, joining: false, busy: false };
   const money = n => '$' + (Number(n) % 1 ? Number(n).toFixed(2) : Number(n) || 0);
-  const ERR = { bad_code: 'That code was not found. Check it with your dispatcher.', in_company: 'You are already in a company. Leave it first.', company_full: 'That company has no open driver seats right now.', company_inactive: 'That company\'s plan is not active.', own_company: 'That is your own company code.', locked: 'That load has already moved on.', not_found: 'That load is no longer available.', sign_in: 'Please sign in again.' };
+  const ERR = { company_inactive_chat: 'Messages are paused because the company plan is not active.', slow_down: 'Slow down a little, then send again.', bad_code: 'That code was not found. Check it with your dispatcher.', in_company: 'You are already in a company. Leave it first.', company_full: 'That company has no open driver seats right now.', company_inactive: 'That company\'s plan is not active.', own_company: 'That is your own company code.', locked: 'That load has already moved on.', not_found: 'That load is no longer available.', sign_in: 'Please sign in again.' };
   const msg = e => ERR[(e && e.message) || ''] || 'Something went wrong. Try again.';
   const STATUS = { assigned: ['New', 'blue'], accepted: ['Accepted', 'ok'], picked_up: ['Picked up', 'warn'], delivered: ['Delivered', 'ok'], canceled: ['Canceled', 'bad'], open: ['Open', ''] };
   const when = s => { const d = s ? new Date(s) : null; return d && !isNaN(d) ? d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : ''; };
@@ -14,14 +14,14 @@
     try { return await LH.auth.sb.rpc(name, args || {}); } catch (e) { return { error: { message: 'network' } }; }
   }
   function apply(r) {
-    if (r && r.data) { D.data = r.data; const rt = LH.route(); if (rt.name === 'dispatch') LH.render(); }
+    if (r && r.data) { D.data = r.data; D.cleanShared(); const rt = LH.route(); if (rt.name === 'dispatch') LH.render(); }
   }
   D.load = async function () { if (!LH.auth || !LH.auth.user) return; const r = await rpc('driver_overview'); apply(r); };
   D.join = async function (code) {
     code = String(code || '').trim().toUpperCase(); if (!code) { LH.toast('Enter the code from your dispatcher'); return false; }
     D.busy = true; const r = await rpc('join_company', { p_code: code }); D.busy = false;
     if (r.error) { LH.toast(msg(r.error), 4500); return false; }
-    D.data = r.data; LH.toast('You joined ' + ((r.data.company || {}).name || 'the company')); if (LH.plans && LH.plans.load) await LH.plans.load(); return true;
+    D.data = r.data; D.pollUnread(true); LH.toast('You joined ' + ((r.data.company || {}).name || 'the company')); if (LH.plans && LH.plans.load) await LH.plans.load(); return true;
   };
   D.start = async function () {
     let code = null; try { code = localStorage.getItem('lh-join-code'); } catch (e) { }
@@ -30,7 +30,7 @@
       const ok = await D.join(code); D.joining = false;
       if (ok) { location.hash = '#/dispatch'; return; }
     }
-    D.load();
+    await D.load(); D.pollUnread(true);
   };
 
   /* ---------- page ---------- */
@@ -57,8 +57,10 @@
     const ls = d.loads || [], active = ls.filter(l => ['assigned', 'accepted', 'picked_up'].includes(l.status)), done = ls.filter(l => !['assigned', 'accepted', 'picked_up'].includes(l.status));
     return { title: 'Dispatch', html: `<div class="card"><div class="row"><div class="t sp"><b>${esc(d.company.name)}</b><div class="muted" style="font-size:14px">${d.company.dispatcher_email ? 'Dispatcher ' + esc(d.company.dispatcher_email) : 'Your dispatcher'}</div></div>${d.company.active === false ? '<span class="badge bad">Inactive</span>' : ''}</div>
       <div class="row wrap" style="margin-top:12px"><button class="btn sm" data-act="dispLeave">Leave company</button></div></div>
+      <div class="card chat"><h3>Messages</h3><div class="chat-log" id="chatLog" aria-live="polite"></div>
+        <form id="chatForm" class="chat-form"><input name="body" id="chatBody" maxlength="1000" autocomplete="off" placeholder="Message your dispatcher" aria-label="Message your dispatcher"><button class="btn pri" type="submit">Send</button></form></div>
       <div class="sec"><h2>Your loads from dispatch</h2></div>${active.length ? active.map(loadCard).join('') : LH.empty('Nothing assigned right now', 'Loads your dispatcher sends you will show up here.')}
-      ${done.length ? `<div class="sec"><h2>Finished</h2></div>${done.slice(0, 20).map(loadCard).join('')}` : ''}` };
+      ${done.length ? `<div class="sec"><h2>Finished</h2></div>${done.slice(0, 20).map(loadCard).join('')}` : ''}`, after: () => D.chatOpen() };
   };
   document.addEventListener('submit', e => { if (e.target.id !== 'joinForm') return; e.preventDefault(); LH.acts.joinCode(null, e.target.elements.code.value); });
   LH.acts.joinCode = async (el, code) => {
@@ -77,4 +79,111 @@
       pick: { name: '', city: d.pickCity || '', addr: d.pickAddr || '', time: t(d.pickTime) }, deliv: { name: '', city: d.delivCity || '', addr: d.delivAddr || '', time: t(d.delivTime) } };
     LH.S.loads.push(n); LH.save(); LH.toast('Added to your loads'); LH.go('load/' + n.id);
   };
+
+  /* ---------- sharing a load you booked yourself ---------- */
+  const inCompany = () => !!(D.data && D.data.company);
+  const iso = n => { const t = Number(n); return t ? new Date(t).toISOString() : ''; };
+  D.canShare = l => inCompany() && !l.dispatchId;
+  D.payload = l => {
+    const st = LH.stage(l), status = st === 'booked' ? 'accepted' : st === 'picked' ? 'picked_up' : 'delivered';
+    const data = { ref: l.ref || '', broker: l.brokerName || '', brokerPhone: l.brokerPhone || '', rate: Number(l.rate) || 0, miles: Number(l.loaded) || 0,
+      pickCity: (l.pick || {}).city || '', pickAddr: (l.pick || {}).addr || '', pickTime: iso((l.pick || {}).time),
+      delivCity: (l.deliv || {}).city || '', delivAddr: (l.deliv || {}).addr || '', delivTime: iso((l.deliv || {}).time) };
+    return { data, status, sig: JSON.stringify([data, status]) };
+  };
+  D.share = async l => {
+    const p = D.payload(l), r = await rpc('driver_share_load', { p_local: l.id, p_data: p.data, p_status: p.status });
+    if (r.error) return r.error.message;
+    l.shared = { sig: p.sig, at: Date.now() }; LH.persist(); return '';
+  };
+  D.unshare = async id => { await rpc('driver_unshare_load', { p_local: id }); };
+  let syncT = null, syncing = false;
+  D.scheduleShare = () => { clearTimeout(syncT); syncT = setTimeout(D.syncShared, 1500); };
+  D.syncShared = async () => {
+    if (syncing || !inCompany()) return; syncing = true;
+    try {
+      for (const l of (LH.S.loads || [])) {
+        if (!l.shared || l.dispatchId) continue;
+        const p = D.payload(l); if (l.shared.sig === p.sig) continue;
+        const e = await D.share(l);
+        if (e === 'no_company') { D.cleanShared(true); break; }
+        if (e) break;
+      }
+    } finally { syncing = false; }
+  };
+  D.cleanShared = force => {
+    if (!LH.S || !LH.S.loads) return; let ch = false;
+    const keep = new Set(inCompany() && !force ? ((D.data && D.data.shared) || []) : []);
+    LH.S.loads.forEach(l => { if (l.shared && !keep.has(l.id)) { delete l.shared; ch = true; } });
+    if (ch) LH.persist();
+  };
+  const save0 = LH.save;
+  LH.save = function () { save0.apply(this, arguments); if (inCompany()) D.scheduleShare(); };
+  LH.acts.shareLoad = el => {
+    const l = LH.load(el.dataset.id); if (!l) return;
+    LH.ask('Share this load with your dispatcher?', 'They will see the route, broker, rate, miles, times and status, and it updates as you move the load along. Your notes, costs, profit, invoices and photos stay private.', 'Share', async () => {
+      const e = await D.share(l);
+      if (e) { LH.toast(e === 'company_inactive' ? msg({ message: 'company_inactive' }) : e === 'too_many' ? 'You have shared the maximum number of loads.' : msg({ message: e }), 4000); return; }
+      LH.toast('Shared with your dispatcher'); LH.render();
+    }, false);
+  };
+  LH.acts.unshareLoad = async el => {
+    const l = LH.load(el.dataset.id); if (!l) return;
+    await D.unshare(l.id); delete l.shared; LH.persist(); LH.toast('Stopped sharing'); LH.render();
+  };
+
+  /* ---------- chat with your dispatcher ---------- */
+  D.msgs = []; D.draft = ''; D.unread = 0;
+  const hm = s => { const d = s ? new Date(s) : null; return d && !isNaN(d) ? d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : ''; };
+  D.paintNb = () => {
+    $$('.nb').forEach(x => x.remove());
+    if (!D.unread) return;
+    const label = D.unread > 9 ? '9+' : String(D.unread);
+    $$('.side a[href="#/dispatch"], .list a[href="#/dispatch"], .tabs a[href="#/more"]').forEach(a => { const b = document.createElement('b'); b.className = 'nb'; b.textContent = label; b.setAttribute('aria-label', D.unread + ' unread'); a.appendChild(b); });
+  };
+  D.setUnread = n => { n = Number(n) || 0; if (n !== D.unread) { D.unread = n; D.paintNb(); } };
+  let upT = null;
+  D.pollUnread = start => {
+    if (start && !upT) upT = setInterval(() => D.pollUnread(), 20000);
+    if (!inCompany() || document.hidden || !LH.auth || !LH.auth.user) return;
+    if (LH.route().name === 'dispatch') return;
+    rpc('chat_unread').then(r => { if (r && r.data) D.setUnread(r.data.total); });
+  };
+  const bubble = m => {
+    const ld = m.load_id && ((D.data && D.data.loads) || []).find(x => x.id === m.load_id), dd = ld && ld.data;
+    const re = dd ? `<span class="re">Re: ${esc([dd.pickCity, dd.delivCity].filter(Boolean).join(' → ') || 'load')}${dd.ref ? ' #' + esc(dd.ref) : ''}</span>` : '';
+    return `<div class="bub ${m.mine ? 'me' : ''}">${re}${esc(m.body)}<small>${esc(hm(m.created_at))}</small></div>`;
+  };
+  D.paintChat = () => {
+    const el = $('#chatLog'); if (!el) return;
+    const atEnd = el.scrollHeight - el.scrollTop - el.clientHeight < 60 || !el.children.length;
+    el.innerHTML = D.msgs.length ? D.msgs.map(bubble).join('') : '<p class="muted" style="margin:0">No messages yet. Say hello to your dispatcher.</p>';
+    if (atEnd) el.scrollTop = el.scrollHeight;
+  };
+  let chatT = null;
+  D.chatPoll = async () => {
+    if (LH.route().name !== 'dispatch' || !$('#chatLog')) { clearInterval(chatT); chatT = null; return; }
+    if (document.hidden || !inCompany()) return;
+    const last = D.msgs.length ? D.msgs[D.msgs.length - 1].id : 0;
+    const r = await rpc('chat_messages', { p_driver: null, p_after: last, p_mark: true });
+    if (r.error || !r.data) return;
+    const fresh = (r.data.messages || []).filter(m => !D.msgs.some(x => x.id === m.id));
+    if (fresh.length) { D.msgs = D.msgs.concat(fresh).slice(-200); D.paintChat(); }
+    D.setUnread(0);
+  };
+  D.chatOpen = () => {
+    const i = $('#chatBody'); if (i) { i.value = D.draft; i.addEventListener('input', () => { D.draft = i.value; }); }
+    D.paintChat(); D.chatPoll();
+    if (!chatT) chatT = setInterval(D.chatPoll, 4000);
+  };
+  document.addEventListener('submit', async e => {
+    if (e.target.id !== 'chatForm') return; e.preventDefault();
+    const i = e.target.elements.body, body = i.value.trim(), btn = e.target.querySelector('button'); if (!body || D.sending) return;
+    D.sending = true; btn.disabled = true;
+    const r = await rpc('chat_send', { p_driver: null, p_body: body, p_load: null });
+    D.sending = false; btn.disabled = false;
+    if (r.error) { const k = r.error.message; LH.toast(k === 'company_inactive' ? ERR.company_inactive_chat : (ERR[k] || 'Message not sent. Try again.'), 4000); return; }
+    i.value = ''; D.draft = ''; await D.chatPoll(); i.focus();
+  });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { D.pollUnread(); D.chatPoll(); } });
 })();

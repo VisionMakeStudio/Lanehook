@@ -6,7 +6,9 @@
   var H = location.hostname;
   if (H === 'localhost' || H === '127.0.0.1' || /^\d+\.\d+\.\d+\.\d+$/.test(H)) return;
   if (navigator.globalPrivacyControl === true || navigator.doNotTrack === '1' || window.doNotTrack === '1') return;
-  var KEY = 'lh-ga', started = false;
+  var KEY = 'lh-ga', started = false, Q = [];
+  /* lhTrack(name, params): count an event once Analytics is running. Never send emails or other personal details. */
+  window.lhTrack = function (n, p) { if (started && window.gtag) window.gtag('event', n, p || {}); else if (Q.length < 20) Q.push([n, p]); };
   function start(id) {
     if (started || !/^G-[A-Z0-9]{6,14}$/.test(id || '')) return;
     started = true;
@@ -14,6 +16,7 @@
     window.gtag = function () { window.dataLayer.push(arguments); };
     window.gtag('js', new Date());
     window.gtag('config', id);
+    Q.splice(0).forEach(function (q) { window.gtag('event', q[0], q[1] || {}); });
     var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
     document.head.appendChild(s);
     document.addEventListener('click', function (e) {

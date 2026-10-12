@@ -10,6 +10,11 @@ LH.auth = {
     this.sb = window.supabase.createClient(c.supabaseUrl, c.supabaseKey, { auth: { flowType: 'pkce', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
     const { data } = await this.sb.auth.getSession();
     this.user = data.session ? data.session.user : null;
+    // A sign-in link opened in a different browser than the one that asked for it cannot finish (the secure handshake lives in the first browser).
+    if (!this.user && /[?&]code=|error_code=|error=access_denied|otp_expired/.test(location.search + location.hash)) {
+      this.linkMsg = 'That link was opened in a different browser than the one you signed in from, so it could not finish. Enter your email and we will send a 6-digit code to type in here.';
+      try { history.replaceState(null, '', location.pathname); } catch (e) { }
+    }
     this.sb.auth.onAuthStateChange((ev, sess) => {
       const u = sess ? sess.user : null, was = this.user && this.user.id;
       this.user = u;
@@ -44,7 +49,7 @@ LH.auth = {
     try {
       const k = 'lh-told-' + this.user.id; if (sessionStorage.getItem(k)) return; sessionStorage.setItem(k, '1');
       const { data } = await this.sb.auth.getSession(); if (!data.session) return;
-      fetch('/.netlify/functions/notify', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + data.session.access_token }, body: JSON.stringify({ portal: 'driver' }) }).catch(() => { });
+      fetch('/.netlify/functions/notify', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + data.session.access_token }, body: JSON.stringify({ portal: 'driver' }) }).then(r => r.json()).then(j => { if (j && j.new && window.lhTrack) lhTrack('sign_up', { method: 'email', portal: 'driver' }); }).catch(() => { });
     } catch (e) { }
   },
 
@@ -69,26 +74,27 @@ LH.auth = {
       <img class="auth-logo" src="${logo}" alt="LaneHook">
       <div id="authBody"></div>
       <p class="auth-fine">By continuing you agree to the <a href="/terms/" target="_blank" rel="noopener">Terms of Service</a> and <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>. <a href="../">Back to lanehook.com</a></p></div></div>`;
-    stage === 'code' ? this.codeStep(prefill) : this.emailStep(prefill);
+    const note = this.linkMsg || ''; this.linkMsg = '';
+    stage === 'code' ? this.codeStep(prefill) : this.emailStep(prefill, note);
   },
   emailStep(email, msg) {
-    $('#authBody').innerHTML = `<h1>Sign in</h1><p class="muted">Enter your email. We will send you a link that signs you in. No password needed.</p>
+    $('#authBody').innerHTML = `<h1>Sign in</h1><p class="muted">Enter your email. We will send you a 6-digit code to sign in. No password needed.</p>
       <form id="authForm"><label class="f"><span>Email</span><input name="email" type="email" inputmode="email" autocomplete="email" value="${esc(email || '')}" placeholder="you@email.com" required></label>
       <div id="authMsg" class="auth-msg" role="status">${msg ? esc(msg) : ''}</div>
-      <button class="btn pri block" id="authGo">Email me a sign-in link</button></form>`;
+      <button class="btn pri block" id="authGo">Email me a code</button></form>`;
     const f = $('#authForm');
     f.onsubmit = async e => {
       e.preventDefault(); const em = f.elements.email.value.trim().toLowerCase(); if (!/^\S+@\S+\.\S+$/.test(em)) { $('#authMsg').textContent = 'Enter a valid email address.'; return; }
       const b = $('#authGo'); b.disabled = true; b.innerHTML = '<span class="spin"></span> Sending…';
       const { error } = await this.sb.auth.signInWithOtp({ email: em, options: Object.assign({ emailRedirectTo: location.origin + '/app/', shouldCreateUser: true }, LH.wantPlanData()) });
-      if (error) { b.disabled = false; b.textContent = 'Email me a sign-in link'; $('#authMsg').textContent = /rate|limit|seconds/i.test(error.message) ? 'Too many emails right now. Wait a minute and try again.' : 'We could not send the email. Check the address and try again.'; return; }
+      if (error) { b.disabled = false; b.textContent = 'Email me a code'; $('#authMsg').textContent = /rate|limit|seconds/i.test(error.message) ? 'Too many emails right now. Wait a minute and try again.' : 'We could not send the email. Check the address and try again.'; return; }
       this.codeStep(em);
     };
   },
   codeStep(email) {
-    $('#authBody').innerHTML = `<h1>Check your email</h1><p class="muted">We sent a sign-in link to <b style="color:var(--text)">${esc(email)}</b>. Open it on this device and you are in.</p>
-      <div class="card" style="margin:14px 0"><b>Link opened somewhere else?</b><p class="muted" style="margin:6px 0 12px;font-size:14px">If the email opens in a different app or browser, type the code from the email here instead.</p>
-      <form id="codeForm" class="row"><input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456" aria-label="Code from email" style="letter-spacing:.2em;font-size:20px;text-align:center" required><button class="btn pri">Sign in</button></form><div id="authMsg" class="auth-msg" role="status"></div></div>
+    $('#authBody').innerHTML = `<h1>Enter your code</h1><p class="muted">We emailed a 6-digit code to <b style="color:var(--text)">${esc(email)}</b>. Type it here to sign in.</p>
+      <form id="codeForm" style="margin:14px 0"><input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456" aria-label="6-digit code from the email" style="letter-spacing:.3em;font-size:26px;text-align:center;margin-bottom:10px" required autofocus><div id="authMsg" class="auth-msg" role="status"></div><button class="btn pri block">Sign in</button></form>
+      <p class="muted" style="font-size:14px;margin:0 0 14px">The email also has a sign-in button. It only works in the same browser you are using now, so the code is the safer way.</p>
       <div class="row wrap"><button class="btn sm" id="resend" disabled>Send again</button><button class="btn sm" id="otherEmail">Use another email</button></div>`;
     $('#codeForm').onsubmit = async e => {
       e.preventDefault(); const tok = e.target.elements.code.value.replace(/\D/g, ''); if (tok.length < 6) { $('#authMsg').textContent = 'Enter the full code from the email.'; return; }

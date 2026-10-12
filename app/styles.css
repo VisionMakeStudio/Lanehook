@@ -214,3 +214,13 @@ h1,h2,h3,.big,.ph-hey{font-family:'Archivo',system-ui,sans-serif;font-weight:800
 .side{min-height:100vh}
 
 .legal-links{text-align:center;font-size:13px;color:var(--muted);margin:22px 0 8px}.legal-links a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+
+.chat-log{display:flex;flex-direction:column;gap:8px;max-height:46vh;overflow-y:auto;margin:10px 0;padding:2px}
+.bub{max-width:84%;padding:9px 12px;border-radius:16px 16px 16px 4px;background:var(--surface2);align-self:flex-start;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.4}
+.bub.me{align-self:flex-end;border-radius:16px 16px 4px 16px;background:var(--blue);color:#fff}
+.bub small{display:block;opacity:.65;font-size:11px;margin-top:3px}
+.bub .re{display:block;font-size:12px;font-weight:700;opacity:.85;margin-bottom:3px}
+.chat-form{display:flex;gap:8px}.chat-form input{flex:1;min-width:0}
+.nb{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:8px;border-radius:99px;background:var(--orange);color:#0B132B;font-size:11px;font-weight:800}
+.tabs a{position:relative}.tabs a .nb{position:absolute;top:4px;left:calc(50% + 6px);margin:0}
+.list a.item .nb{margin-left:0;margin-right:6px}

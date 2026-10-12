@@ -3,6 +3,7 @@
 (function () {
   try { const p = new URLSearchParams(location.search).get('plan'); if (/^(solo|crew|fleet)$/.test(p || '')) localStorage.setItem('lh-want-plan', p); } catch (e) { }
   const billingBack = (() => { try { return new URLSearchParams(location.search).get('billing') === 'success'; } catch (e) { return false; } })();
+  if (billingBack && window.lhTrack) lhTrack('checkout_success', { portal: 'driver' });
   const P = LH.plans = { cfg: null, mine: null, loaded: false, activating: billingBack, uid: null };
   const money = n => '$' + (Number(n) % 1 ? Number(n).toFixed(2) : Number(n) || 0);
   const when = d => d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
@@ -51,6 +52,7 @@
   };
 
   P.go = async function (action, plan) {
+    if (action === 'checkout' && window.lhTrack) lhTrack('begin_checkout', { plan, portal: 'driver' });
     LH.toast('One moment…', 6000);
     try {
       const res = await fetch('/.netlify/functions/billing', { method: 'POST', headers: Object.assign({ 'content-type': 'application/json' }, await LH.auth.headers()), body: JSON.stringify({ action, plan }) });

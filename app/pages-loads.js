@@ -170,7 +170,7 @@ async function saveLoadForm(f) {
 function loadDetail(l) {
   const st = LH.stage(l), si = LH.stageIdx(l), inv = LH.invoiceStatus(l), pr = LH.loadProfit(l), mcs = cleanMC(l.brokerMc), bk = LH.S.brokers[mcs];
   const next = { booked: ['Mark picked up', 'picked'], picked: ['Mark delivered', 'delivered'], delivered: ['Create invoice', 'invoice'], invoiced: ['Mark paid', 'paid'] }[st];
-  const menu = [{ label: 'Edit load', act: 'goEdit', id: l.id, icon: 'edit' }, { label: 'Add extra charge', act: 'addExtra', id: l.id, icon: 'plus' }, { label: 'Check broker', act: 'guardLoad', id: l.id, icon: 'shield' }, st !== 'booked' && !l.invoice ? { label: 'Move back one step', act: 'stageBack', id: l.id, icon: 'back' } : null, { label: 'Delete load', act: 'delLoad', id: l.id, icon: 'trash', bad: 1 }];
+  const menu = [{ label: 'Edit load', act: 'goEdit', id: l.id, icon: 'edit' }, { label: 'Add extra charge', act: 'addExtra', id: l.id, icon: 'plus' }, { label: 'Check broker', act: 'guardLoad', id: l.id, icon: 'shield' }, LH.disp && LH.disp.canShare(l) ? (l.shared ? { label: 'Stop sharing with dispatcher', act: 'unshareLoad', id: l.id, icon: 'users' } : { label: 'Share with dispatcher', act: 'shareLoad', id: l.id, icon: 'users' }) : null, st !== 'booked' && !l.invoice ? { label: 'Move back one step', act: 'stageBack', id: l.id, icon: 'back' } : null, { label: 'Delete load', act: 'delLoad', id: l.id, icon: 'trash', bad: 1 }];
   const hdr = `<div class="card">
     <div class="row"><h2 class="sp">${esc(LH.routeLabel(l))}</h2>${stageBadge(l)}</div>
     <div class="steps" aria-hidden="true">${LH.STAGES.map((s, i) => `<i class="${i <= si ? 'on' : ''}"></i>`).join('')}</div>
@@ -179,7 +179,7 @@ function loadDetail(l) {
     <dt>Delivery</dt><dd>${esc((l.deliv && l.deliv.name) || '–')}${l.deliv && l.deliv.time ? '<br><small class="muted">' + fmtDT(l.deliv.time) + '</small>' : ''}</dd>
     <dt>Rate</dt><dd class="mono">${money(l.rate)}${LH.extrasTotal(l) ? ' + ' + money(LH.extrasTotal(l)) + ' extra' : ''}</dd></dl>
     ${(l.extras || []).length ? `<div style="margin-top:10px">${l.extras.map((x, i) => `<div class="row" style="min-height:36px"><span class="sp">${esc(x.label)}</span><b class="mono">${money(x.amount)}</b><button class="icon-btn" style="width:36px;height:36px" data-act="delExtra" data-id="${l.id}" data-v="${i}" aria-label="Remove">${ic('x', 16)}</button></div>`).join('')}</div>` : ''}
-    <div class="row wrap" style="margin-top:12px">${mcs ? `<button class="btn sm" data-act="guardLoad" data-id="${l.id}">${ic('shield', 16)}${bk && bk.checkedAt ? 'Checked ' + fmtDay(isoDay(new Date(bk.checkedAt))) : 'Check broker'}</button>` : ''}${bk && bk.flag ? `<span class="badge ${bk.flag === 'good' ? 'ok' : (bk.flag === 'slow' ? 'warn' : 'bad')}">${{ good: 'Good payer', slow: 'Slow payer', avoid: 'Avoid' }[bk.flag]}</span>` : ''}</div>
+    <div class="row wrap" style="margin-top:12px">${mcs ? `<button class="btn sm" data-act="guardLoad" data-id="${l.id}">${ic('shield', 16)}${bk && bk.checkedAt ? 'Checked ' + fmtDay(isoDay(new Date(bk.checkedAt))) : 'Check broker'}</button>` : ''}${bk && bk.flag ? `<span class="badge ${bk.flag === 'good' ? 'ok' : (bk.flag === 'slow' ? 'warn' : 'bad')}">${{ good: 'Good payer', slow: 'Slow payer', avoid: 'Avoid' }[bk.flag]}</span>` : ''}${l.shared ? '<span class="badge blue">Shared with dispatcher</span>' : ''}</div>
     ${next ? `<button class="btn pri block" style="margin-top:14px" data-act="advance" data-id="${l.id}">${next[0]}</button>` : ''}
     ${st === 'delivered' && !(l.photos || []).some(p => p.kind === 'POD') ? `<div class="hint" style="margin:10px 0 0">Add a photo of the signed POD before you invoice.</div>` : ''}</div>`;
   const profit = `<div class="card"><h3>Profit on this load</h3>
@@ -193,6 +193,7 @@ LH.acts.guardLoad = async el => { const l = LH.load(el.dataset.id); if (!l.broke
 LH.acts.stageBack = el => { const l = LH.load(el.dataset.id), i = LH.STAGES.indexOf(l.stage || 'booked'); if (i > 0) { l.stage = LH.STAGES[i - 1]; LH.save(); LH.render(); } };
 LH.acts.delLoad = el => ask('Delete this load?', 'The load, its photos, and its detention record will be removed from this device. This cannot be undone.', 'Delete', async () => {
   const l = LH.load(el.dataset.id); for (const p of (l.photos || [])) await LH.delBlob(p.id);
+  if (l.shared && LH.disp) LH.disp.unshare(l.id);
   LH.S.loads = LH.S.loads.filter(x => x.id !== l.id); LH.save(); toast('Load deleted'); LH.go('loads');
 });
 LH.acts.advance = el => {

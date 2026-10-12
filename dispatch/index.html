@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="LaneHook Dispatch">
 <link rel="manifest" href="/dispatch/manifest.webmanifest"><link rel="icon" type="image/png" href="/dispatch/icons/icon-192.png"><link rel="apple-touch-icon" href="/dispatch/icons/apple-touch-icon.png">
+<script src="/analytics.js"></script>
 <script src="/install.js" data-portal="dispatcher" data-name="LaneHook Dispatch" data-icon="/dispatch/icons/icon-192.png"></script>
 <link rel="icon" type="image/png" href="../app/icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -117,6 +118,22 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-b
 @media(min-width:900px){.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:start}.col{display:block}.col h3{display:block}.chips.m{display:none}
  .col .lc{margin-bottom:10px}}
 @media(max-width:480px){.two{grid-template-columns:1fr}}
+.nb{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:8px;border-radius:99px;background:var(--orange);color:var(--navy);font-size:11px;font-weight:800;font-style:normal;vertical-align:middle}
+.tag{display:inline-flex;font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px;background:#DBEAFE;color:#1D4ED8;white-space:nowrap}
+.msgs{display:grid;grid-template-columns:1fr;gap:14px}
+.tlist{background:#fff;border:1px solid var(--bd);border-radius:16px;overflow:hidden}
+.th{display:flex;align-items:center;gap:12px;padding:13px 16px;border-top:1px solid var(--bd);width:100%;text-align:start}.th:first-child{border-top:0}.th:hover,.th.on{background:#F1F5F9}
+.th .g{flex:1;min-width:0}.th .g b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.th .g small{display:block;color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tpane{display:none;flex-direction:column;background:#fff;border:1px solid var(--bd);border-radius:16px;overflow:hidden}
+.msgs.open .tlist{display:none}.msgs.open .tpane{display:flex}
+.thead{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--bd)}.thead b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mlog{display:flex;flex-direction:column;gap:8px;height:52vh;overflow-y:auto;padding:14px}
+.bub{max-width:84%;padding:9px 12px;border-radius:16px 16px 16px 4px;background:#EEF2F7;align-self:flex-start;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.4}
+.bub.me{align-self:flex-end;border-radius:16px 16px 4px 16px;background:var(--blue);color:#fff}
+.bub small{display:block;opacity:.65;font-size:11px;margin-top:3px}.bub .re{display:block;font-size:12px;font-weight:700;opacity:.85;margin-bottom:3px}
+.mform{display:grid;gap:8px;padding:12px 14px;border-top:1px solid var(--bd)}.mform .rw{display:flex;gap:8px}.mform input{flex:1;min-width:0}.mform select{min-height:40px;font-size:14px}
+.mempty{margin:auto;color:var(--muted);text-align:center;padding:20px}
+@media(min-width:900px){.msgs{grid-template-columns:320px 1fr;align-items:start}.msgs .tlist{display:block!important}.msgs .tpane{display:flex}.tpane .back{display:none}.mlog{height:56vh}.tpane .none{display:flex}}
 </style>
 </head>
 <body>
@@ -128,9 +145,10 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-b
 const $=(s,r=document)=>r.querySelector(s), esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const C=window.LH_CONFIG, sb=window.supabase.createClient(C.supabaseUrl,C.supabaseKey,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const ST={open:'Open',assigned:'Sent',accepted:'Accepted',picked_up:'Picked up',delivered:'Delivered',canceled:'Canceled'};
-const ERR={plan_required:'Your plan is not active. Choose a plan to keep sending loads.',bad_driver:'That driver is not in your company.',not_found:'That load was not found.',name_required:'Enter a name.',exists:'You already have a company.',is_driver:'This account is a driver. Leave the company in the Driver Portal first.',no_company:'Set up your company first.',sign_in:'Please sign in again.'};
-let O=null, PLAN=null, CFG=null, VIEW='loads', TAB='open', Q='', FIRST=true;
+const ERR={plan_required:'Your plan is not active. Choose a plan to keep sending loads.',bad_driver:'That driver is not in your company.',not_found:'That load was not found.',name_required:'Enter a name.',exists:'You already have a company.',is_driver:'This account is a driver. Leave the company in the Driver Portal first.',no_company:'Set up your company first.',sign_in:'Please sign in again.',company_inactive:'Your plan is not active, so messages are paused.',slow_down:'Slow down a little, then send again.',driver_load:'That load was booked by the driver. You can view it but not change it.'};
+let O=null, PLAN=null, CFG=null, VIEW='loads', TAB='open', Q='', FIRST=true, THREADS=[], TH='', MSGS=[], ABOUT='', DRAFT='', UNREAD=0, TICK=0, POLLING=false;
 const billingBack=new URLSearchParams(location.search).get('billing')==='success';
+if(billingBack&&window.lhTrack)lhTrack('checkout_success',{portal:'dispatcher'});
 const money=n=>'$'+(Number(n)%1?Number(n).toFixed(2):(Number(n)||0));
 const when=s=>{const d=s?new Date(s):null;return d&&!isNaN(d)?d.toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):''};
 const day=s=>s?new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'';
@@ -147,20 +165,23 @@ function loginView(email,stage,msg2){
   $('#app').innerHTML=`<div class="auth"><div class="auth-card"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><h1>Dispatcher sign in</h1><div id="ab"></div></div></div>`;
   const b=$('#ab');
   if(stage==='code'){
-    b.innerHTML=`<p>We sent a sign-in link to <b>${esc(email)}</b>. Open it, or type the code from the email here.</p><form id="cf"><label class="f"><span>Code</span><input name="c" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required></label><div class="msg" id="m">${esc(msg2||'')}</div><button class="btn pri">Sign in</button></form><button class="btn ghost" id="bk">Use another email</button>`;
+    b.innerHTML=`<p>We emailed a 6-digit code to <b>${esc(email)}</b>. Type it here to sign in.</p><form id="cf"><label class="f"><span>Code</span><input name="c" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456" style="letter-spacing:.3em;font-size:24px;text-align:center" required autofocus></label><div class="msg" id="m">${esc(msg2||'')}</div><button class="btn pri">Sign in</button></form><p style="margin-top:14px;font-size:13px">The email also has a sign-in button. It only works in the same browser you are using now, so the code is the safer way.</p><button class="btn ghost" id="bk">Use another email</button>`;
     $('#cf').onsubmit=async e=>{e.preventDefault();const t=e.target.c.value.replace(/\D/g,'');const {error}=await sb.auth.verifyOtp({email,token:t,type:'email'});if(error)$('#m').textContent='That code did not work. It may have expired.'};
     $('#bk').onclick=()=>loginView('');
   }else{
-    b.innerHTML=`<p>Send loads to your drivers and see where every load stands. No password, just your email.</p><form id="ef"><label class="f"><span>Email</span><input name="e" type="email" autocomplete="email" value="${esc(email||'')}" required></label><div class="msg" id="m">${esc(msg2||'')}</div><button class="btn pri" id="go">Email me a sign-in link</button></form><p style="margin-top:16px;font-size:14px">Driving for a company? <a href="../app/" style="color:var(--orange)">Open the Driver Portal</a></p><p style="margin-top:10px;font-size:13px;color:var(--muted)">By continuing you agree to the <a href="/terms/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">Terms of Service</a> and <a href="/privacy/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">Privacy Policy</a>.</p>`;
+    b.innerHTML=`<p>Send loads to your drivers and see where every load stands. No password. We email you a 6-digit code.</p><form id="ef"><label class="f"><span>Email</span><input name="e" type="email" autocomplete="email" value="${esc(email||'')}" required></label><div class="msg" id="m">${esc(msg2||'')}</div><button class="btn pri" id="go">Email me a code</button></form><p style="margin-top:16px;font-size:14px">Driving for a company? <a href="../app/" style="color:var(--orange)">Open the Driver Portal</a></p><p style="margin-top:10px;font-size:13px;color:var(--muted)">By continuing you agree to the <a href="/terms/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">Terms of Service</a> and <a href="/privacy/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">Privacy Policy</a>.</p>`;
     $('#ef').onsubmit=async e=>{e.preventDefault();const em=e.target.e.value.trim().toLowerCase();$('#go').disabled=true;
       const {error}=await sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin+'/dispatch/',shouldCreateUser:true}});
       if(error){$('#go').disabled=false;$('#m').textContent=/rate|limit|seconds/i.test(error.message)?'Too many emails right now. Wait a minute and try again.':'Could not send. Check the address.';return}loginView(em,'code')};
   }
 }
 /* ---------- shell ---------- */
-const NAV=[['loads','Loads'],['drivers','Drivers'],['company','Company']];
+const NAV=[['loads','Loads'],['drivers','Drivers'],['messages','Messages'],['company','Company']];
+const nbHtml=()=>UNREAD?`<i class="nb" aria-label="${UNREAD} unread">${UNREAD>9?'9+':UNREAD}</i>`:'';
+function paintNb(){document.querySelectorAll('a .nb').forEach(x=>x.remove());document.querySelectorAll('a[href="#/messages"]').forEach(a=>a.insertAdjacentHTML('beforeend',nbHtml()));document.title=(UNREAD?'('+UNREAD+') ':'')+'LaneHook Dispatcher Portal'}
+function setUnread(n){n=Number(n)||0;if(n!==UNREAD){UNREAD=n;paintNb()}}
 function shell(inner){
-  const nav=NAV.map(n=>`<a href="#/${n[0]}" class="${VIEW===n[0]?'on':''}">${n[1]}</a>`).join('');
+  const nav=NAV.map(n=>`<a href="#/${n[0]}" class="${VIEW===n[0]?'on':''}">${n[1]}${n[0]==='messages'?nbHtml():''}</a>`).join('');
   $('#app').innerHTML=`<div class="shell"><aside class="side"><div class="brand"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Dispatcher Portal</b></div>${nav}<div class="me">${esc((O&&O.company&&O.company.name)||'')}<br><span style="color:#94A3B8">${esc(me())}</span><br><button class="btn sm" id="so" style="margin-top:10px;width:100%">Sign out</button></div></aside>
   <div class="main"><div class="top"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Dispatcher</b><button class="btn sm" id="so2">Sign out</button></div><div class="nav2">${nav}</div><div class="wrap">${inner}</div></div></div>`;
   ['so','so2'].forEach(i=>{const b=$('#'+i);if(b)b.onclick=async()=>{await sb.auth.signOut();loginView('')}});
@@ -168,6 +189,7 @@ function shell(inner){
 let EMAIL='';const me=()=>EMAIL;
 function route(){const h=location.hash.replace(/^#\/?/,'').split('/')[0];return NAV.some(n=>n[0]===h)?h:'loads'}
 window.addEventListener('hashchange',()=>{VIEW=route();if(O&&O.company)draw()});
+async function srpc(name,args){try{const r=await sb.rpc(name,args||{});return r.error?null:r.data}catch(e){return null}}
 /* ---------- screens before a company exists ---------- */
 function planCards(){
   const ps=CFG&&CFG.plans?['crew','fleet'].filter(k=>CFG.plans[k]&&CFG.plans[k].available&&CFG.plans[k].price>0):[];
@@ -177,6 +199,7 @@ function planCards(){
 function bindPlans(){document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>checkout(b.dataset.plan))}
 async function checkout(plan){
   toast('One moment…',6000);
+  if(window.lhTrack)lhTrack('begin_checkout',{plan:plan,portal:'dispatcher'});
   try{const {data}=await sb.auth.getSession();const r=await fetch('/.netlify/functions/billing',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+data.session.access_token},body:JSON.stringify({action:'checkout',plan,ret:'dispatch'})});const j=await r.json().catch(()=>({}));
     if(r.ok&&j.url){location.href=j.url;return}if(j.detail){toast('Billing problem: '+j.detail,8000);return}toast({already_subscribed:'You already have a plan. Use Manage billing.',early_access:'Everything is free right now.',not_configured:'Billing is not set up yet.'}[j.error]||'Could not open billing. Try again in a minute.',4500)}catch(e){toast('You appear to be offline.')}
 }
@@ -195,9 +218,11 @@ function draw(){
     gate(`<h1 style="font-size:26px">Name your company</h1><p style="color:var(--muted)">Drivers will see this name when they join.</p><form id="cf" style="max-width:420px"><label class="f"><span>Company name</span><input name="n" maxlength="80" required autocomplete="organization"></label><button class="btn pri" style="width:100%">Create company</button></form>`);
     return $('#cf').onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector('button');b.disabled=true;const r=await rpc('create_company',{p_name:e.target.n.value});if(r){O=r;toast('Company created');draw()}else b.disabled=false}
   }
-  shell((O.allowed?'':`<div class="banner warn"><b>Your plan is not active.</b>You can look around, but you cannot send loads or add drivers until you choose a plan. <button class="btn sm" id="fixplan" style="margin-top:8px">Fix my plan</button></div>`)+({loads:pageLoads,drivers:pageDrivers,company:pageCompany}[VIEW])());
+  shell((O.allowed?'':`<div class="banner warn"><b>Your plan is not active.</b>You can look around, but you cannot send loads or add drivers until you choose a plan. <button class="btn sm" id="fixplan" style="margin-top:8px">Fix my plan</button></div>`)+({loads:pageLoads,drivers:pageDrivers,messages:pageMessages,company:pageCompany}[VIEW])());
   const fp=$('#fixplan');if(fp)fp.onclick=()=>PLAN&&PLAN.has_customer?portal():(O.company&&openPlans());
   bind();
+  if(VIEW==='messages')msgOpen();
+  startPolls();
 }
 function openPlans(){const s=sheet(`<h2>Choose a plan</h2>${planCards()}`);s.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>checkout(b.dataset.plan))}
 /* ---------- helpers ---------- */
@@ -214,7 +239,7 @@ function menu(btn,items){closeMenu();const m=document.createElement('div');m.cla
 function confirmBox(title,text,ok,fn){const s=sheet(`<h2>${esc(title)}</h2><p style="color:var(--muted);margin:6px 0 18px">${esc(text)}</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn" id="n">Cancel</button><button class="btn bad" id="y">${esc(ok)}</button></div>`);$('#n',s).onclick=closeSheet;$('#y',s).onclick=()=>{closeSheet();fn()}}
 async function act(name,args,okMsg){const r=await rpc(name,args);if(r){O=r;if(okMsg)toast(okMsg);draw()}return r}
 /* ---------- loads ---------- */
-const COLS=[['open','Open',['open']],['sent','Sent to drivers',['assigned','accepted']],['road','On the road',['picked_up']],['done','Delivered',['delivered','canceled']]];
+const COLS=[['open','Open',['open']],['sent','With drivers',['assigned','accepted']],['road','On the road',['picked_up']],['done','Delivered',['delivered','canceled']]];
 function pageLoads(){
   const all=(O.loads||[]).filter(l=>{if(!Q)return true;const d=l.data||{};return [d.ref,d.broker,d.pickCity,d.delivCity,dname(drv(l.driver_id))].join(' ').toLowerCase().includes(Q.toLowerCase())});
   const cnt=k=>all.filter(l=>COLS.find(c=>c[0]===k)[2].includes(l.status)).length;
@@ -224,7 +249,7 @@ function pageLoads(){
   <div class="board">${COLS.map(c=>{const ls=all.filter(l=>c[2].includes(l.status));return `<section class="col ${TAB===c[0]?'show':''}"><h3>${c[1]} · ${ls.length}</h3>${ls.length?ls.map(loadCard).join(''):`<div class="empty sm">${c[0]==='open'?'No open loads.':'Nothing here.'}</div>`}</section>`}).join('')}</div>`;
 }
 function loadCard(l){const d=l.data||{},m=drv(l.driver_id),route=[d.pickCity,d.delivCity].filter(Boolean).join(' → ');
-  return `<div class="lc" data-l="${esc(l.id)}" role="button" tabindex="0"><div class="t1"><div><b>${esc(route||'Load')}</b>${d.ref?` <span style="color:var(--muted)">#${esc(d.ref)}</span>`:''}</div><button class="dots" data-m="${esc(l.id)}" aria-label="Load actions">⋯</button></div>
+  return `<div class="lc" data-l="${esc(l.id)}" role="button" tabindex="0"><div class="t1"><div><b>${esc(route||'Load')}</b>${d.ref?` <span style="color:var(--muted)">#${esc(d.ref)}</span>`:''}${l.source==='driver'?' <span class="tag">Driver booked</span>':''}</div><button class="dots" data-m="${esc(l.id)}" aria-label="Load actions">⋯</button></div>
   <small>${esc([d.broker,d.rate?money(d.rate):''].filter(Boolean).join(' · '))}${d.pickTime?'<br>Pickup '+esc(when(d.pickTime)):''}</small>
   <div class="ft"><span class="stat ${esc(l.status)}">${esc(ST[l.status]||l.status)}</span><span style="font-size:13px;color:var(--muted)">${m?esc(dname(m)):'No driver'}</span></div></div>`}
 function loadForm(l,presetDriver){
@@ -247,9 +272,18 @@ function assignSheet(l){
   const ms=O.members||[];const s=sheet(`<h2>Send to a driver</h2><div style="margin:12px 0">${ms.length?ms.map(m=>`<button class="drv" style="width:100%;text-align:start;border:1px solid var(--bd);border-radius:14px;margin-bottom:8px" data-d="${esc(m.user_id)}"><span class="av">${esc(ini(m))}</span><span class="g"><b>${esc(dname(m))}</b><small>${m.active_loads} active load${m.active_loads==1?'':'s'}</small></span></button>`).join(''):'<div class="empty sm">No drivers yet. Share your company code from the Drivers page.</div>'}</div><button class="btn" id="cx" style="width:100%">Cancel</button>`);
   $('#cx',s).onclick=closeSheet;s.querySelectorAll('[data-d]').forEach(b=>b.onclick=async()=>{closeSheet();await act('save_company_load',{p_id:l.id,p_data:l.data,p_driver:b.dataset.d},'Sent to '+dname(drv(b.dataset.d)))});
 }
+function viewLoad(l){
+  const d=l.data||{},m=drv(l.driver_id),row=(k,v)=>v?`<dt>${k}</dt><dd>${esc(v)}</dd>`:'';
+  const s=sheet(`<h2>${esc([d.pickCity,d.delivCity].filter(Boolean).join(' → ')||'Load')}</h2><p style="color:var(--muted);margin:4px 0 0;font-size:14px">Booked by the driver. You can view it and message them, but only they can change it.</p>
+   <dl class="kv"><dt>Status</dt><dd>${esc(ST[l.status]||l.status)}</dd>${row('Driver',m?dname(m):'')}${row('Load #',d.ref)}${row('Broker',d.broker)}${row('Broker phone',d.brokerPhone)}${row('Rate',d.rate?money(d.rate):'')}${row('Miles',d.miles)}${row('Pickup',[when(d.pickTime),d.pickCity,d.pickAddr].filter(Boolean).join(' · '))}${row('Delivery',[when(d.delivTime),d.delivCity,d.delivAddr].filter(Boolean).join(' · '))}</dl>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn" id="cx">Close</button>${m?'<button class="btn pri" id="mm">Message driver</button>':''}</div>`);
+  $('#cx',s).onclick=closeSheet;const mm=$('#mm',s);if(mm)mm.onclick=()=>{closeSheet();msgDriver(l.driver_id,l.id)};
+}
+function msgDriver(id,loadId){TH=id;ABOUT=loadId||'';MSGS=[];if(location.hash==='#/messages'){draw()}else location.hash='#/messages'}
 function loadMenu(btn,l){
+  if(l.source==='driver'){return menu(btn,[{t:'View details',f:()=>viewLoad(l)},l.driver_id?{t:'Message driver',f:()=>msgDriver(l.driver_id,l.id)}:null])}
   const setS=(st,t)=>({t,f:()=>act('set_company_load_status',{p_id:l.id,p_status:st})});
-  menu(btn,[{t:'Edit',f:()=>loadForm(l)},{t:l.driver_id?'Send to a different driver':'Send to a driver',f:()=>assignSheet(l)},
+  menu(btn,[{t:'Edit',f:()=>loadForm(l)},{t:l.driver_id?'Send to a different driver':'Send to a driver',f:()=>assignSheet(l)},l.driver_id?{t:'Message driver',f:()=>msgDriver(l.driver_id,l.id)}:null,
     l.driver_id&&['assigned','accepted','picked_up'].includes(l.status)?{t:'Take back (make open)',f:()=>act('set_company_load_status',{p_id:l.id,p_status:'open'},'Load is open again')}:null,
     ['accepted','assigned','picked_up'].includes(l.status)&&l.driver_id?setS('delivered','Mark delivered'):null,
     l.status==='canceled'||l.status==='delivered'?setS(l.driver_id?'assigned':'open','Reopen'):null,
@@ -266,6 +300,73 @@ function pageDrivers(){
    <div class="row2"><button class="btn sm" id="cpc">Copy code</button><button class="btn sm" id="cpl">Copy link</button><button class="btn sm" id="shr">Share…</button></div></div>
   <div class="panel" style="padding:0"><div style="padding:16px 18px 6px"><h3 style="margin:0">Live roster</h3></div>${ms.length?ms.map(m=>`<div class="drv"><span class="av">${esc(ini(m))}</span><div class="g"><b>${esc(dname(m))}</b><small>${esc(m.name?m.email+' · ':'')}${esc(status(m))}</small></div><button class="dots" data-dm="${esc(m.user_id)}" aria-label="Driver actions">⋯</button></div>`).join(''):'<div class="empty">No drivers yet.<br>Share the code above and they will show up here.</div>'}</div>`;
 }
+/* ---------- messages ---------- */
+const tn=t=>t.name||t.email||'Driver';
+const hm=s=>when(s);
+function pageMessages(){
+  return `<div class="head"><div><h1>Messages</h1><p>${(O.members||[]).length?'Chat with your drivers.':'Add drivers from the Drivers page to start chatting.'}</p></div></div>
+  <div class="msgs ${TH?'open':''}" id="msgs"><div class="tlist" id="tl"></div><section class="tpane" id="tp"></section></div>`;
+}
+function paintThreads(){
+  const el=$('#tl');if(!el)return;
+  el.innerHTML=THREADS.length?THREADS.map(t=>`<button class="th ${t.user_id===TH?'on':''}" data-th="${esc(t.user_id)}"><span class="av">${esc(tn(t).trim().slice(0,1).toUpperCase())}</span><span class="g"><b>${esc(tn(t))}</b><small>${t.last_body?(t.last_mine?'You: ':'')+esc(t.last_body):'No messages yet'}</small></span>${t.unread?`<i class="nb" style="margin:0">${t.unread>9?'9+':t.unread}</i>`:''}</button>`).join(''):'<div class="empty sm">No drivers yet.</div>';
+  el.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>{TH=b.dataset.th;ABOUT='';MSGS=[];DRAFT='';msgOpen()});
+}
+function paintPane(){
+  const el=$('#tp'),box=$('#msgs');if(!el)return;
+  const t=THREADS.find(x=>x.user_id===TH);
+  if(box)box.classList.toggle('open',!!t);
+  if(!t){el.innerHTML='<div class="mempty">Pick a driver to see your conversation.</div>';return}
+  const loads=(O.loads||[]).filter(l=>l.driver_id===TH);
+  el.innerHTML=`<div class="thead"><button class="dots back" id="mb2" aria-label="Back to drivers">‹</button><span class="av">${esc(tn(t).trim().slice(0,1).toUpperCase())}</span><b>${esc(tn(t))}</b></div><div class="mlog" id="ml" aria-live="polite"></div>
+  <form class="mform" id="mf"><div class="rw"><input name="b" id="mi" maxlength="1000" autocomplete="off" placeholder="Message ${esc(tn(t))}" aria-label="Message"><button class="btn pri" type="submit">Send</button></div>
+  ${loads.length?`<select name="about" id="ma" aria-label="About a load"><option value="">Not about a specific load</option>${loads.map(l=>{const d=l.data||{};return `<option value="${esc(l.id)}" ${l.id===ABOUT?'selected':''}>About: ${esc([d.pickCity,d.delivCity].filter(Boolean).join(' → ')||'Load')}${d.ref?' #'+esc(d.ref):''}</option>`}).join('')}</select>`:''}</form>`;
+  const i=$('#mi');i.value=DRAFT;i.oninput=()=>{DRAFT=i.value};const a=$('#ma');if(a)a.onchange=()=>{ABOUT=a.value};
+  $('#mb2').onclick=()=>{TH='';MSGS=[];paintPane();paintThreads()};
+  $('#mf').onsubmit=sendMsg;paintMsgs();
+}
+function paintMsgs(){
+  const el=$('#ml');if(!el)return;const near=el.scrollHeight-el.scrollTop-el.clientHeight<60||!el.children.length;
+  el.innerHTML=MSGS.length?MSGS.map(m=>{const ld=m.load_id&&(O.loads||[]).find(x=>x.id===m.load_id),d=ld&&ld.data;
+    return `<div class="bub ${m.mine?'me':''}">${d?`<span class="re">Re: ${esc([d.pickCity,d.delivCity].filter(Boolean).join(' → ')||'load')}${d.ref?' #'+esc(d.ref):''}</span>`:''}${esc(m.body)}<small>${esc(hm(m.created_at))}</small></div>`}).join(''):'<div class="mempty">No messages yet. Say hello.</div>';
+  if(near)el.scrollTop=el.scrollHeight;
+}
+async function pollThreads(){
+  const d=await srpc('chat_threads');if(!d||VIEW!=='messages')return;
+  THREADS=d;if(TH&&!THREADS.some(t=>t.user_id===TH)){TH='';MSGS=[]}
+  setUnread(d.reduce((n,t)=>n+(Number(t.unread)||0),0));
+  if(!$('#tp').firstChild||!TH)paintPane();else{const b=$('.thead b');if(!b)paintPane()}
+  paintThreads();
+}
+async function pollOpen(){
+  if(!TH||VIEW!=='messages'||document.hidden)return;
+  const last=MSGS.length?MSGS[MSGS.length-1].id:0,id=TH;
+  const d=await srpc('chat_messages',{p_driver:id,p_after:last,p_mark:true});if(!d||id!==TH)return;
+  const fresh=(d.messages||[]).filter(m=>!MSGS.some(x=>x.id===m.id));
+  if(fresh.length||!last){MSGS=MSGS.concat(fresh).slice(-200);paintMsgs()}
+  const t=THREADS.find(x=>x.user_id===id);if(t&&t.unread){t.unread=0;paintThreads();setUnread(THREADS.reduce((n,x)=>n+(Number(x.unread)||0),0))}
+}
+async function msgOpen(){
+  if(!$('#tl'))return;await pollThreads();paintPane();paintThreads();pollOpen();
+}
+async function sendMsg(e){
+  e.preventDefault();const f=e.target,body=f.b.value.trim(),btn=f.querySelector('button');if(!body||!TH)return;btn.disabled=true;
+  const r=await rpc('chat_send',{p_driver:TH,p_body:body,p_load:ABOUT||null});btn.disabled=false;
+  if(r){DRAFT='';f.b.value='';await pollOpen();pollThreads();const i=$('#mi');if(i)i.focus()}
+}
+/* ---------- background refresh ---------- */
+function startPolls(){
+  if(POLLING)return;POLLING=true;
+  srpc('chat_unread').then(u=>u&&setUnread(u.total));
+  setInterval(async()=>{
+    if(document.hidden||!O||!O.company)return;TICK++;
+    if(VIEW==='messages'){pollOpen();if(TICK%4===0)pollThreads();return}
+    if(TICK%5===0){const u=await srpc('chat_unread');if(u)setUnread(u.total)}
+    if(TICK%8===0&&!document.querySelector('.scrim,.menu')&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||'')){
+      const o=await srpc('company_overview');if(o&&JSON.stringify(o)!==JSON.stringify(O)&&!document.querySelector('.scrim,.menu')){O=o;draw()}}
+  },4000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&O&&O.company){VIEW==='messages'?(pollThreads(),pollOpen()):srpc('chat_unread').then(u=>u&&setUnread(u.total))}});
+}
 /* ---------- company ---------- */
 function pageCompany(){
   const c=O.company,p=PLAN||{},cfgp=CFG&&CFG.plans&&CFG.plans[p.plan];
@@ -281,9 +382,9 @@ function bind(){
   const q=$('#q');if(q)q.oninput=()=>{Q=q.value;const pos=q.selectionStart;draw();const n=$('#q');n.focus();n.setSelectionRange(pos,pos)};
   const nl=$('#nl');if(nl)nl.onclick=()=>loadForm(null);
   document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{TAB=b.dataset.tab;draw()});
-  document.querySelectorAll('.lc').forEach(c=>{const l=(O.loads||[]).find(x=>x.id===c.dataset.l);c.onclick=e=>{if(e.target.closest('.dots'))return;loadForm(l)}});
+  document.querySelectorAll('.lc').forEach(c=>{const l=(O.loads||[]).find(x=>x.id===c.dataset.l);c.onclick=e=>{if(e.target.closest('.dots'))return;l.source==='driver'?viewLoad(l):loadForm(l)}});
   document.querySelectorAll('[data-m]').forEach(b=>b.onclick=e=>{e.stopPropagation();loadMenu(b,(O.loads||[]).find(x=>x.id===b.dataset.m))});
-  document.querySelectorAll('[data-dm]').forEach(b=>b.onclick=()=>{const m=drv(b.dataset.dm);menu(b,[{t:'Send a load',f:()=>loadForm(null,m.user_id)},'-',{t:'Remove from company',bad:1,f:()=>confirmBox('Remove '+dname(m)+'?','They lose access to your loads. Loads they have not finished go back to Open.','Remove',()=>act('remove_driver',{p_user:m.user_id},'Driver removed'))}])});
+  document.querySelectorAll('[data-dm]').forEach(b=>b.onclick=()=>{const m=drv(b.dataset.dm);menu(b,[{t:'Message',f:()=>msgDriver(m.user_id)},{t:'Send a load',f:()=>loadForm(null,m.user_id)},'-',{t:'Remove from company',bad:1,f:()=>confirmBox('Remove '+dname(m)+'?','They lose access to your loads. Loads they have not finished go back to Open.','Remove',()=>act('remove_driver',{p_user:m.user_id},'Driver removed'))}])});
   const cp=(id,txt,ok)=>{const b=$('#'+id);if(b)b.onclick=async()=>{try{await navigator.clipboard.writeText(txt);toast(ok)}catch(e){toast('Copy it by hand: '+txt,5000)}}};
   if(O.company){cp('cpc',O.company.code,'Code copied');cp('cpl',location.origin+'/app/?join='+O.company.code,'Link copied')}
   const sh=$('#shr');if(sh)sh.onclick=async()=>{const t=`Join ${O.company.name} on LaneHook: ${location.origin}/app/?join=${O.company.code} (code ${O.company.code})`;try{if(navigator.share)await navigator.share({text:t});else{await navigator.clipboard.writeText(t);toast('Invite copied')}}catch(e){}};
@@ -291,11 +392,11 @@ function bind(){
   const rot=$('#rot');if(rot)rot.onclick=()=>confirmBox('Make a new code?','The old code stops working for new drivers.','Make new code',()=>act('rotate_company_code',{},'New code ready'));
   const mb=$('#mb');if(mb)mb.onclick=portal;const pl=$('#pl');if(pl)pl.onclick=openPlans;
 }
-function tellOwner(ses){try{const k='lh-told-'+ses.user.id;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');fetch('/.netlify/functions/notify',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+ses.access_token},body:JSON.stringify({portal:'dispatcher'})}).catch(()=>{})}catch(e){}}
+function tellOwner(ses){try{const k='lh-told-'+ses.user.id;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');fetch('/.netlify/functions/notify',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+ses.access_token},body:JSON.stringify({portal:'dispatcher'})}).then(r=>r.json()).then(j=>{if(j&&j.new&&window.lhTrack)lhTrack('sign_up',{method:'email',portal:'dispatcher'})}).catch(()=>{})}catch(e){}}
 (async function(){
   const {data}=await sb.auth.getSession();
   sb.auth.onAuthStateChange(async(ev,s)=>{if(ev==='SIGNED_IN'&&s){EMAIL=s.user.email||'';tellOwner(s);if(location.search||location.hash.indexOf('access_token')>-1)history.replaceState(null,'',location.pathname+location.hash);await load()}});
-  if(!data.session){ if(new URLSearchParams(location.search).has('code')){$('#app').innerHTML='<div class="auth"><div class="auth-card"><p>Signing you in…</p></div></div>';await new Promise(r=>setTimeout(r,4000));if((await sb.auth.getSession()).data.session)return}return loginView('')}
+  if(!data.session){ if(new URLSearchParams(location.search).has('code')){$('#app').innerHTML='<div class="auth"><div class="auth-card"><p>Signing you in…</p></div></div>';await new Promise(r=>setTimeout(r,4000));if((await sb.auth.getSession()).data.session)return}return loginView('',undefined,/[?&]code=|error_code=|error=access_denied|otp_expired/.test(location.search+location.hash)?'That link was opened in a different browser than the one you signed in from, so it could not finish. Enter your email and we will send a 6-digit code to type in here.':'')}
   EMAIL=data.session.user.email||'';tellOwner(data.session);await load();
   if(window.LHInstall)LHInstall.auto(()=>!!document.querySelector('.shell'));
 })();

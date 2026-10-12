@@ -505,7 +505,7 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
   <div class="hero-copy">
     <div class="pill"><b>New</b>Built for owner-operators &amp; small fleets</div>
     <h1 id="h1" translate="no">Dispatch sends it.<br>The driver's already on it.</h1>
-    <p>LaneHook puts your loads, detention, broker checks, invoices, and paperwork in one place on your phone. Sign in with your email and start free. Dispatch tools for fleets are on the way.</p>
+    <p>LaneHook puts your loads, detention, broker checks, invoices, and paperwork in one place on your phone. Sign in with your email and start free. Running a fleet? Dispatchers get their own portal.</p>
     <div class="hero-ctas">
       <a href="/app/" class="btn btn-o">Start free</a>
       <a href="#demo" class="btn btn-ghost">Try the live demo ↓</a>
@@ -703,7 +703,7 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
       <div class="dmac" id="dmac">
         <div class="mac-lid">
           <div class="dm-screen">
-            <div class="bar"><i></i><i></i><i></i><div class="url mono">app.lanehook.com/dispatch/<span id="dpPath">fleet</span></div></div>
+            <div class="bar"><i></i><i></i><i></i><div class="url mono">lanehook.com/dispatch/<span id="dpPath">fleet</span></div></div>
             <div class="dm-body">
 
               <div class="dv fleet" data-dp-view="fleet">
@@ -800,10 +800,14 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
     </div>
 
     <div class="hscroll" data-reveal>
-      <div><b>Fleet roster</b><p>Every driver on your code with live status, location, and the load they're on.</p></div>
+      <div><b>Fleet roster</b><p>Every driver on your code with their status and the load they're on.</p></div>
       <div><b>Send &amp; track loads</b><p>Push a load to a driver's phone and watch it move from booked to delivered.</p></div>
-      <div style="border-top-color:var(--orange)"><b>Load Guard</b><p>A quick broker check for double-brokering red flags before a truck rolls.</p></div>
-      <div><b>Settlements</b><p>Driver pay sheets built from the loads, fuel, and fees already in the portal.</p></div>
+      <div style="border-top-color:var(--orange)"><b>Driver-booked loads</b><p>Drivers can share loads they booked themselves, so you see them without a phone call.</p></div>
+      <div><b>Messages</b><p>Chat with each driver and tie a message to a specific load.</p></div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-top:22px" data-reveal>
+      <p style="margin:0;font-size:14px;color:var(--gray);max-width:560px">The laptop above is a preview. The fleet map and settlements are coming later.</p>
+      <a href="/dispatch/" class="btn btn-o" data-cta="dispatch">Open the Dispatcher Portal</a>
     </div>
   </div>
 </section>
@@ -924,7 +928,7 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
 
   <footer class="foot">
     <svg width="140" height="17" aria-hidden="true"><use href="#wordmark"/></svg>
-    <nav><a href="#driver">Driver Portal</a><a href="#dispatch">Dispatcher</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="/app/">Log in</a></nav>
+    <nav><a href="#driver">Driver Portal</a><a href="#dispatch">Dispatcher</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="/app/">Driver log in</a><a href="/dispatch/">Dispatcher log in</a></nav>
     <div>© 2026 LaneHook · lanehook.com · <a href="/terms/" class="legal">Terms of Service</a> · <a href="/privacy/" class="legal">Privacy Policy</a></div>
   </footer>
 </section>
@@ -1131,11 +1135,11 @@ var R=[
 ["Docs missing before invoicing","Docs faltantes para facturar","Не хватает документов для счёта","Бракує документів для рахунку","ਬਿੱਲ ਤੋਂ ਪਹਿਲਾਂ ਘੱਟ ਕਾਗਜ਼","Hisobdan oldin yetishmayotgan hujjatlar","مستندات ناقصة قبل الفوترة"],
 ["Sample figures for preview","Cifras de ejemplo","Примеры цифр","Приклади цифр","ਨਮੂਨਾ ਅੰਕੜੇ","Namunaviy raqamlar","أرقام تجريبية"],
 ["Fleet roster","Lista de flota","Список водителей","Список водіїв","ਫਲੀਟ ਸੂਚੀ","Avtopark ro'yxati","قائمة الأسطول"],
-["Every driver on your code with live status, location, and the load they're on.","Cada chofer con tu código, con estado en vivo, ubicación y la carga que lleva.","Все водители по вашему коду: статус, местоположение и текущий груз.","Усі водії за вашим кодом: статус, місцезнаходження і поточний вантаж.","ਤੁਹਾਡੇ ਕੋਡ ਵਾਲਾ ਹਰ ਡਰਾਈਵਰ — ਲਾਈਵ ਸਟੇਟਸ, ਟਿਕਾਣਾ ਅਤੇ ਮੌਜੂਦਾ ਲੋਡ।","Kodingizdagi har bir haydovchi: jonli holat, joylashuv va hozirgi yuk.","كل سائق على رمزك مع حالته المباشرة وموقعه والحمولة التي ينقلها."],
+["Every driver on your code with their status and the load they're on.","Cada chofer con tu código, con su estado y la carga que lleva.","Все водители по вашему коду: статус и текущий груз.","Усі водії за вашим кодом: статус і поточний вантаж.","ਤੁਹਾਡੇ ਕੋਡ ਵਾਲਾ ਹਰ ਡਰਾਈਵਰ, ਉਸਦੀ ਸਥਿਤੀ ਅਤੇ ਉਹ ਜਿਸ ਲੋਡ 'ਤੇ ਹੈ।","Kodingizdagi har bir haydovchi, uning holati va qaysi yukda ekani.","كل سائق على رمزك مع حالته والحمولة التي يعمل عليها."],
 ["Send & track loads","Envía y rastrea cargas","Отправка и отслеживание грузов","Надсилання й відстеження вантажів","ਲੋਡ ਭੇਜੋ ਅਤੇ ਟ੍ਰੈਕ ਕਰੋ","Yuk yuborish va kuzatish","أرسل الأحمال وتتبّعها"],
 ["Push a load to a driver's phone and watch it move from booked to delivered.","Envía una carga al teléfono del chofer y mírala pasar de reservada a entregada.","Отправьте груз на телефон водителя и следите за ним от брони до доставки.","Надішліть вантаж на телефон водія і стежте за ним від броні до доставки.","ਡਰਾਈਵਰ ਦੇ ਫ਼ੋਨ 'ਤੇ ਲੋਡ ਭੇਜੋ ਅਤੇ ਬੁਕਿੰਗ ਤੋਂ ਡਿਲੀਵਰੀ ਤੱਕ ਵੇਖੋ।","Yukni haydovchi telefoniga yuboring va band qilishdan yetkazishgacha kuzating.","أرسل الحمولة إلى هاتف السائق وتابعها من الحجز حتى التسليم."],
-["A quick broker check for double-brokering red flags before a truck rolls.","Una revisión rápida del broker para detectar doble corretaje antes de que salga el camión.","Быстрая проверка брокера на признаки двойного брокеринга до выезда трака.","Швидка перевірка брокера на ознаки подвійного брокерингу до виїзду трака.","ਟਰੱਕ ਚੱਲਣ ਤੋਂ ਪਹਿਲਾਂ ਡਬਲ-ਬ੍ਰੋਕਰਿੰਗ ਦੇ ਖ਼ਤਰੇ ਲਈ ਬ੍ਰੋਕਰ ਦੀ ਤੇਜ਼ ਜਾਂਚ।","Mashina yo'lga chiqishidan oldin ikki tomonlama brokerlik belgilarini tez tekshirish.","فحص سريع للوسيط بحثًا عن علامات الوساطة المزدوجة قبل انطلاق الشاحنة."],
-["Driver pay sheets built from the loads, fuel, and fees already in the portal.","Hojas de pago del chofer hechas con las cargas, combustible y cargos que ya están en la app.","Расчётные листы водителей из грузов, топлива и сборов, которые уже есть в приложении.","Розрахункові листи водіїв із вантажів, пального і зборів, що вже є в застосунку.","ਐਪ ਵਿੱਚ ਪਹਿਲਾਂ ਤੋਂ ਮੌਜੂਦ ਲੋਡ, ਤੇਲ ਅਤੇ ਫ਼ੀਸਾਂ ਤੋਂ ਬਣੀਆਂ ਡਰਾਈਵਰ ਤਨਖ਼ਾਹ ਸ਼ੀਟਾਂ।","Ilovadagi yuklar, yoqilg'i va to'lovlardan tuzilgan haydovchi maosh varaqalari.","كشوف رواتب السائقين مبنية من الأحمال والوقود والرسوم الموجودة في التطبيق."],
+["Drivers can share loads they booked themselves, so you see them without a phone call.","Los choferes pueden compartir las cargas que reservaron ellos mismos, y tú las ves sin llamar.","Водители могут делиться грузами, которые забронировали сами, и вы видите их без звонка.","Водії можуть ділитися вантажами, які забронювали самі, і ви бачите їх без дзвінка.","ਡਰਾਈਵਰ ਆਪਣੇ ਆਪ ਬੁੱਕ ਕੀਤੇ ਲੋਡ ਸਾਂਝੇ ਕਰ ਸਕਦੇ ਹਨ, ਤਾਂ ਜੋ ਤੁਸੀਂ ਫ਼ੋਨ ਕੀਤੇ ਬਿਨਾਂ ਵੇਖ ਸਕੋ।","Haydovchilar o'zlari band qilgan yuklarni ulashishi mumkin, siz qo'ng'iroqsiz ko'rasiz.","يمكن للسائقين مشاركة الحمولات التي حجزوها بأنفسهم لتراها دون اتصال هاتفي."],
+["Chat with each driver and tie a message to a specific load.","Chatea con cada chofer y vincula un mensaje a una carga concreta.","Переписывайтесь с каждым водителем и привязывайте сообщение к конкретному грузу.","Листуйтеся з кожним водієм і прив'язуйте повідомлення до конкретного вантажу.","ਹਰ ਡਰਾਈਵਰ ਨਾਲ ਚੈਟ ਕਰੋ ਅਤੇ ਸੁਨੇਹੇ ਨੂੰ ਕਿਸੇ ਖ਼ਾਸ ਲੋਡ ਨਾਲ ਜੋੜੋ।","Har bir haydovchi bilan yozishing va xabarni aniq yukka bog'lang.","راسل كل سائق واربط الرسالة بحمولة محددة."],
 ["03 — TRY IT","03 — PRUÉBALO","03 — ПОПРОБУЙТЕ","03 — СПРОБУЙТЕ","03 — ਵਰਤ ਕੇ ਵੇਖੋ","03 — SINAB KO'RING","03 — جرّبها"],
 ["Two tools you can use right now.","Dos herramientas que puedes usar ya.","Два инструмента, которыми можно пользоваться уже сейчас.","Два інструменти, якими можна користуватися вже зараз.","ਦੋ ਟੂਲ ਜੋ ਤੁਸੀਂ ਹੁਣੇ ਵਰਤ ਸਕਦੇ ਹੋ।","Hozirning o'zida ishlatish mumkin bo'lgan ikki vosita.","أداتان يمكنك استخدامهما الآن."],
 ["Detention $","Detention $","Простой $","Простій $","ਡਿਟੈਂਸ਼ਨ $","Kutish $","الانتظار $"],
@@ -1213,8 +1217,13 @@ var R=[
 ["Terms of Service", "Términos del servicio", "Условия использования", "Умови використання", "ਸੇਵਾ ਦੀਆਂ ਸ਼ਰਤਾਂ", "Foydalanish shartlari", "شروط الخدمة"],
 ["Privacy Policy", "Política de privacidad", "Политика конфиденциальности", "Політика конфіденційності", "ਪਰਦੇਦਾਰੀ ਨੀਤੀ", "Maxfiylik siyosati", "سياسة الخصوصية"],
 ["Log in", "Iniciar sesión", "Войти", "Увійти", "ਲੌਗਇਨ", "Kirish", "تسجيل الدخول"],
+["Driver-booked loads","Cargas reservadas por el chofer","Грузы, забронированные водителем","Вантажі, заброньовані водієм","ਡਰਾਈਵਰ ਵੱਲੋਂ ਬੁੱਕ ਕੀਤੇ ਲੋਡ","Haydovchi band qilgan yuklar","حمولات حجزها السائق"],
+["The laptop above is a preview. The fleet map and settlements are coming later.","La laptop de arriba es una vista previa. El mapa de flota y las liquidaciones llegarán después.","Ноутбук выше — это превью. Карта автопарка и расчёты появятся позже.","Ноутбук вище — це прев'ю. Карта автопарку й розрахунки з'являться пізніше.","ਉੱਪਰ ਲੈਪਟਾਪ ਇੱਕ ਝਲਕ ਹੈ। ਫਲੀਟ ਨਕਸ਼ਾ ਅਤੇ ਸੈਟਲਮੈਂਟ ਬਾਅਦ ਵਿੱਚ ਆਉਣਗੇ।","Yuqoridagi noutbuk — ko'rinish namunasi. Avtopark xaritasi va hisob-kitoblar keyinroq qo'shiladi.","الحاسوب أعلاه معاينة فقط. خريطة الأسطول والتسويات قادمة لاحقًا."],
+["Open the Dispatcher Portal","Abrir el Portal del Despachador","Открыть портал диспетчера","Відкрити портал диспетчера","ਡਿਸਪੈਚਰ ਪੋਰਟਲ ਖੋਲ੍ਹੋ","Dispetcher portalini ochish","افتح بوابة المنسّق"],
+["Driver log in","Acceso de chofer","Вход для водителей","Вхід для водіїв","ਡਰਾਈਵਰ ਲੌਗਇਨ","Haydovchi kirishi","دخول السائقين"],
+["Dispatcher log in","Acceso de despachador","Вход для диспетчеров","Вхід для диспетчерів","ਡਿਸਪੈਚਰ ਲੌਗਇਨ","Dispetcher kirishi","دخول المنسّقين"],
 ["Start free", "Empieza gratis", "Начать бесплатно", "Почати безкоштовно", "ਮੁਫ਼ਤ ਸ਼ੁਰੂ ਕਰੋ", "Bepul boshlash", "ابدأ مجانًا"],
-["LaneHook puts your loads, detention, broker checks, invoices, and paperwork in one place on your phone. Sign in with your email and start free. Dispatch tools for fleets are on the way.", "LaneHook reúne tus cargas, demoras, verificación de brokers, facturas y documentos en una sola app en tu teléfono. Entra con tu correo y empieza gratis. Las herramientas de despacho para flotas están en camino.", "LaneHook собирает ваши рейсы, простой, проверку брокеров, счета и документы в одном приложении на телефоне. Войдите по email и начните бесплатно. Инструменты диспетчера для автопарков скоро появятся.", "LaneHook збирає ваші рейси, простої, перевірку брокерів, рахунки та документи в одному застосунку на телефоні. Увійдіть через email і почніть безкоштовно. Інструменти диспетчера для автопарків уже скоро.", "LaneHook ਤੁਹਾਡੇ ਲੋਡ, ਡਿਟੈਂਸ਼ਨ, ਬ੍ਰੋਕਰ ਚੈੱਕ, ਇਨਵੌਇਸ ਅਤੇ ਕਾਗਜ਼ਾਤ ਨੂੰ ਫ਼ੋਨ ਦੀ ਇੱਕ ਐਪ ਵਿੱਚ ਲਿਆਉਂਦਾ ਹੈ। ਈਮੇਲ ਨਾਲ ਸਾਈਨ ਇਨ ਕਰੋ ਅਤੇ ਮੁਫ਼ਤ ਸ਼ੁਰੂ ਕਰੋ। ਫਲੀਟਾਂ ਲਈ ਡਿਸਪੈਚ ਟੂਲ ਆ ਰਹੇ ਹਨ।", "LaneHook yuklar, kutish vaqti, broker tekshiruvi, hisob-fakturalar va hujjatlaringizni telefondagi bitta ilovada jamlaydi. Email orqali kiring va bepul boshlang. Parklar uchun dispetcher vositalari tez orada.", "يجمع LaneHook شحناتك ووقت الانتظار وفحص الوسطاء والفواتير والأوراق في تطبيق واحد على هاتفك. سجّل الدخول ببريدك وابدأ مجانًا. أدوات الإرسال للأساطيل قادمة قريبًا."],
+["LaneHook puts your loads, detention, broker checks, invoices, and paperwork in one place on your phone. Sign in with your email and start free. Running a fleet? Dispatchers get their own portal.", "LaneHook reúne tus cargas, demoras, verificación de brokers, facturas y documentos en una sola app en tu teléfono. Entra con tu correo y empieza gratis. ¿Manejas una flota? Los despachadores tienen su propio portal.", "LaneHook собирает ваши рейсы, простой, проверку брокеров, счета и документы в одном приложении на телефоне. Войдите по email и начните бесплатно. Ведёте автопарк? У диспетчеров есть свой портал.", "LaneHook збирає ваші рейси, простої, перевірку брокерів, рахунки та документи в одному застосунку на телефоні. Увійдіть через email і почніть безкоштовно. Керуєте автопарком? У диспетчерів є власний портал.", "LaneHook ਤੁਹਾਡੇ ਲੋਡ, ਡਿਟੈਂਸ਼ਨ, ਬ੍ਰੋਕਰ ਚੈੱਕ, ਇਨਵੌਇਸ ਅਤੇ ਕਾਗਜ਼ਾਤ ਨੂੰ ਫ਼ੋਨ ਦੀ ਇੱਕ ਐਪ ਵਿੱਚ ਲਿਆਉਂਦਾ ਹੈ। ਈਮੇਲ ਨਾਲ ਸਾਈਨ ਇਨ ਕਰੋ ਅਤੇ ਮੁਫ਼ਤ ਸ਼ੁਰੂ ਕਰੋ। ਫਲੀਟ ਚਲਾ ਰਹੇ ਹੋ? ਡਿਸਪੈਚਰਾਂ ਲਈ ਆਪਣਾ ਪੋਰਟਲ ਹੈ।", "LaneHook yuklar, kutish vaqti, broker tekshiruvi, hisob-fakturalar va hujjatlaringizni telefondagi bitta ilovada jamlaydi. Email orqali kiring va bepul boshlang. Park boshqarasizmi? Dispetcherlar uchun alohida portal bor.", "يجمع LaneHook شحناتك ووقت الانتظار وفحص الوسطاء والفواتير والأوراق في تطبيق واحد على هاتفك. سجّل الدخول ببريدك وابدأ مجانًا. تدير أسطولًا؟ للمنسّقين بوابتهم الخاصة."],
 ["Everything on the road, in one place.", "Todo lo de la carretera, en una sola app.", "Всё для дороги в одном приложении.", "Усе для дороги в одному застосунку.", "ਸੜਕ ਦਾ ਸਭ ਕੁਝ, ਇੱਕ ਐਪ ਵਿੱਚ।", "Yo'ldagi hamma narsa bitta ilovada.", "كل ما تحتاجه على الطريق في تطبيق واحد."],
 ["Stop juggling a notes app, a spreadsheet, a camera roll, and five websites.", "Deja de usar una app de notas, una hoja de cálculo, el rollo de fotos y cinco sitios web.", "Хватит жонглировать заметками, таблицей, галереей и пятью сайтами.", "Годі жонглювати нотатками, таблицею, галереєю та п'ятьма сайтами.", "ਨੋਟਸ ਐਪ, ਸਪ੍ਰੈਡਸ਼ੀਟ, ਕੈਮਰਾ ਰੋਲ ਅਤੇ ਪੰਜ ਵੈੱਬਸਾਈਟਾਂ ਵਿਚਕਾਰ ਭੱਜਣਾ ਬੰਦ ਕਰੋ।", "Eslatmalar, jadval, galereya va beshta saytni almashtirib yurishni bas qiling.", "كفى تنقلًا بين تطبيق الملاحظات وجدول البيانات ومعرض الصور وخمسة مواقع."],
 ["Load tracker", "Control de cargas", "Учёт рейсов", "Облік рейсів", "ਲੋਡ ਟਰੈਕਰ", "Yuk kuzatuvi", "متتبع الشحنات"],
