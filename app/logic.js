@@ -113,7 +113,7 @@ LH.lookup = async function (mc) {
   if (res.status === 402) return { ok: false, reason: 'upgrade' };
   if (!res.ok || !body) return { ok: false, reason: (body && body.error) || 'error' };
   if (!body.found) return { ok: true, found: false };
-  const c = body.carrier || {}, bond = c.bondInsuranceOnFile;
+  const c = body.carrier || {}, bond = c.bondInsuranceOnFile, x = body.extra || {}, au = x.authority || {}, ce = x.census || {}, ins = x.insurance || [];
   return {
     ok: true, found: true, mc,
     snap: {
@@ -121,10 +121,23 @@ LH.lookup = async function (mc) {
       allowed: c.allowedToOperate === 'Y', statusCode: c.statusCode || '',
       broker: c.brokerAuthorityStatus || '', common: c.commonAuthorityStatus || '', contract: c.contractAuthorityStatus || '',
       bondOnFile: !!(bond && String(bond) !== '0' && String(bond).toUpperCase() !== 'N'), bondRequired: String(c.bondInsuranceRequired || '').toUpperCase() === 'Y',
-      addr: [c.phyStreet, c.phyCity, c.phyState, c.phyZipcode].filter(Boolean).join(', '), phone: c.telephone || ''
+      addr: [c.phyStreet, c.phyCity, c.phyState, c.phyZipcode].filter(Boolean).join(', '), phone: c.telephone || '',
+      complaints: Number(c.complaintCount) || 0,
+      authSince: au.since || '', authLast: au.lastStatus ? { status: au.lastStatus, reason: au.lastReason, date: au.lastDate } : null, authEvents: au.inactiveEvents || 0, authLastBad: au.lastInactive || null,
+      dotAdded: ce.dotAdded || '', mcs150: ce.mcs150 || '', power: ce.powerUnits || 0, drivers: ce.drivers || 0, email: ce.email || '', officer: ce.officer || '', org: ce.org || '', mailAddr: ce.mailAddr || '',
+      ins: ins.map(i => ({ form: i.form, insurer: i.insurer, max: i.max, since: i.effective })), more: !!(au.since || ce.dotAdded || ins.length)
     }
   };
 };
+/* "3 days", "5 months", "2 years 3 months" from an ISO date */
+LH.ageDays = d => { const t = d ? Date.parse(d) : NaN; return isNaN(t) ? null : Math.max(0, Math.floor((Date.now() - t) / 864e5)); };
+LH.ageText = d => {
+  const n = LH.ageDays(d); if (n == null) return '';
+  if (n < 60) return n + (n === 1 ? ' day' : ' days');
+  if (n < 730) { const m = Math.round(n / 30.4); return m + (m === 1 ? ' month' : ' months'); }
+  const y = Math.floor(n / 365), m = Math.floor((n - y * 365) / 30.4); return y + ' years' + (m ? ' ' + m + ' months' : '');
+};
+const FREE_MAIL = /@(gmail|yahoo|ymail|outlook|hotmail|live|aol|icloud|me|msn|proton|protonmail|gmx|mail)\./i;
 const words = s => String(s || '').toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(w => w.length > 2 && !['llc', 'inc', 'the', 'corp', 'logistics', 'freight', 'transportation', 'company', 'group', 'and'].includes(w));
 /* turn a lookup + history into flags */
 LH.guardFlags = function (snap, prev, enteredName) {
@@ -133,6 +146,20 @@ LH.guardFlags = function (snap, prev, enteredName) {
   if (snap.broker && snap.broker !== 'A') f.push({ cls: 'bad', t: snap.broker === 'N' ? 'No active broker authority' : 'Broker authority is not active (status ' + snap.broker + ')' });
   if (!snap.broker) f.push({ cls: 'warn', t: 'No broker authority listed. If this is a carrier posting loads, ask why.' });
   if (snap.broker === 'A' && !snap.bondOnFile) f.push({ cls: 'bad', t: 'No broker bond on file with FMCSA' });
+  const nd = LH.ageDays(snap.authSince), dd = LH.ageDays(snap.dotAdded);
+  if (nd != null && nd < 90) f.push({ cls: 'bad', t: 'Brand-new authority: only ' + LH.ageText(snap.authSince) + ' old. New MC numbers are the most common setup for fraud and double brokering. Verify everything.' });
+  else if (nd != null && nd < 365) f.push({ cls: 'warn', t: 'Young authority: active for only ' + LH.ageText(snap.authSince) + '.' });
+  if (dd != null && dd < 90 && !(nd != null && nd < 90)) f.push({ cls: 'warn', t: 'The USDOT number was registered only ' + LH.ageText(snap.dotAdded) + ' ago.' });
+  if (snap.authLast && snap.authLast.status === 'Inactive') f.push({ cls: 'bad', t: 'Latest authority action: ' + (snap.authLast.reason || 'inactive') + (snap.authLast.date ? ' (' + snap.authLast.date + ')' : '') });
+  else if (snap.authEvents > 0) f.push({ cls: 'warn', t: 'Authority was suspended or revoked ' + snap.authEvents + (snap.authEvents === 1 ? ' time' : ' times') + ' before' + (snap.authLastBad ? ' (last: ' + (snap.authLastBad.reason || 'inactive') + ', ' + snap.authLastBad.date + ')' : '') });
+  if (snap.broker === 'A' && (snap.ins || []).length) {
+    const bd = snap.ins.filter(i => /BMC-8[45]/.test(i.form));
+    if (bd.length && Math.max(...bd.map(i => i.max)) < 75000) f.push({ cls: 'bad', t: 'Broker bond on file is under the $75,000 FMCSA minimum' });
+  }
+  if (snap.broker === 'A' && snap.email && FREE_MAIL.test(snap.email)) f.push({ cls: 'warn', t: 'The company email on file is a free address (' + snap.email.split('@')[1] + '). Real brokers usually use their own domain.' });
+  if (snap.more && snap.power === 0 && snap.broker !== 'A' && (snap.common === 'A' || snap.contract === 'A')) f.push({ cls: 'warn', t: 'FMCSA shows no trucks for this carrier' });
+  const sd = LH.ageDays(snap.mcs150); if (sd != null && sd > 730) f.push({ cls: 'warn', t: 'Company details on file with FMCSA were last updated ' + LH.ageText(snap.mcs150) + ' ago' });
+  if (snap.complaints > 0) f.push({ cls: 'warn', t: snap.complaints + ' customer complaint' + (snap.complaints === 1 ? '' : 's') + ' on file with FMCSA' });
   if (enteredName) {
     const a = words(enteredName), b = words(snap.name + ' ' + snap.dba);
     if (a.length && b.length && !a.some(w => b.includes(w))) f.push({ cls: 'bad', t: 'The name on your paperwork does not match FMCSA ("' + snap.name + '"). Possible identity fraud.' });
@@ -142,7 +169,7 @@ LH.guardFlags = function (snap, prev, enteredName) {
     if (prev.broker !== snap.broker) ch.push('authority status');
     if (ch.length) f.push({ cls: 'warn', t: 'Changed since you last checked: ' + ch.join(', ') });
   }
-  if (!f.length) f.push({ cls: 'ok', t: 'Authority is active and the basics look consistent' });
+  if (!f.length) f.push({ cls: 'ok', t: nd != null && nd >= 730 ? 'Authority is active and has been for ' + LH.ageText(snap.authSince) + ', and the basics look consistent' : 'Authority is active and the basics look consistent' });
   return f;
 };
 
