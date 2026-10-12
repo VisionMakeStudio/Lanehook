@@ -1,7 +1,7 @@
-// Starts Stripe Checkout and the Stripe billing portal for a signed-in person.
+// Starts Stripe Checkout, moves a subscription to a bigger plan, and opens the Stripe billing portal for a signed-in person.
 // Needs STRIPE_SECRET_KEY and SUPABASE_SERVICE_ROLE_KEY.
 const { signedInUser } = require('./lib/auth');
-const { getSettings, accountRow } = require('./lib/sb');
+const { getSettings, accountRow, upsertAccount } = require('./lib/sb');
 const stripe = require('./lib/stripe');
 const json = (s, b) => ({ statusCode: s, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' }, body: JSON.stringify(b) });
 
@@ -31,6 +31,26 @@ exports.handler = async (event) => {
       if (row && row.stripe_customer_id) params.customer = row.stripe_customer_id; else params.customer_email = user.email;
       const sess = await stripe.call('POST', 'checkout/sessions', params);
       return json(200, { url: sess.url });
+    }
+    if (b.action === 'change') {
+      // move an active subscription up to a bigger plan, prorated by Stripe
+      const s = await getSettings();
+      const plan = String(b.plan || ''), p = s.plans && s.plans[plan];
+      if (s.earlyAccess) return json(400, { error: 'early_access' });
+      if (!p || !['crew', 'fleet'].includes(plan) || !p.available || !(p.price > 0)) return json(400, { error: 'bad_plan' });
+      if (!row || !row.stripe_subscription_id || !['active', 'trialing', 'past_due'].includes(row.sub_status)) return json(409, { error: 'no_subscription' });
+      if (row.plan === plan) return json(409, { error: 'same_plan' });
+      const cents = Math.round(p.price * 100);
+      if (cents <= Number(row.plan_amount || 0)) return json(409, { error: 'not_an_upgrade' });
+      const sub = await stripe.call('GET', 'subscriptions/' + row.stripe_subscription_id);
+      const item = sub.items && sub.items.data && sub.items.data[0];
+      if (!item || ['canceled', 'incomplete_expired'].includes(sub.status)) return json(409, { error: 'no_subscription' });
+      const prod = await stripe.call('POST', 'products', { name: 'LaneHook ' + p.name, metadata: { plan } });
+      const upd = { items: [{ id: item.id, price_data: { currency: 'usd', product: prod.id, unit_amount: cents, recurring: { interval: 'month' } } }], proration_behavior: 'create_prorations', metadata: { uid: user.id, plan } };
+      if (sub.cancel_at_period_end) upd.cancel_at_period_end = false;
+      await stripe.call('POST', 'subscriptions/' + sub.id, upd);
+      await upsertAccount(user.id, { plan, plan_amount: cents, cancel_at_period_end: false });
+      return json(200, { ok: true });
     }
     if (b.action === 'portal') {
       if (!row || !row.stripe_customer_id) return json(400, { error: 'no_customer' });

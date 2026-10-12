@@ -1,9 +1,11 @@
 'use strict';
-/* LaneHook driver portal: demo data for testing and walk-throughs. Hidden unless you open /app/?demo=1 once. Everything it adds is tagged and can be cleared. */
+/* LaneHook driver portal: demo data for testing and walk-throughs. Only shown to the owner account. Everything it adds is tagged and can be cleared. */
 (function () {
   try { const p = new URLSearchParams(location.search).get('demo'); if (p === '1') localStorage.setItem('lh-demo', '1'); if (p === '0') localStorage.removeItem('lh-demo'); } catch (e) { }
   const D = LH.demo = {};
-  D.on = () => { try { return localStorage.getItem('lh-demo') === '1'; } catch (e) { return false; } };
+  const OWNER = 'info@visionmakestudio.com';
+  D.owner = () => { try { return !!(LH.auth && LH.auth.user && String(LH.auth.user.email || '').trim().toLowerCase() === OWNER); } catch (e) { return false; } };
+  D.on = () => { try { return D.owner() && localStorage.getItem('lh-demo') === '1'; } catch (e) { return false; } };
   D.has = () => !!(LH.S && ['loads', 'expenses', 'docs', 'maint', 'trips', 'contacts', 'inspections', 'calcs'].some(k => (LH.S[k] || []).some(x => x.demo)));
   const day = n => addDays(isoDay(), n), ts = (n, h) => { const d = new Date(day(n) + 'T' + String(h || 9).padStart(2, '0') + ':00:00'); return d.getTime(); };
   D.add = function () {
@@ -47,7 +49,7 @@
     LH.save(); toast('Demo data cleared'); LH.render();
   };
   D.card = function () {
-    if (!D.on() && !D.has()) return '';
+    if (!D.owner() && !D.has()) return '';
     return `<div class="card"><h3>Demo data</h3><p class="muted" style="margin:0 0 12px;font-size:14px">Fill the app with sample loads, expenses, fuel and documents to try everything without typing. Sample items are tagged Demo and can be cleared in one tap. Your real entries are never touched.</p><div class="grid2"><button class="btn pri" data-act="demoAdd">Load demo data</button><button class="btn" data-act="demoClear">Clear demo data</button></div></div>`;
   };
   LH.acts.demoAdd = () => D.add(); LH.acts.demoClear = () => ask('Clear demo data?', 'Only the sample items tagged Demo are removed.', 'Clear', () => D.clear(), false);

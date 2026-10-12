@@ -165,6 +165,7 @@ function toast(t,ms){const e=document.createElement('div');e.className='toast';e
 const msg=e=>ERR[(e&&e.message)||'']||'Something went wrong. Try again.';
 async function rpc(name,args){if(DEMO)return demoRpc(name,args);try{const r=await sb.rpc(name,args||{});if(r.error){toast(msg(r.error),4000);return null}return r.data}catch(e){toast('You appear to be offline.');return null}}
 async function load(){
+  if(DEMO&&!isOwner()){DEMO=false;try{localStorage.removeItem('lh-d-demo-active');localStorage.removeItem('lh-demo')}catch(e){}}
   if(DEMO){O=demoOverview();PLAN={plan:'comped',sub_status:'active'};return draw()}
   const [o,p,s]=await Promise.all([sb.rpc('company_overview'),sb.rpc('my_plan'),sb.from('site_settings').select('data').eq('id',1).maybeSingle()]);
   if(o.error){if(/sign_in/.test(o.error.message))return loginView('');toast('Could not load. Pull to refresh.');return}
@@ -304,9 +305,15 @@ function loadMenu(btn,l){
 }
 /* ---------- drivers ---------- */
 function status(m){const a=(O.loads||[]).find(l=>l.driver_id===m.user_id&&['picked_up','accepted','assigned'].includes(l.status));if(!a)return 'Available';const d=a.data||{};return (a.status==='picked_up'?'On the road':a.status==='accepted'?'Accepted':'Load sent')+(d.delivCity?' · to '+d.delivCity:'')}
+function seatBanner(){
+  if(DEMO||!PLAN||PLAN.plan!=='crew')return '';
+  const n=(O.members||[]).length,lim=O.limit||0,f=CFG&&CFG.plans&&CFG.plans.fleet;if(!lim||n<lim-1||!f||!f.available||!(f.price>0))return '';
+  const full=n>=lim;
+  return `<div class="banner ${full?'warn':'info'}"><b>${full?'Your driver seats are full':'Driver seats: '+n+' of '+lim+' used'}</b>${full?'New drivers cannot join until you upgrade. Fleet gives you up to 25 drivers, plus scorecards, a pay run and reminders.':'Fleet gives you up to 25 drivers, plus scorecards, a pay run and reminders.'}<div style="margin-top:8px"><button class="btn sm pri" data-x="fup">Upgrade to Fleet</button></div></div>`;
+}
 function pageDrivers(){
   const c=O.company,ms=O.members||[],lim=O.limit||0,link=location.origin+'/app/?join='+c.code;
-  return `<div class="head"><div><h1>Drivers</h1><p>${ms.length} of ${lim} driver seats used.</p></div></div>${availStrip()}
+  return `<div class="head"><div><h1>Drivers</h1><p>${ms.length} of ${lim} driver seats used.</p></div></div>${seatBanner()}${availStrip()}
   <div class="panel" style="margin-bottom:14px"><h3>Invite drivers</h3><p class="sub">Give drivers this code. They enter it in the Driver Portal under Dispatch, or open the link below.</p>
    <div class="code" id="cd">${esc(c.code)}</div><div class="copy" style="margin:12px 0">${esc(link)}</div>
    <div class="row2"><button class="btn sm" id="cpc">Copy code</button><button class="btn sm" id="cpl">Copy link</button><button class="btn sm" id="shr">Share…</button></div></div>
@@ -582,7 +589,7 @@ function formTop(l){
 }
 /* ----- demo mode (nothing is saved) ----- */
 let DEMO=false;try{DEMO=localStorage.getItem('lh-d-demo-active')==='1'}catch(e){}
-const demoFlag=()=>{try{return localStorage.getItem('lh-demo')==='1'}catch(e){return false}};
+const OWNER_EMAIL='info@visionmakestudio.com',isOwner=()=>String(EMAIL||'').trim().toLowerCase()===OWNER_EMAIL,demoFlag=()=>isOwner();
 function demoOverview(){
   let seed=7;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};
   const names=['Marcus Reed','Jay Patel','Sofia Lopez','Dmitri Ivanov','Aisha Khan'],cities=[['Newark, NJ','Boston, MA',215],['Edison, NJ','Atlanta, GA',860],['Camden, NJ','Baltimore, MD',105],['Albany, NY','Hartford, CT',110],['Scranton, PA','Richmond, VA',420],['Allentown, PA','Columbus, OH',470],['Elizabeth, NJ','Charlotte, NC',620],['Trenton, NJ','Pittsburgh, PA',350]],brokers=['Blue Ridge Logistics','Harbor Freight Brokers','Summit Freight','Keystone Transport','Atlas Brokerage'];
@@ -782,7 +789,7 @@ function payRunPaper(){const d=payRun();return `<div class="paper"><h2>Pay run</
 Object.assign(XA,{
   ftab:(b,e)=>{if(e&&e.preventDefault)e.preventDefault();FT=b.dataset.v;draw()},fper:b=>{FP=+b.dataset.v;draw()},ppay:b=>{FPAY=b.dataset.v;FPOFF=0;draw()},pnav:b=>{FPOFF+=+b.dataset.v;draw()},pnow:()=>{FPOFF=0;draw()},
   fadd:()=>itemForm(null),fedit:b=>itemForm(b.dataset.v),tadd:()=>truckForm(null),tedit:b=>truckForm(b.dataset.v),
-  fup:()=>PLAN&&PLAN.has_customer?portal():openPlans(),fretry:()=>{FD=undefined;draw()},
+  fup:upgradeFleet,fretry:()=>{FD=undefined;draw()},
   fprint:()=>{const s=sheet(payRunPaper()+`<div class="noprint" style="margin-top:14px"><button class="btn pri" style="width:100%" id="pp">Print or save PDF</button></div>`);$('#pp',s).onclick=()=>window.print()},
   fcsv:b=>{const x=fleetCSVrows(b.dataset.v);saveCSV(x[0],x[1])}
 });
@@ -797,6 +804,19 @@ document.addEventListener('change',async e=>{const t=e.target;
   const v=Number(String(inp.value).replace(/[^0-9.]/g,''));if(!sel.value||!inp.value||isNaN(v))return;
   const r=await rpc('save_fleet_pay',{p_driver:d,p_mode:sel.value,p_val:v});if(r){FD=r;paintPayRun()}
 });
+const canChange=()=>PLAN&&PLAN.has_customer&&['active','trialing','past_due'].includes(PLAN.sub_status);
+function upgradeFleet(){
+  if(DEMO){toast('Demo mode: plans are not changed.');return}
+  if(!canChange())return openPlans();
+  const pr=CFG&&CFG.plans&&CFG.plans.fleet&&CFG.plans.fleet.price;
+  confirmBox('Upgrade to Fleet?',(pr?'Fleet is '+money(pr)+' a month. ':'')+'Your plan changes now, and Stripe adjusts your next bill for the difference.','Upgrade',doUpgrade);
+}
+async function doUpgrade(){
+  toast('One moment…',6000);
+  try{const {data}=await sb.auth.getSession();const r=await fetch('/.netlify/functions/billing',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+data.session.access_token},body:JSON.stringify({action:'change',plan:'fleet',ret:'dispatch'})});const j=await r.json().catch(()=>({}));
+    if(r.ok&&j.ok){toast('You are on Fleet now');FD=undefined;await load();return}
+    toast({same_plan:'You are already on Fleet.',no_subscription:'Could not find an active subscription. Use Manage billing.',early_access:'Everything is free right now.',bad_plan:'That plan is not available.'}[j.error]||'Could not change your plan. Try again in a minute.',5000)}catch(e){toast('You appear to be offline.')}
+}
 function demoFleet(){
   const ms=(O&&O.members)||[],dt=n=>iso(new Date(Date.now()+n*DAYMS));
   const trucks=[{id:'dt1',name:'Truck 12',plate:'NJ-482XK',vin:'1FDXE4FS8KDC12345',driver_id:ms[0]&&ms[0].user_id,note:''},{id:'dt2',name:'Truck 14',plate:'NJ-771PL',vin:'3C7WRNBL1KG654321',driver_id:ms[1]&&ms[1].user_id,note:''},{id:'dt3',name:'Truck 21',plate:'NY-HJ4820',vin:'1HTMMAAL5KH987654',driver_id:ms[2]&&ms[2].user_id,note:''}];
