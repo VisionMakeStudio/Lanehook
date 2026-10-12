@@ -14,7 +14,7 @@
     try { return await LH.auth.sb.rpc(name, args || {}); } catch (e) { return { error: { message: 'network' } }; }
   }
   function apply(r) {
-    if (r && r.data) { D.data = r.data; D.cleanShared(); const rt = LH.route(); if (rt.name === 'dispatch') LH.render(); }
+    if (r && r.data) { D.data = r.data; try { localStorage.setItem('lh-in-co', r.data.company ? '1' : '0'); } catch (e) { } D.cleanShared(); const rt = LH.route(); if (rt.name === 'dispatch') LH.render(); }
   }
   D.load = async function () { if (!LH.auth || !LH.auth.user) return; const r = await rpc('driver_overview'); apply(r); D.loadCk(); };
   D.loadCk = async function () { if (!LH.auth || !LH.auth.user || !D.data || !D.data.company) { D.ck = false; return; } const r = await rpc('checkin_enabled'); const on = !r.error && r.data === true; if (on !== D.ck) { D.ck = on; const rt = LH.route(); if (rt.name === 'dispatch') LH.render(); } };
@@ -22,7 +22,7 @@
     code = String(code || '').trim().toUpperCase(); if (!code) { LH.toast('Enter the code from your dispatcher'); return false; }
     D.busy = true; const r = await rpc('join_company', { p_code: code }); D.busy = false;
     if (r.error) { LH.toast(msg(r.error), 4500); return false; }
-    D.data = r.data; D.pollUnread(true); LH.toast('You joined ' + ((r.data.company || {}).name || 'the company')); if (LH.plans && LH.plans.load) await LH.plans.load(); return true;
+    D.data = r.data; try { localStorage.setItem('lh-in-co', '1'); } catch (e) { } D.pollUnread(true); LH.toast('You joined ' + ((r.data.company || {}).name || 'the company')); if (LH.plans && LH.plans.load) await LH.plans.load(); return true;
   };
   D.start = async function () {
     let code = null; try { code = localStorage.getItem('lh-join-code'); } catch (e) { }
@@ -64,11 +64,16 @@
       <div class="sec"><h2>Your loads from dispatch</h2></div>${active.length ? active.map(loadCard).join('') : LH.empty('Nothing assigned right now', 'Loads your dispatcher sends you will show up here.')}
       ${done.length ? `<div class="sec"><h2>Finished</h2></div>${done.slice(0, 20).map(loadCard).join('')}` : ''}`, after: () => D.chatOpen() };
   };
+  LH.coCard = () => {
+    if (!(LH.auth && LH.auth.user)) return '';
+    if (LH.inCo()) { const c = D.data && D.data.company; return `<div class="card"><h3>Your company</h3><p class="muted" style="margin:6px 0 12px;font-size:14px">${c ? 'You drive for ' + esc(c.name) + '.' : 'You are in a company.'} Loads from your dispatcher are in Dispatch.</p><a class="btn pri" href="#/dispatch">Open Dispatch</a></div>`; }
+    return `<div class="card"><h3>Join a company</h3><p class="muted" style="margin:6px 0 14px;font-size:14px;line-height:1.5">Driving for a company? Enter the code your dispatcher gave you. Your own loads, invoices and documents stay private.</p><form id="joinForm" class="row"><input name="code" autocomplete="off" autocapitalize="characters" maxlength="10" placeholder="Company code" aria-label="Company code" style="letter-spacing:.15em;text-transform:uppercase" required><button class="btn pri" type="submit">Join</button></form></div>`;
+  };
   document.addEventListener('submit', e => { if (e.target.id !== 'joinForm') return; e.preventDefault(); LH.acts.joinCode(null, e.target.elements.code.value); });
   LH.acts.joinCode = async (el, code) => {
     if (code == null) { const i = $('#wallCode'); code = i ? i.value : ''; }
     const ok = await D.join(code);
-    if (ok) { if (LH.plans) LH.plans.refreshView(); else LH.render(); }
+    if (ok) { if (LH.route().name !== 'dispatch') { location.hash = '#/dispatch'; return; } if (LH.plans) LH.plans.refreshView(); else LH.render(); }
   };
   LH.acts.dispStatus = async el => { const r = await rpc('driver_set_status', { p_id: el.dataset.id, p_status: el.dataset.v }); if (r.error) { LH.toast(msg(r.error), 3500); D.load(); } else { apply(r); LH.toast('Updated'); if (D.ck && (el.dataset.v === 'picked_up' || el.dataset.v === 'delivered')) setTimeout(() => LH.ask('Check in now?', 'Let your dispatcher see where you are.', 'Check in', () => D.checkin(el.dataset.v === 'picked_up' ? 'pickup' : 'delivery', el.dataset.id), false), 600); } };
   D.checkin = function (kind, loadId) {

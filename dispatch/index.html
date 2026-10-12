@@ -74,6 +74,7 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-b
 .nav2{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:var(--navy);scrollbar-width:none}.nav2::-webkit-scrollbar{display:none}
 .nav2 a{flex-shrink:0;padding:9px 16px;border-radius:99px;text-decoration:none;color:#CBD5E1;font-weight:600;font-size:14px;border:1px solid var(--line)}.nav2 a.on{background:var(--orange);border-color:var(--orange);color:var(--navy)}
 .grid{display:grid;gap:14px;margin-bottom:14px}.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr}
+.gt{background:#fff;border:1px solid var(--bd);border-radius:14px;margin:0 0 10px;padding:0 16px}.gt summary{display:flex;align-items:center;gap:8px;min-height:52px;cursor:pointer;list-style:none;font-size:16px}.gt summary::-webkit-details-marker{display:none}.gt summary::after{content:"+";margin-left:auto;font-size:22px;color:var(--muted)}.gt[open] summary::after{content:"\2212"}.gt ol{margin:0 0 12px;padding-left:22px;line-height:1.65;font-size:15px}.gt ol li{margin:0 0 6px}.gt .btn{margin:0 0 14px}.gt .tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:#FEF3C7;color:#92400E}
 .panel{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:16px 18px}.panel h3{font-size:16px;margin-bottom:12px}
 .panel .sub{font-size:13px;color:var(--muted);margin:-6px 0 12px}
 .kpis.six{grid-template-columns:repeat(2,1fr)}.kpi small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
@@ -136,11 +137,14 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-b
 .mempty{margin:auto;color:var(--muted);text-align:center;padding:20px}
 @media(min-width:900px){.msgs{grid-template-columns:320px 1fr;align-items:start}.msgs .tlist{display:block!important}.msgs .tpane{display:flex}.tpane .back{display:none}.mlog{height:56vh}.tpane .none{display:flex}}
 
-.cal{display:grid;gap:8px}.cd{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:10px 12px;display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;align-items:start}.cd.today{border-color:var(--blue);box-shadow:0 0 0 2px #DBEAFE}.cd.none{padding:7px 12px;align-items:center;background:#F8FAFC}
+.cal{display:grid;gap:8px}.cd{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:8px 12px;display:grid;grid-template-columns:70px minmax(0,1fr);gap:10px;align-items:center;min-height:52px}.cd.today{border-color:var(--blue);box-shadow:0 0 0 2px #DBEAFE}
 .ch{font-weight:800;font-size:13px;line-height:1.25}.ch span{display:block;color:var(--muted);font-weight:600;font-size:12px}.cn{color:var(--muted);font-size:13px}
-.ci{display:flex;flex-wrap:wrap;gap:6px}.cx{flex:1 1 210px;max-width:340px;min-width:0;background:#F8FAFC;border:1px solid var(--bd);border-radius:10px;padding:7px 10px;cursor:pointer;text-align:start;display:block}.cx:hover{border-color:#CBD5E1}
-.cx .l1,.cx .l2{display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap}.cx .l1{font-weight:700;font-size:13px}.cx .l2{font-size:12px;color:var(--muted);margin-top:2px}.cx .tx{overflow:hidden;text-overflow:ellipsis;min-width:0}
-.cx .dot{width:8px;height:8px;border-radius:50%;background:#94A3B8;flex-shrink:0;margin-inline-start:auto}.cx .dot.open{background:#F59E0B}.cx .dot.assigned{background:#2563EB}.cx .dot.accepted{background:#4F46E5}.cx .dot.picked_up{background:#EA580C}.cx .dot.delivered{background:#16A34A}
+.ci{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0}.ci::-webkit-scrollbar{display:none}
+.cx{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;min-width:0;height:30px;padding:0 10px;background:#F1F5F9;border:1px solid var(--bd);border-radius:99px;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;cursor:pointer}.cx:hover{border-color:#94A3B8;background:#E8EEF6}
+.cx .r{color:var(--muted);font-weight:600;max-width:70px;overflow:hidden;text-overflow:ellipsis}
+.cx .dot{width:7px;height:7px;border-radius:50%;background:#94A3B8;flex-shrink:0}.cx .dot.open{background:#F59E0B}.cx .dot.assigned{background:#2563EB}.cx .dot.accepted{background:#4F46E5}.cx .dot.picked_up{background:#EA580C}.cx .dot.delivered{background:#16A34A}
+@media(min-width:1280px){.cal{grid-template-columns:repeat(7,minmax(0,1fr));align-items:stretch}.cd{display:block;min-height:210px;padding:10px}.ch{margin-bottom:8px}.ch span{display:inline;margin-inline-start:6px}.ci{flex-direction:column;overflow:visible}.cx{width:100%;justify-content:flex-start}.cx .dot{margin-inline-start:auto}}
+@media(max-width:600px){.cd{grid-template-columns:56px minmax(0,1fr);gap:8px}}
 .lc.sm{padding:9px 12px;margin-bottom:6px}.lc.sm .t1 b{font-size:14px}.lc.sm small{margin-top:1px}.moreb{width:100%;margin:2px 0 10px}
 @media(max-width:600px){.cd{grid-template-columns:1fr;gap:6px}.ch{display:flex;gap:8px;align-items:baseline}.ch span{display:inline}.cx{max-width:none}}
 
@@ -149,6 +153,9 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-b
 .ckrow{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--bd);flex-wrap:wrap}.ckrow:first-child{border-top:0}.ckrow .g{flex:1;min-width:160px}.ckrow .g b{display:block}.ckrow .g small{display:block;color:var(--muted);font-size:13px;overflow-wrap:anywhere}
 .ckdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block;margin-inline-end:6px}
 @media(max-width:600px){.ckmap{height:280px}}
+.attn{display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;background:#fff;border:1px solid var(--bd);border-radius:14px;padding:10px 14px;margin-bottom:14px}.attn>b{font-size:14px}.attl{display:flex;flex-wrap:wrap;gap:8px 14px;flex:1;min-width:0;align-items:center}.att{display:inline-flex;align-items:center;gap:8px;font-size:14px}.attn label{white-space:nowrap;margin-inline-start:auto;display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}.attn select{min-height:32px;font-size:13px;padding:0 8px}
+.ckstrip{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;background:#fff;border:1px solid var(--bd);border-radius:14px;padding:8px 12px;margin:0 0 14px}.ckstrip>b{font-size:13px;white-space:nowrap}.ckl{display:flex;gap:6px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}.ckl::-webkit-scrollbar{display:none}
+.ckp{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:99px;border:1px solid var(--bd);background:#F8FAFC;font-size:12px;white-space:nowrap}.ckp b{font-weight:700}.ckp:hover{border-color:#94A3B8}
 #atoasts{position:fixed;right:12px;top:calc(12px + var(--sat,0px));z-index:95;display:grid;gap:8px;max-width:min(360px,calc(100vw - 24px))}.at{text-align:start;background:var(--navy);color:var(--off);border-radius:14px;padding:12px 14px;box-shadow:0 8px 30px #0005;border-left:4px solid var(--orange);display:block;width:100%}.at b{display:block;font-size:14px}.at span{display:block;font-size:13px;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .kpis.six{grid-template-columns:repeat(2,1fr)}@media(min-width:700px){.kpis.six{grid-template-columns:repeat(3,1fr)}}@media(min-width:1100px){.kpis.six{grid-template-columns:repeat(6,1fr)}}
 .tbl .a,.paper .a{text-align:right}
@@ -170,6 +177,7 @@ let DALL=false, PEND=null, LAST=null, O=null, PLAN=null, CFG=null, VIEW='loads',
 const billingBack=new URLSearchParams(location.search).get('billing')==='success';
 if(billingBack&&window.lhTrack)lhTrack('checkout_success',{portal:'dispatcher'});
 const money=n=>'$'+(Number(n)%1?Number(n).toFixed(2):(Number(n)||0));
+const t12=(s,c)=>{const m=/T(\d\d):(\d\d)/.exec(s||'');if(!m)return '';let h=+m[1];const ap=h>=12?(c?'p':' PM'):(c?'a':' AM');h=h%12||12;return h+':'+m[2]+ap};
 const when=s=>{const d=s?new Date(s):null;return d&&!isNaN(d)?d.toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):''};
 const day=s=>s?new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'';
 function toast(t,ms){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),ms||3200)}
@@ -198,7 +206,7 @@ function loginView(email,stage,msg2){
   }
 }
 /* ---------- shell ---------- */
-const NAV=[['loads','Loads'],['drivers','Drivers'],['money','Money'],['fleet','Fleet'],['messages','Messages'],['company','Company']];
+const NAV=[['loads','Loads'],['drivers','Drivers'],['money','Money'],['fleet','Fleet'],['messages','Messages'],['company','Company'],['howto','How to']];
 const nbHtml=()=>UNREAD?`<i class="nb" aria-label="${UNREAD} unread">${UNREAD>9?'9+':UNREAD}</i>`:'';
 function paintNb(){document.querySelectorAll('a .nb').forEach(x=>x.remove());document.querySelectorAll('a[href="#/messages"]').forEach(a=>a.insertAdjacentHTML('beforeend',nbHtml()));document.title=(UNREAD?'('+UNREAD+') ':'')+'LaneHook Dispatcher Portal'}
 function setUnread(n){n=Number(n)||0;if(n!==UNREAD){UNREAD=n;paintNb()}}
@@ -240,12 +248,13 @@ function draw(){
     gate(`<h1 style="font-size:26px">Name your company</h1><p style="color:var(--muted)">Drivers will see this name when they join.</p><form id="cf" style="max-width:420px"><label class="f"><span>Company name</span><input name="n" maxlength="80" required autocomplete="organization"></label><button class="btn pri" style="width:100%">Create company</button></form>`);
     return $('#cf').onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector('button');b.disabled=true;const r=await rpc('create_company',{p_name:e.target.n.value});if(r){O=r;toast('Company created');draw()}else b.disabled=false}
   }
-  shell((VIEW==='loads'?fleetBanner():'')+(O.allowed?'':`<div class="banner warn"><b>Your plan is not active.</b>You can look around, but you cannot send loads or add drivers until you choose a plan. <button class="btn sm" id="fixplan" style="margin-top:8px">Fix my plan</button></div>`)+({loads:pageLoads,drivers:pageDrivers,money:pageMoney,fleet:pageFleet,messages:pageMessages,company:pageCompany}[VIEW])());
+  shell((VIEW==='loads'?fleetBanner():'')+(O.allowed?'':`<div class="banner warn"><b>Your plan is not active.</b>You can look around, but you cannot send loads or add drivers until you choose a plan. <button class="btn sm" id="fixplan" style="margin-top:8px">Fix my plan</button></div>`)+({loads:pageLoads,drivers:pageDrivers,money:pageMoney,fleet:pageFleet,messages:pageMessages,company:pageCompany,howto:pageHowto}[VIEW])());
   const fp=$('#fixplan');if(fp)fp.onclick=()=>PLAN&&PLAN.has_customer?portal():(O.company&&openPlans());
   bind();
   if(FD===undefined&&!FLOAD&&O.allowed)loadFleet(VIEW!=='fleet');
   if(VIEW==='messages')msgOpen();
   if(VIEW==='fleet'&&FT==='checkins'&&O.allowed){if(CK===undefined&&!CKLOAD)loadCk();else if(CK)ckPaint()}
+  if(VIEW==='loads'&&LVIEW==='board'&&FD&&FD.fleet&&CK===undefined&&!CKLOAD)loadCk();
   startPolls();
 }
 function openPlans(){const s=sheet(`<h2>Choose a plan</h2>${planCards()}`);s.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>checkout(b.dataset.plan))}
@@ -269,7 +278,7 @@ function pageBoard(){
   const all=(O.loads||[]).filter(l=>{if(!Q)return true;const d=l.data||{};return [d.ref,d.broker,d.pickCity,d.delivCity,dname(drv(l.driver_id))].join(' ').toLowerCase().includes(Q.toLowerCase())});
   const cnt=k=>all.filter(l=>COLS.find(c=>c[0]===k)[2].includes(l.status)).length;
   if(!COLS.some(c=>c[0]===TAB))TAB='open';
-  return `<div class="head"><div><h1>Loads</h1><p>${(O.loads||[]).length?'Send a load to a driver and watch it move.':'Create your first load.'}</p></div><div class="row2"><input id="q" type="search" placeholder="Search loads" value="${esc(Q)}" style="width:200px" aria-label="Search loads"><button class="btn pri" id="nl">New load</button></div></div>${viewToggle()}${availStrip()}
+  return `<div class="head"><div><h1>Loads</h1><p>${(O.loads||[]).length?'Send a load to a driver and watch it move.':'Create your first load.'}</p></div><div class="row2"><input id="q" type="search" placeholder="Search loads" value="${esc(Q)}" style="width:200px" aria-label="Search loads"><button class="btn pri" id="nl">New load</button></div></div>${viewToggle()}${availStrip()}${ckStrip()}
   <div class="chips m" role="tablist">${COLS.map(c=>`<button class="chip ${TAB===c[0]?'on':''}" data-tab="${c[0]}">${c[1]} <i>${cnt(c[0])}</i></button>`).join('')}</div>
   <div class="board">${COLS.map(c=>{const ls=all.filter(l=>c[2].includes(l.status)),dn=c[0]==='done',shown=dn&&!DALL?ls.slice(0,8):ls;return `<section class="col ${TAB===c[0]?'show':''}"><h3>${c[1]} · ${ls.length}</h3>${ls.length?shown.map(l=>dn?loadCard(l,true):loadCard(l)).join('')+(dn&&ls.length>8?`<button class="btn sm moreb" data-x="dall">${DALL?'Show fewer':'Show all '+ls.length}</button>`:''):`<div class="empty sm">${c[0]==='open'?'No open loads.':'Nothing here.'}</div>`}</section>`}).join('')}</div>`;
 }
@@ -410,14 +419,46 @@ function pageCompany(){
   <div class="panel"><h3>Company</h3><form id="rn"><label class="f"><span>Company name</span><input name="n" value="${esc(c.name)}" maxlength="80" required></label><button class="btn sm">Save name</button></form>
    <h3 style="margin-top:22px">Company code</h3><p class="sub">Drivers join with this code. Change it if it gets shared by mistake. Drivers already in stay in.</p><div class="code" style="font-size:28px">${esc(c.code)}</div><div style="margin-top:12px"><button class="btn sm" id="rot">Make a new code</button></div></div>
   <div class="panel"><h3>Plan</h3><p style="margin:0 0 4px"><b>${esc(cfgp?cfgp.name:p.plan==='comped'?'Complimentary':'No plan')}</b></p><p class="sub" style="margin:0 0 14px">${esc(line)}</p><div class="row2">${p.has_customer?'<button class="btn sm" id="mb">Manage billing</button>':''}${O.allowed&&p.sub_status?'':'<button class="btn sm pri" id="pl">Choose a plan</button>'}</div>
-   <h3 style="margin-top:22px">Driver Portal</h3><p class="sub">Your drivers use the Driver Portal on their phones.</p><a class="btn sm" href="../app/">Open Driver Portal</a>${window.LHInstall&&LHInstall.canShow()?'<h3 style="margin-top:22px">Home screen</h3><p class="sub">Add the Dispatcher Portal to your phone like an app.</p><button class="btn sm" data-a2hs>Add to home screen</button>':''}</div></div>${alertsPanel()}${demoPanel()}`;
+   <h3 style="margin-top:22px">Driver Portal</h3><p class="sub">Your drivers use the Driver Portal on their phones.</p><a class="btn sm" href="../app/">Open Driver Portal</a>${window.LHInstall&&LHInstall.canShow()?'<h3 style="margin-top:22px">Home screen</h3><p class="sub">Add the Dispatcher Portal to your phone like an app.</p><button class="btn sm" data-a2hs>Add to home screen</button>':''}</div></div>${alertsPanel()}${demoPanel()}${supportPanel()}`;
 }
+/* ---------- support + how to ---------- */
+const SUPMAIL='info@visionmakestudio.com';
+function supportHref(){const em=(typeof me==='function'&&me())||'';return 'mailto:'+SUPMAIL+'?subject='+encodeURIComponent('LaneHook support')+'&body='+encodeURIComponent(em?'My LaneHook account: '+em+'\n\nHow can we help?\n':'How can we help?\n')}
+function supportPanel(){return `<div class="panel" style="margin-top:14px"><h3>Need help?</h3><p class="sub">Email us and a real person will write back.</p><a class="btn sm" href="${esc(supportHref())}">${SUPMAIL}</a></div>`}
+const HOWTO=[
+ ['Set up your company and code','','company','company code name join create drivers',['Sign in with your email. The first time, type your company name and tap Create company.','Open Company. Your company code is there. Tap Copy code, or Make a new code if it got shared by mistake.','Send the code to each driver. They open the Driver Portal, go to Settings and type it under Join a company.']],
+ ['The loads board','','loads','loads board new load assign status',['Open Loads and tap New load.','Add the pickup, delivery, rate and broker, pick a driver and save. The driver gets it in their app.','Watch each load move across the board as the driver taps Accepted, Picked up and Delivered.','Tap a load to see details, edit it, message the driver or copy a tracking link.']],
+ ['Week calendar','','loads','calendar week schedule day chips',['Open Loads and switch to Week calendar.','Each load is one small chip on its pickup or delivery day. Times show in AM and PM.','Tap a chip for the full info, then Edit load. Use the arrows to change weeks.']],
+ ['Scan a rate confirmation','','loads','ratecon rate confirmation scan photo pdf fill',['Open Loads and tap New load.','Tap Scan the rate confirmation and pick the photo or PDF.','Check what it filled in, fix anything wrong, choose a driver and save.']],
+ ['Tracking links for brokers','','loads','tracking link share broker status stop',['Open a load and tap its menu.','Tap Copy tracking link and send it to the broker. They see the status without logging in.','Tap Stop tracking link to turn it off.']],
+ ['Drivers','','drivers','drivers seats invite remove available',['Open Drivers to see everyone who joined with your code.','See who is free and who has a load.','Tap a driver to message them, or remove them. Your seat count shows at the top.']],
+ ['Messages','','messages','messages chat driver unread',['Open Messages and pick a driver.','Type and send. Drivers see it in the Driver Portal under Dispatch.','Unread messages show a number on the Messages tab.']],
+ ['Money','','money','money revenue week month year csv report',['Open Money.','Pick Week, Month or Year to see revenue and loads.','Tap Download CSV or Print report for your records.']],
+ ['Company, plan and billing','','company','company plan billing manage upgrade',['Open Company.','Change the company name, or tap Manage billing to update your card or cancel.','Tap Open Driver Portal to see what your drivers see.']],
+ ['Driver seats and upgrading','','company','seat limit crew fleet upgrade drivers full',['The Drivers page shows how many seats you use.','When seats are full, new drivers cannot join.','Tap Upgrade to Fleet for up to 25 drivers and the Fleet tools.']],
+ ['Scorecards','Fleet','fleet','fleet scorecard drivers on time performance',['Open Fleet and pick Scorecards.','See each driver\'s loads, on-time rate and revenue.']],
+ ['Lanes','Fleet','fleet','fleet lanes routes profit',['Open Fleet and pick Lanes.','See which routes you run most and what they pay.']],
+ ['Driver pay and pay run','Fleet','fleet','fleet pay run driver pay sheet print settlement',['Open Fleet and pick Pay run.','Choose the week with the arrows.','Tap Pay sheet for one driver, or Print pay run for everyone.']],
+ ['Reminders','Fleet','fleet','fleet reminders insurance expiry due add',['Open Fleet and pick Reminders.','Tap Add reminder for things like insurance or a truck inspection.','They show on Fleet when they are due.']],
+ ['Trucks','Fleet','fleet','fleet trucks add truck unit',['Open Fleet and pick Trucks.','Tap Add truck and fill in the unit.','Put each truck with its driver.']],
+ ['Idle driver alerts','Fleet','fleet','fleet idle alert drivers no load days',['Open Fleet. The strip at the top shows drivers with no load.','Pick how many days under Idle after.','Tap See reminders for anything due.']],
+ ['Driver check-ins','Fleet','fleet','fleet check in checkins map location',['Drivers tap Check in in their app to share where they are, one time.','See the latest on the Loads page strip, or open Fleet and pick Check-ins for the map.','Tap a check-in for the time, note and ETA. They are kept 30 days.']]
+];
+function howItem(t){return `<details class="gt" data-k="${esc((t[0]+' '+t[3]).toLowerCase())}"><summary><b>${esc(t[0])}</b>${t[1]?`<span class="tag">${esc(t[1])}</span>`:''}</summary><ol>${t[4].map(x=>`<li>${esc(x)}</li>`).join('')}</ol><a class="btn sm pri" href="#/${t[2]}">Take me there</a></details>`}
+function pageHowto(){
+  let hide=false;try{hide=localStorage.getItem('lh-d-start-x')==='1'}catch(e){}
+  return `<div class="head"><div><h1>How to use LaneHook</h1><p>Pick a topic for simple steps. Or search.</p></div></div>
+  ${hide?'':`<div class="panel" id="startx" style="margin-bottom:14px;border-color:var(--orange)"><h3>Start here</h3><p class="sub">1. Create your company. 2. Send your company code to your drivers. 3. Add a load and pick a driver.</p><div class="row2"><a class="btn sm pri" href="#/company">Get my code</a><button class="btn sm" data-x="startx">Hide</button></div></div>`}
+  <input id="howq" type="search" placeholder="Search, for example calendar" aria-label="Search topics" autocomplete="off" style="width:100%;margin-bottom:12px;padding:12px;border:1px solid var(--bd);border-radius:12px;font-size:15px"><div id="howlist">${HOWTO.map(howItem).join('')}</div><p class="sub" id="hownone" style="display:none">Nothing found. Email us and we will help.</p>${supportPanel()}`;
+}
+document.addEventListener('input',e=>{if(e.target.id!=='howq')return;const q=e.target.value.trim().toLowerCase();let n=0;document.querySelectorAll('#howlist .gt').forEach(d=>{const m=!q||d.dataset.k.includes(q)||d.textContent.toLowerCase().includes(q);d.style.display=m?'':'none';if(m)n++});const z=$('#hownone');if(z)z.style.display=n?'none':''});
 /* ---------- events ---------- */
 function bind(){
   const q=$('#q');if(q)q.oninput=()=>{Q=q.value;const pos=q.selectionStart;draw();const n=$('#q');n.focus();n.setSelectionRange(pos,pos)};
   const nl=$('#nl');if(nl)nl.onclick=()=>loadForm(null);
   document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{TAB=b.dataset.tab;draw()});
-  document.querySelectorAll('.lc,.cx').forEach(c=>{const l=(O.loads||[]).find(x=>x.id===c.dataset.l);if(!l)return;c.onclick=e=>{if(e.target.closest('.dots'))return;l.source==='driver'?viewLoad(l):loadForm(l)}});
+  document.querySelectorAll('.cx').forEach(c=>{const l=(O.loads||[]).find(x=>x.id===c.dataset.c);if(l)c.onclick=()=>calInfo(l,c.title)});
+  document.querySelectorAll('.lc').forEach(c=>{const l=(O.loads||[]).find(x=>x.id===c.dataset.l);if(!l)return;c.onclick=e=>{if(e.target.closest('.dots'))return;l.source==='driver'?viewLoad(l):loadForm(l)}});
   document.querySelectorAll('[data-m]').forEach(b=>b.onclick=e=>{e.stopPropagation();loadMenu(b,(O.loads||[]).find(x=>x.id===b.dataset.m))});
   document.querySelectorAll('[data-dm]').forEach(b=>b.onclick=()=>{const m=drv(b.dataset.dm);menu(b,[{t:'History',f:()=>driverHistory(m.user_id)},{t:'Pay sheet',f:()=>{PAYD=m.user_id;MT='pay';location.hash='#/money'}},{t:'Message',f:()=>msgDriver(m.user_id)},{t:'Send a load',f:()=>loadForm(null,m.user_id)},'-',{t:'Remove from company',bad:1,f:()=>confirmBox('Remove '+dname(m)+'?','They lose access to your loads. Loads they have not finished go back to Open.','Remove',()=>act('remove_driver',{p_user:m.user_id},'Driver removed'))}])});
   const cp=(id,txt,ok)=>{const b=$('#'+id);if(b)b.onclick=async()=>{try{await navigator.clipboard.writeText(txt);toast(ok)}catch(e){toast('Copy it by hand: '+txt,5000)}}};
@@ -519,6 +560,14 @@ function fleetStatus(){let av=0,booked=0,road=0;(O.members||[]).forEach(m=>{cons
 function availStrip(){const f=fleetStatus();if(!f.total)return '';return `<div class="kpis" style="grid-template-columns:repeat(3,1fr)" id="avail"><div class="kpi"><span>Available</span><b style="color:var(--ok)">${f.av}</b></div><div class="kpi"><span>Load sent</span><b>${f.booked}</b></div><div class="kpi"><span>On the road</span><b style="color:var(--orange)">${f.road}</b></div></div>`}
 /* ----- calendar ----- */
 function viewToggle(){return `<div class="chips" style="margin-bottom:10px">${[['board','Board'],['cal','Week calendar']].map(c=>`<button class="chip ${LVIEW===c[0]?'on':''}" data-x="lview" data-v="${c[0]}">${c[1]}</button>`).join('')}<button class="chip" data-x="activity">Recent activity${ACT.length?' <i>'+ACT.length+'</i>':''}</button></div>`}
+function calInfo(l){
+  const d=l.data||{},m=drv(l.driver_id),row=(k,v)=>v?`<dt>${k}</dt><dd>${esc(v)}</dd>`:'';
+  const at=(t,c,a)=>[t?(when(t)):'',c,a].filter(Boolean).join(' · ');
+  const s=sheet(`<h2>${esc([d.pickCity,d.delivCity].filter(Boolean).join(' → ')||'Load')}</h2><p style="margin:6px 0 0"><span class="stat ${esc(l.status)}">${esc(ST[l.status]||l.status)}</span>${d.ref?` <span style="color:var(--muted)">#${esc(d.ref)}</span>`:''}</p>
+   <dl class="kv"><dt>Driver</dt><dd>${m?esc(dname(m)):'No driver'}</dd>${row('Broker',d.broker)}${row('Broker phone',d.brokerPhone)}${row('Rate',d.rate?money(d.rate):'')}${row('Miles',d.miles)}${row('Pickup',at(d.pickTime,d.pickCity,d.pickAddr))}${row('Delivery',at(d.delivTime,d.delivCity,d.delivAddr))}${row('Notes',d.notes)}</dl>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn" id="cx2">Close</button><button class="btn pri" id="ed">${l.source==='driver'?'View details':'Edit load'}</button></div>`);
+  $('#cx2',s).onclick=closeSheet;$('#ed',s).onclick=()=>{closeSheet();l.source==='driver'?viewLoad(l):loadForm(l)};
+}
 function pageCal(){
   const base=new Date();base.setHours(12,0,0,0);base.setDate(base.getDate()-((base.getDay()+6)%7)+7*CALOFF);
   const days=[...Array(7)].map((_,i)=>{const d=new Date(base);d.setDate(d.getDate()+i);return iso(d)}),today=iso(new Date());
@@ -527,7 +576,7 @@ function pageCal(){
   L.filter(l=>l.status!=='canceled').forEach(l=>{const x=l.data||{},p=(x.pickTime||'').slice(0,10),q=(x.delivTime||'').slice(0,10);let any=false;
     if(ev[p]){ev[p].push({l,t:'PU',time:x.pickTime,city:x.pickCity});any=true}if(ev[q]){ev[q].push({l,t:'DEL',time:x.delivTime,city:x.delivCity});any=true}
     if(!p&&!q&&['open','assigned','accepted','picked_up'].includes(l.status))unsched.push(l)});
-  const item=e=>{const x=e.l.data||{},m=e.l.driver_id?drv(e.l.driver_id):null,fn=m?String(dname(m)).split(' ')[0]:'No driver';return `<button class="cx" data-l="${esc(e.l.id)}" title="${esc(ST[e.l.status]||e.l.status)}"><span class="l1"><span>${e.t==='PU'?'↑':'↓'}</span><span>${esc((e.time||'').slice(11,16))}</span>${x.ref?`<span class="tx" style="font-weight:600;color:var(--muted)">#${esc(x.ref)}</span>`:''}<i class="dot ${esc(e.l.status)}"></i></span><span class="l2"><span class="tx">${esc(e.city||'—')}</span><span>·</span><span class="tx">${esc(fn)}</span></span></button>`};
+  const item=e=>{const x=e.l.data||{};return `<button class="cx" data-c="${esc(e.l.id)}" title="${esc(ST[e.l.status]||e.l.status)}"><span>${e.t==='PU'?'↑':'↓'}</span><span>${esc(t12(e.time,1))}</span>${x.ref?`<span class="r">${esc(x.ref)}</span>`:''}<i class="dot ${esc(e.l.status)}"></i></button>`};
   return `<div class="head"><div><h1>Loads</h1><p>Pickups and deliveries for the week.</p></div><div class="row2"><input id="q" type="search" placeholder="Search loads" value="${esc(Q)}" style="width:200px" aria-label="Search loads"><button class="btn pri" id="nl">New load</button></div></div>${viewToggle()}
   <div class="row2" style="justify-content:center;margin:0 0 12px"><button class="btn sm" data-x="cnav" data-v="-1" aria-label="Previous week">‹</button><b id="clabel" style="min-width:200px;text-align:center">${esc(sd(days[0])+' – '+sd(days[6])+', '+days[6].slice(0,4))}</b><button class="btn sm" data-x="cnav" data-v="1" aria-label="Next week">›</button>${CALOFF?'<button class="btn sm" data-x="cnow">This week</button>':''}</div>
   <div class="cal" id="cal">${days.map(d=>`<div class="cd ${d===today?'today':''} ${ev[d].length?'':'none'}"><div class="ch">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][days.indexOf(d)]} <span>${sd(d)}</span></div>${ev[d].length?`<div class="ci">${ev[d].sort((a,b)=>(a.time||'').localeCompare(b.time||'')).map(item).join('')}</div>`:'<div class="cn">Nothing</div>'}</div>`).join('')}</div>
@@ -645,7 +694,7 @@ const XA={
   drvhist:b=>{if(b.dataset.v)driverHistory(b.dataset.v)},brhist:b=>brokerHistory(b.dataset.v),
   payprint:()=>{const s=sheet(payPaper()+`<div class="noprint" style="margin-top:14px"><button class="btn pri" style="width:100%" id="pp">Print or save PDF</button></div>`);$('#pp',s).onclick=()=>window.print()},
   paycsv:()=>{const d=payData(),m=drv(PAYD),rows=[['Date','Load','Route','Rate','Miles','Pay']];d.rows.forEach(x=>rows.push([x.date,x.ref,x.route,x.rate.toFixed(2),x.mi,x.pay.toFixed(2)]));rows.push([],['','','','','Gross',d.gross.toFixed(2)]);if(d.ded)rows.push(['','','','',PAYDEDN||'Deduction',(-d.ded).toFixed(2)]);rows.push(['','','','','Net',d.net.toFixed(2)]);saveCSV('pay-'+dname(m).replace(/\W+/g,'-')+'-'+PAYFROM+'.csv',rows)},
-  lview:b=>{LVIEW=b.dataset.v;draw()},cnav:b=>{CALOFF+=+b.dataset.v;draw()},cnow:()=>{CALOFF=0;draw()},dall:()=>{DALL=!DALL;draw()},ckrefresh:()=>{CK=undefined;draw()},ckpick:b=>{CKSEL=b.dataset.v;ckPaint();const m=$('#ckmap');if(m)m.scrollIntoView({behavior:'smooth',block:'center'})},activity:activitySheet,
+  lview:b=>{LVIEW=b.dataset.v;draw()},cnav:b=>{CALOFF+=+b.dataset.v;draw()},cnow:()=>{CALOFF=0;draw()},dall:()=>{DALL=!DALL;draw()},idleall:()=>{IDLEALL=!IDLEALL;draw()},ckopen:b=>ckSheet(b.dataset.v),ckrefresh:()=>{CK=undefined;draw()},ckpick:b=>{CKSEL=b.dataset.v;ckPaint();const m=$('#ckmap');if(m)m.scrollIntoView({behavior:'smooth',block:'center'})},activity:activitySheet,
   openload:b=>{const l=(O.loads||[]).find(x=>x.id===b.dataset.v);if(l)l.source==='driver'?viewLoad(l):loadForm(l)},
   atoast:b=>{setAlertPref('toast',!alertPrefs().toast);draw()},
   abrowser:async b=>{const p=alertPrefs();if(p.browser){setAlertPref('browser',false);draw();return}
@@ -729,12 +778,15 @@ function fleetTeaser(){
   const f=[['Driver scorecards','Revenue, rate per mile, on-time delivery and idle days for every driver.'],['Lane and broker report','See which lanes and brokers pay best per mile.'],['Pay run','Work out what you owe every driver in one table.'],['Reminders','Insurance, registration, inspections and service dates, with warnings before they run out.'],['Trucks','Keep your trucks, plates and drivers in one list.'],['Idle driver alerts','Know who has had no load for days.'],['Up to 25 drivers','Room to grow.']];
   return `<div class="panel"><h3>Fleet tools come with the Fleet plan</h3><p class="sub">${price?'Fleet is '+money(price)+' a month. ':''}No hardware and no contract.</p><div style="display:grid;gap:12px;margin:6px 0 16px">${f.map(x=>`<div><b>${x[0]}</b><div style="color:var(--muted);font-size:14px">${x[1]}</div></div>`).join('')}</div><button class="btn pri" data-x="fup">Upgrade to Fleet</button></div>`;
 }
+let IDLEALL=false;
 function fleetAlerts(){
   const idle=(O.members||[]).map(m=>({m,i:idleOf(m)})).filter(x=>x.i.s==='idle'),s=fleetSoon(),od=s.filter(i=>daysTo(i.due)<0).length;
-  const sel=`<select id="idlesel" aria-label="Idle after" style="min-height:34px">${[2,3,5,7].map(n=>`<option value="${n}" ${idleDays()===n?'selected':''}>${n} days</option>`).join('')}</select>`;
-  return `<div class="panel" style="margin-bottom:14px"><div class="row2" style="justify-content:space-between"><h3 style="margin:0">Needs attention</h3><label class="row2" style="gap:8px;font-size:13px;color:var(--muted)">Idle after ${sel}</label></div>
-   <div style="margin-top:10px;display:grid;gap:8px">${idle.length?idle.map(x=>`<div class="row2" style="gap:10px"><span class="pill cancels">Idle ${x.i.d} days</span><b>${esc(dname(x.m))}</b></div>`).join(''):'<div style="color:var(--muted)">No idle drivers.</div>'}
-   ${s.length?`<div class="row2" style="gap:10px"><span class="pill ${od?'off':'cancels'}">${od?od+' overdue':s.length+' coming due'}</span><a href="#/fleet" data-x="ftab" data-v="remind" style="font-weight:600">See reminders</a></div>`:'<div style="color:var(--muted)">Nothing due in the next 14 days.</div>'}</div></div>`;
+  const sel=`<select id="idlesel" aria-label="Idle after">${[2,3,5,7].map(n=>`<option value="${n}" ${idleDays()===n?'selected':''}>${n} days</option>`).join('')}</select>`;
+  const shown=IDLEALL?idle:idle.slice(0,2),more=idle.length-2,items=[];
+  shown.forEach(x=>items.push(`<span class="att"><span class="pill cancels" style="text-transform:none">Idle ${x.i.d} days</span><b>${esc(dname(x.m))}</b></span>`));
+  if(more>0)items.push(`<button class="pill" data-x="idleall" style="text-transform:none;border:0">${IDLEALL?'Show less':'+'+more+' more'}</button>`);
+  if(s.length)items.push(`<span class="att"><span class="pill ${od?'off':'cancels'}" style="text-transform:none">${od?od+' overdue':s.length+' coming due'}</span><a href="#/fleet" data-x="ftab" data-v="remind" style="font-weight:600">See reminders</a></span>`);
+  return `<div class="attn"><b>Needs attention</b><div class="attl">${items.length?items.join(''):'<span style="color:var(--muted);font-size:14px">All clear</span>'}</div><label>Idle after ${sel}</label></div>`;
 }
 function perToggle(){return `<div class="chips">${[30,90,365].map(d=>`<button class="chip ${FP===d?'on':''}" data-x="fper" data-v="${d}">${d===365?'1 year':'Last '+d+' days'}</button>`).join('')}</div>`}
 function fleetScore(){
@@ -801,6 +853,7 @@ function fleetCSVrows(w){
 }
 function payRunPaper(){const d=payRun();return `<div class="paper"><h2>Pay run</h2><div><b>${esc(O.company.name)}</b> · ${esc(d.r.label)}</div><table><thead><tr><th>Driver</th><th>Loads</th><th class="a">Rate total</th><th>Pay by</th><th class="a">Pay</th></tr></thead><tbody>${d.rows.filter(x=>x.n).map(x=>`<tr><td>${esc(dname(x.m))}</td><td>${x.n}</td><td class="a">${money2(x.rate)}</td><td>${esc(payLabel(x.p)||'Not set')}</td><td class="a">${x.p?money2(x.pay):'–'}</td></tr>`).join('')}<tr><td colspan="4"><b>Total</b></td><td class="a"><b>${money2(d.total)}</b></td></tr></tbody></table><small>Prepared with LaneHook on ${day(new Date())}.</small></div>`}
 Object.assign(XA,{
+  startx:()=>{try{localStorage.setItem('lh-d-start-x','1')}catch(e){}const e=$('#startx');if(e)e.remove()},
   ftab:(b,e)=>{if(e&&e.preventDefault)e.preventDefault();FT=b.dataset.v;draw()},fper:b=>{FP=+b.dataset.v;draw()},ppay:b=>{FPAY=b.dataset.v;FPOFF=0;draw()},pnav:b=>{FPOFF+=+b.dataset.v;draw()},pnow:()=>{FPOFF=0;draw()},
   fadd:()=>itemForm(null),fedit:b=>itemForm(b.dataset.v),tadd:()=>truckForm(null),tedit:b=>truckForm(b.dataset.v),
   fup:upgradeFleet,fretry:()=>{FD=undefined;draw()},
@@ -838,10 +891,20 @@ const ckKind={pickup:'At pickup',delivery:'At delivery'};
 async function loadCk(){
   if(CKLOAD)return;CKLOAD=true;const r=await srpc('fleet_checkins');CKLOAD=false;
   const old=JSON.stringify(CK);if(r){CK=r;CKERR=false}else{CK=null;CKERR=true}
-  if(VIEW==='fleet'&&FT==='checkins'&&JSON.stringify(CK)!==old)draw();
+  if(JSON.stringify(CK)!==old&&((VIEW==='fleet'&&FT==='checkins')||(VIEW==='loads'&&LVIEW==='board')))draw();
+}
+function ckStrip(){
+  if(!(FD&&FD.fleet))return '';if(CK===undefined||CK===null)return '';
+  const last=ckLatest().filter(c=>drv(c.driver_id));
+  if(!last.length)return `<div class="ckstrip"><b>Driver check-ins</b><span style="color:var(--muted);font-size:13px;flex:1">None yet. Drivers tap Check in in the Driver Portal.</span></div>`;
+  return `<div class="ckstrip"><b>Driver check-ins</b><div class="ckl">${last.slice(0,12).map(c=>{const m=drv(c.driver_id);return `<button class="ckp" data-x="ckopen" data-v="${esc(c.driver_id)}"><i class="ckdot" style="background:${ckFresh(c.at)};margin:0"></i><b>${esc(String(dname(m)).split(' ')[0])}</b><span>${esc(ckAge(c.at))}</span></button>`}).join('')}</div><button class="btn sm" data-x="ckopen" data-v="">View map</button></div>`;
+}
+function ckSheet(id){
+  CKSEL=id||'';const s=sheet(`<h2>Driver check-ins</h2>${fleetCheckins(true)}<button class="btn" id="cxs" style="width:100%;margin-top:12px">Close</button>`);
+  $('#cxs',s).onclick=closeSheet;setTimeout(ckPaint,50);
 }
 function ckLatest(){const seen={},out=[];((CK&&CK.list)||[]).forEach(c=>{if(!seen[c.driver_id]){seen[c.driver_id]=1;out.push(c)}});return out}
-function fleetCheckins(){
+function fleetCheckins(inSheet){
   if(CK===undefined)return '<div class="empty">Loading…</div>';
   if(CKERR||!CK)return `<div class="panel"><h3>Could not load check-ins</h3><p class="sub">Check your connection and try again.</p><button class="btn pri" data-x="ckrefresh">Try again</button></div>`;
   const last=ckLatest(),by={};last.forEach(c=>by[c.driver_id]=c);
@@ -850,7 +913,7 @@ function fleetCheckins(){
   const map=last.length?`${note}<div class="ckmap" id="ckmap" role="img" aria-label="Map of the latest driver check-ins"></div>`:'';
   const rows=ms.length?ms.map(m=>{const c=by[m.user_id];
     return `<div class="ckrow"><span class="av">${esc(ini(m))}</span><span class="g"><b>${esc(dname(m))}</b>${c?`<small><i class="ckdot" style="background:${ckFresh(c.at)}"></i><span>Checked in</span> <span>${esc(ckAge(c.at))}</span>${ckKind[c.kind]?' · <span>'+ckKind[c.kind]+'</span>':''}${c.eta?' · <span>ETA</span> '+esc(c.eta.replace(/^ETA\s*/i,'')):''}</small>${c.note?`<small>${esc(c.note)}</small>`:''}`:'<small>No check-in yet</small>'}</span>${c?`<span class="row2"><button class="btn sm" data-x="ckpick" data-v="${esc(m.user_id)}">Show on map</button><a class="btn sm" href="https://www.google.com/maps?q=${c.lat},${c.lng}" target="_blank" rel="noopener">Open in Maps</a></span>`:''}</div>`}).join(''):'<div class="empty sm">No drivers yet.</div>';
-  return `<div class="panel"><div class="row2" style="justify-content:space-between;margin-bottom:8px"><div><h3 style="margin:0">Where your drivers are</h3><p class="sub" style="margin:4px 0 0">Each pin is the last place a driver checked in. Green is under 2 hours, amber is under a day, gray is older.</p></div><button class="btn sm" data-x="ckrefresh">Refresh</button></div>${map}<div>${rows}</div>
+  return `<div class="panel"><div class="row2" style="justify-content:space-between;margin-bottom:8px"><div>${inSheet?'':'<h3 style="margin:0">Where your drivers are</h3>'}<p class="sub" style="margin:4px 0 0">Each pin is the last place a driver checked in. Green is under 2 hours, amber is under a day, gray is older.</p></div>${inSheet?'':'<button class="btn sm" data-x="ckrefresh">Refresh</button>'}</div>${map}<div>${rows}</div>
    <p class="ft2" style="margin-top:12px">A check-in is a one-time location a driver chooses to share from the Driver Portal. It is not live tracking. Check-ins are kept for 30 days and only you, the dispatcher, can see them.</p></div>`;
 }
 function ckLoadLib(){

@@ -1,6 +1,7 @@
 'use strict';
 /* LaneHook driver portal: core (storage, helpers, UI kit, router) */
 const LH = window.LH = { pages: {}, acts: {}, S: null };
+LH.inCo = LH.inCo || (() => { try { if (LH.disp && LH.disp.data) return !!LH.disp.data.company; return localStorage.getItem('lh-in-co') === '1'; } catch (e) { return false; } });
 
 /* ---------- helpers ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -192,10 +193,10 @@ LH.render = function () {
   closeMenu();
   const r = LH.route(), pg = LH.pages[r.name] || LH.pages.home;
   const out = pg(r) || { title: 'LaneHook', html: '' };
-  const group = { loads: 'loads', load: 'loads', guard: 'guard', money: 'money', vault: 'vault', brokers: 'brokers', dispatch: 'dispatch', calc: 'calc', tools: 'tools', fuel: 'fuel', scan: 'scan', road: 'road', inspect: 'inspect', breakdown: 'breakdown', maint: 'maint', settings: 'settings', home: 'home', more: 'more' }[r.name] || 'home';
-  const sideLinks = NAV.map(n => n.sep ? '<hr>' : (n.noside ? '' : `<a href="#/${n.k}" class="${group === n.k ? 'on' : ''}">${ic(n.icon)}${esc(n.label)}</a>`)).join('');
+  const group = { loads: 'loads', load: 'loads', guard: 'guard', money: 'money', vault: 'vault', brokers: 'brokers', dispatch: 'dispatch', calc: 'calc', tools: 'tools', fuel: 'fuel', scan: 'scan', road: 'road', inspect: 'inspect', breakdown: 'breakdown', maint: 'maint', settings: 'settings', guide: 'more', home: 'home', more: 'more' }[r.name] || 'home';
+  const sideLinks = NAV.map(n => n.sep ? '<hr>' : (n.noside || (n.k === 'dispatch' && !LH.inCo()) ? '' : `<a href="#/${n.k}" class="${group === n.k ? 'on' : ''}">${ic(n.icon)}${esc(n.label)}</a>`)).join('');
   const tabLinks = NAV.filter(n => n.tab).map(n => {
-    const on = group === n.k || (n.k === 'more' && ['vault', 'brokers', 'dispatch', 'calc', 'tools', 'fuel', 'scan', 'road', 'inspect', 'breakdown', 'maint', 'settings'].includes(group));
+    const on = group === n.k || (n.k === 'more' && ['vault', 'brokers', 'dispatch', 'calc', 'tools', 'fuel', 'scan', 'road', 'inspect', 'breakdown', 'maint', 'settings', 'guide'].includes(group));
     return `<a href="#/${n.k}" class="${on ? 'on' : ''}" ${on ? 'aria-current="page"' : ''}>${ic(n.icon, 24)}${esc(n.short || n.label)}</a>`;
   }).join('');
   $('#app').innerHTML = `

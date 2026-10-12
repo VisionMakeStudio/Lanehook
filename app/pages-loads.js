@@ -33,10 +33,11 @@ LH.pages.home = () => {
     const e = ad.ev;
     html += `<a class="card link" href="#/load/${ad.load.id}" style="border-color:var(--bad)"><div class="row"><span class="badge bad">Detention running</span><span class="sp"></span><span class="muted">${esc(LH.loadLabel(ad.load))}</span></div><div class="timer" data-tick="${e.arrive}" style="margin-top:6px">${clock(Date.now() - e.arrive)}</div><div class="muted">Since ${fmtDT(e.arrive)} at ${e.stop === 'pick' ? 'pickup' : 'delivery'}</div></a>`;
   }
-  html += quick;
+  html += (LH.guideHint ? LH.guideHint() : '') + quick;
   html += `<div class="grid2" style="margin-bottom:12px"><a class="btn" href="#/scan">${ic('cam', 18)}Scan to PDF</a><a class="btn" href="#/fuel">${ic('money', 18)}Log fuel</a></div>`;
   if (LH.demo && LH.demo.on() && !LH.demo.has()) html += `<div class="alert"><i></i><div><b>Demo mode</b><small>Fill the app with sample loads, fuel and expenses. <button class="btn sm pri" data-act="demoAdd" style="margin-left:6px">Load demo data</button></small></div></div>`;
   if (LH.demo && LH.demo.has()) html += `<div class="alert"><i></i><div><b>Demo data is on</b><small>Sample items are tagged Demo. <button class="btn sm" data-act="demoClear" style="margin-left:6px">Clear demo data</button></small></div></div>`;
+  if (LH.auth && LH.auth.user && LH.inCo && !LH.inCo()) html += `<a class="ph-join" href="#/settings" style="display:block;text-align:center;font-size:14px;margin:4px 0 12px;color:var(--muted)">Driving for a company? <b style="color:var(--pri,#2563EB)">Join with a code</b></a>`;
   if (needSetup) html += `<a class="alert" href="#/settings"><i></i><div><b>Add your business details</b><small>Your name, MC number, and payment info go on every invoice.</small></div></a>`;
   const wk0 = new Date(); wk0.setHours(0, 0, 0, 0); wk0.setDate(wk0.getDate() - ((wk0.getDay() + 6) % 7));
   const inWk = S.loads.filter(l => { const t = Date.parse((l.deliv && l.deliv.time) || '') || l.created || 0; return t >= wk0.getTime() && LH.stage(l) !== 'booked'; });

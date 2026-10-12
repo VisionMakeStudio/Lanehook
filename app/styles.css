@@ -245,3 +245,13 @@ h1,h2,h3,.big,.ph-hey{font-family:'Archivo',system-ui,sans-serif;font-weight:800
 .tl-note{font-size:13px;color:var(--muted);margin:10px 0}
 .tl-save{width:100%;min-height:48px;margin-top:6px;background:var(--orange);color:#0B132B;border:0;border-radius:12px;font:inherit;font-weight:700}
 @media (min-width:768px){.tl{grid-template-columns:1fr 1fr;align-items:start}}
+
+/* How-to guide */
+.gt{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin:0 0 10px;padding:0 14px}
+.gt summary{display:flex;align-items:center;gap:8px;min-height:52px;cursor:pointer;list-style:none;font-size:16px}
+.gt summary::-webkit-details-marker{display:none}
+.gt summary::after{content:"+";margin-left:auto;font-size:22px;color:var(--muted)}
+.gt[open] summary::after{content:"\2212"}
+.gt ol{margin:0 0 12px;padding-left:22px;line-height:1.6;font-size:15px}
+.gt ol li{margin:0 0 6px}
+.gt .btn{margin:0 0 14px}
