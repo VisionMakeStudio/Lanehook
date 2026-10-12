@@ -34,6 +34,9 @@ LH.pages.home = () => {
     html += `<a class="card link" href="#/load/${ad.load.id}" style="border-color:var(--bad)"><div class="row"><span class="badge bad">Detention running</span><span class="sp"></span><span class="muted">${esc(LH.loadLabel(ad.load))}</span></div><div class="timer" data-tick="${e.arrive}" style="margin-top:6px">${clock(Date.now() - e.arrive)}</div><div class="muted">Since ${fmtDT(e.arrive)} at ${e.stop === 'pick' ? 'pickup' : 'delivery'}</div></a>`;
   }
   html += quick;
+  html += `<div class="grid2" style="margin-bottom:12px"><a class="btn" href="#/scan">${ic('cam', 18)}Scan to PDF</a><a class="btn" href="#/fuel">${ic('money', 18)}Log fuel</a></div>`;
+  if (LH.demo && LH.demo.on() && !LH.demo.has()) html += `<div class="alert"><i></i><div><b>Demo mode</b><small>Fill the app with sample loads, fuel and expenses. <button class="btn sm pri" data-act="demoAdd" style="margin-left:6px">Load demo data</button></small></div></div>`;
+  if (LH.demo && LH.demo.has()) html += `<div class="alert"><i></i><div><b>Demo data is on</b><small>Sample items are tagged Demo. <button class="btn sm" data-act="demoClear" style="margin-left:6px">Clear demo data</button></small></div></div>`;
   if (needSetup) html += `<a class="alert" href="#/settings"><i></i><div><b>Add your business details</b><small>Your name, MC number, and payment info go on every invoice.</small></div></a>`;
   const wk0 = new Date(); wk0.setHours(0, 0, 0, 0); wk0.setDate(wk0.getDate() - ((wk0.getDay() + 6) % 7));
   const inWk = S.loads.filter(l => { const t = Date.parse((l.deliv && l.deliv.time) || '') || l.created || 0; return t >= wk0.getTime() && LH.stage(l) !== 'booked'; });
@@ -170,7 +173,7 @@ async function saveLoadForm(f) {
 function loadDetail(l) {
   const st = LH.stage(l), si = LH.stageIdx(l), inv = LH.invoiceStatus(l), pr = LH.loadProfit(l), mcs = cleanMC(l.brokerMc), bk = LH.S.brokers[mcs];
   const next = { booked: ['Mark picked up', 'picked'], picked: ['Mark delivered', 'delivered'], delivered: ['Create invoice', 'invoice'], invoiced: ['Mark paid', 'paid'] }[st];
-  const menu = [{ label: 'Edit load', act: 'goEdit', id: l.id, icon: 'edit' }, { label: 'Add extra charge', act: 'addExtra', id: l.id, icon: 'plus' }, { label: 'Check broker', act: 'guardLoad', id: l.id, icon: 'shield' }, LH.disp && LH.disp.canShare(l) ? (l.shared ? { label: 'Stop sharing with dispatcher', act: 'unshareLoad', id: l.id, icon: 'users' } : { label: 'Share with dispatcher', act: 'shareLoad', id: l.id, icon: 'users' }) : null, st !== 'booked' && !l.invoice ? { label: 'Move back one step', act: 'stageBack', id: l.id, icon: 'back' } : null, { label: 'Delete load', act: 'delLoad', id: l.id, icon: 'trash', bad: 1 }];
+  const menu = [{ label: 'Edit load', act: 'goEdit', id: l.id, icon: 'edit' }, { label: 'Add extra charge', act: 'addExtra', id: l.id, icon: 'plus' }, { label: 'Scan paperwork to PDF', act: 'goScan', id: l.id, icon: 'cam' }, { label: 'Check broker', act: 'guardLoad', id: l.id, icon: 'shield' }, LH.disp && LH.disp.canShare(l) ? (l.shared ? { label: 'Stop sharing with dispatcher', act: 'unshareLoad', id: l.id, icon: 'users' } : { label: 'Share with dispatcher', act: 'shareLoad', id: l.id, icon: 'users' }) : null, st !== 'booked' && !l.invoice ? { label: 'Move back one step', act: 'stageBack', id: l.id, icon: 'back' } : null, { label: 'Delete load', act: 'delLoad', id: l.id, icon: 'trash', bad: 1 }];
   const hdr = `<div class="card">
     <div class="row"><h2 class="sp">${esc(LH.routeLabel(l))}</h2>${stageBadge(l)}</div>
     <div class="steps" aria-hidden="true">${LH.STAGES.map((s, i) => `<i class="${i <= si ? 'on' : ''}"></i>`).join('')}</div>
@@ -188,6 +191,7 @@ function loadDetail(l) {
     ${pr.miles ? `<dl class="kv" style="margin-top:12px"><dt>Revenue</dt><dd class="mono">${money(pr.rev)}</dd><dt>Fuel</dt><dd class="mono">${pr.mpgMissing ? 'Set MPG' : '−' + money(pr.fuel)}</dd><dt>Tolls and other</dt><dd class="mono">−${money(pr.tolls + pr.other)}</dd>${pr.run ? `<dt>Running cost</dt><dd class="mono">−${money(pr.run)}</dd>` : ''}</dl>` : ''}</div>`;
   return { title: LH.loadLabel(l), back: 'loads', top: LH.menuBtn(menu), html: `<div class="cols"><div>${hdr}${detentionCard(l)}</div><div>${invoiceCard(l, inv)}${paperworkCard(l)}${profit}${l.notes ? `<div class="card"><h3>Notes</h3><div style="white-space:pre-wrap">${esc(l.notes)}</div></div>` : ''}</div></div>` };
 }
+LH.acts.goScan = el => LH.go('scan/' + el.dataset.id);
 LH.acts.goEdit = el => LH.go('load/' + el.dataset.id + '/edit');
 LH.acts.guardLoad = async el => { const l = LH.load(el.dataset.id); if (!l.brokerMc) { toast('Add the broker MC number first'); LH.go('load/' + l.id + '/edit'); return; } LH.guardSheet(cleanMC(l.brokerMc), l.brokerName, l.id); };
 LH.acts.stageBack = el => { const l = LH.load(el.dataset.id), i = LH.STAGES.indexOf(l.stage || 'booked'); if (i > 0) { l.stage = LH.STAGES[i - 1]; LH.save(); LH.render(); } };
@@ -229,7 +233,7 @@ function detentionCard(l) {
   return `<div class="card"><div class="row"><h3 class="sp" style="margin:0">Detention</h3>${d.owed > 0 ? `<span class="badge ok">${money(d.owed)}</span>` : ''}</div>
     <div class="muted" style="font-size:14px;margin-top:4px">${num(l.freeHours)} hr free${noTerms ? '. No hourly rate on this load, so ask the broker before relying on it' : ', then ' + money(d.rate) + ' per hour'}.</div>
     <div style="margin-top:10px">${stop('pick', 'Pickup')}${stop('deliv', 'Delivery')}</div>
-    ${done ? `<div class="row wrap" style="margin-top:6px"><button class="btn sm" data-act="copyClaim" data-id="${l.id}">Copy claim</button><button class="btn sm" data-act="shareClaim" data-id="${l.id}">${ic('send', 16)}Share</button></div>` : ''}</div>`;
+    ${done ? `<div class="row wrap" style="margin-top:6px"><button class="btn sm" data-act="copyClaim" data-id="${l.id}">Copy claim</button><button class="btn sm" data-act="shareClaim" data-id="${l.id}">${ic('send', 16)}Share</button></div>` : ''}${LH.claimRow ? LH.claimRow(l) : ''}</div>`;
 }
 LH.acts.arrive = async el => {
   const l = LH.load(el.dataset.id), key = el.dataset.v;
@@ -256,7 +260,7 @@ LH.acts.shareClaim = async el => { const t = claimOf(LH.load(el.dataset.id)); if
 const PHOTO_KINDS = ['BOL', 'POD', 'Rate con', 'Pickup photo', 'Delivery photo', 'Damage', 'Receipt', 'Other'];
 function paperworkCard(l) {
   const ps = l.photos || [];
-  return `<div class="card"><div class="row"><h3 class="sp" style="margin:0">Paperwork and photos</h3><button class="btn sm" data-act="addPhoto" data-id="${l.id}">${ic('cam', 16)}Add</button></div>
+  return `<div class="card"><div class="row"><h3 class="sp" style="margin:0">Paperwork and photos</h3><button class="btn sm" data-act="goScan" data-id="${l.id}">PDF scan</button><button class="btn sm" data-act="addPhoto" data-id="${l.id}">${ic('cam', 16)}Add</button></div>
     ${ps.length ? `<div class="thumbs" style="margin-top:12px">${ps.map(p => `<button class="thumb" data-act="viewPhoto" data-id="${l.id}" data-v="${p.id}" aria-label="${esc(p.kind)}">${p.type === 'application/pdf' ? '<div class="pdfmark">PDF</div>' : `<img alt="" data-blob="${p.id}">`}<small>${esc(p.kind)}</small></button>`).join('')}</div>
     <div class="row wrap" style="margin-top:12px"><button class="btn sm" data-act="sharePaper" data-id="${l.id}">${ic('send', 16)}Share paperwork</button></div>` : `<div class="muted" style="margin-top:6px">Scan the BOL at pickup and the signed POD at delivery. Photos of damage go here too.</div>`}</div>`;
 }

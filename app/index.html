@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="LaneHook">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <script src="/analytics.js"></script>
 <script src="/install.js" data-portal="driver" data-name="LaneHook" data-icon="/app/icons/icon-192.png"></script>
@@ -28,12 +28,16 @@ try{var t=localStorage.getItem('lh-theme');if(t==='light'||t==='dark')document.d
 <script src="config.js"></script>
 <script src="vendor/supabase.js"></script>
 <script src="core.js"></script>
+<script src="/tools.js"></script>
 <script src="logic.js"></script>
 <script src="sync.js"></script>
 <script src="auth.js"></script>
 <script src="pages-loads.js"></script>
 <script src="billing.js"></script>
 <script src="dispatch.js"></script>
+<script src="pages-money.js"></script>
+<script src="pages-field.js"></script>
+<script src="demo.js"></script>
 <script src="pages-more.js"></script>
 </body>
 </html>

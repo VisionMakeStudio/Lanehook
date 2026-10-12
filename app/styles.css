@@ -224,3 +224,24 @@ h1,h2,h3,.big,.ph-hey{font-family:'Archivo',system-ui,sans-serif;font-weight:800
 .nb{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:8px;border-radius:99px;background:var(--orange);color:#0B132B;font-size:11px;font-weight:800}
 .tabs a{position:relative}.tabs a .nb{position:absolute;top:4px;left:calc(50% + 6px);margin:0}
 .list a.item .nb{margin-left:0;margin-right:6px}
+
+/* calculators, report tables */
+.side{overflow-y:auto}
+.tblx{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th,.tbl td{padding:8px 6px;text-align:right;border-bottom:1px solid var(--border)}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.tl{display:grid;gap:14px}
+.tl-form,.tl-out{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.tl-f{display:block;margin:0 0 10px}.tl-f span{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:var(--muted)}
+.tl-group{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--orange);margin:14px 0 8px;border-top:1px solid var(--border);padding-top:10px}
+.tl-reset{background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;font-size:13px;padding:4px 0}
+.tl-r{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border)}
+.tl-r span{color:var(--muted);font-size:14px}.tl-r b{text-align:right}
+.tl-r.big{display:block;background:var(--surface2);border-radius:12px;padding:12px 14px;margin-bottom:6px;border:0}
+.tl-r.big span{display:block;font-size:12px}.tl-r.big b{font-size:30px;font-family:'IBM Plex Mono',monospace}
+.tl-r.ok b{color:var(--ok)}.tl-r.bad b{color:var(--bad)}
+.tl-note{font-size:13px;color:var(--muted);margin:10px 0}
+.tl-save{width:100%;min-height:48px;margin-top:6px;background:var(--orange);color:#0B132B;border:0;border-radius:12px;font:inherit;font-weight:700}
+@media (min-width:768px){.tl{grid-template-columns:1fr 1fr;align-items:start}}

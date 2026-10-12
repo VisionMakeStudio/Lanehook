@@ -92,7 +92,7 @@ LH.pages.money = () => {
   const paidMo = S.loads.filter(l => l.paidDate && l.paidDate.startsWith(mo)).reduce((s, l) => s + num(l.paidAmount), 0);
   const expMo = S.expenses.filter(x => x.date.startsWith(mo)).reduce((s, x) => s + num(x.amount), 0);
   const tiles = `<div class="grid2 stats4"><div class="stat"><span>Owed to you</span><b class="mono">${money0(out.reduce((s, l) => s + LH.invoiceTotal(l), 0))}</b></div><div class="stat"><span>Overdue</span><b class="mono" style="${over.length ? 'color:var(--bad)' : ''}">${money0(over.reduce((s, l) => s + LH.invoiceTotal(l), 0))}</b></div><div class="stat"><span>Expenses this month</span><b class="mono">${money0(expMo)}</b></div><div class="stat"><span>Net this month</span><b class="mono" style="color:${paidMo - expMo < 0 ? 'var(--bad)' : 'var(--ok)'}">${money0(paidMo - expMo)}</b></div></div>`;
-  const chips = `<div class="chips" style="margin-top:14px">${[['invoices', 'Invoices'], ['expenses', 'Expenses'], ['ifta', 'IFTA']].map(c => `<button class="chip ${T === c[0] ? 'on' : ''}" data-act="moneyTab" data-v="${c[0]}">${c[1]}</button>`).join('')}</div>`;
+  const chips = `<div class="chips" style="margin-top:14px">${[['invoices', 'Invoices'], ['expenses', 'Expenses'], ['reports', 'Reports'], ['ifta', 'IFTA']].map(c => `<button class="chip ${T === c[0] ? 'on' : ''}" data-act="moneyTab" data-v="${c[0]}">${c[1]}</button>`).join('')}</div>`;
   let body = '';
   if (T === 'invoices') {
     const open = out.sort((a, b) => a.invoice.due.localeCompare(b.invoice.due)), paid = S.loads.filter(l => l.paidDate).sort((a, b) => b.paidDate.localeCompare(a.paidDate)).slice(0, 15);
@@ -104,9 +104,11 @@ LH.pages.money = () => {
     const ex = [...S.expenses].sort((a, b) => b.date.localeCompare(a.date)), by = {};
     ex.forEach(x => { (by[x.date.slice(0, 7)] = by[x.date.slice(0, 7)] || []).push(x); });
     const cats = {}; S.expenses.filter(x => x.date.startsWith(mo)).forEach(x => { cats[x.cat] = (cats[x.cat] || 0) + num(x.amount); });
-    body = `<div class="row" style="margin-bottom:10px"><span class="sp muted">${ex.length} expense${ex.length === 1 ? '' : 's'}</span><button class="btn pri sm" data-act="addExpense">${ic('plus', 16)}Add expense</button></div>` +
+    body = `<div class="row" style="margin-bottom:10px"><span class="sp muted">${ex.length} expense${ex.length === 1 ? '' : 's'}</span><a class="btn sm" href="#/fuel">${ic('truck', 16)}Fuel log</a><button class="btn pri sm" data-act="addExpense">${ic('plus', 16)}Add expense</button></div>` +
       (Object.keys(cats).length ? `<div class="card"><h3>This month by category</h3><dl class="kv">${Object.entries(cats).sort((a, b) => b[1] - a[1]).map(c => `<dt>${esc(c[0])}</dt><dd class="mono">${money(c[1])}</dd>`).join('')}</dl></div>` : '') +
       (ex.length ? Object.keys(by).map(m => `<div class="sec"><h2>${new Date(m + '-15').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h2><span class="muted mono">${money(by[m].reduce((s, x) => s + num(x.amount), 0))}</span></div><div class="list">${by[m].map(x => `<button class="item" data-act="editExpense" data-id="${x.id}"><div class="t"><b>${esc(x.vendor || x.cat)}</b><small>${fmtDay(x.date)} · ${esc(x.cat)}${x.gallons ? ' · ' + x.gallons + ' gal' : ''}${x.state ? ' · ' + x.state : ''}</small></div><span class="amt mono">${money(x.amount)}</span></button>`).join('')}</div>`).join('') : LH.empty('No expenses yet', 'Log fuel, tolls, and repairs as you go. It makes tax time and IFTA easy, and shows your real cost per mile.'));
+  } else if (T === 'reports') {
+    body = LH.moneyReport();
   } else {
     const q = LH.iftaQ, qs = []; const y = new Date().getFullYear(); for (let yy = y; yy >= y - 1; yy--) for (let n = 4; n >= 1; n--) if (yy < y || n <= Math.floor(new Date().getMonth() / 3) + 1) qs.push(yy + '-Q' + n);
     const trips = S.trips.filter(t => inQuarter(t.date, q)), fuel = S.expenses.filter(x => x.cat === 'Fuel' && x.state && x.gallons && inQuarter(x.date, q));
@@ -120,8 +122,8 @@ LH.pages.money = () => {
   return { title: 'Money', html: tiles + chips + body };
 };
 const stateSel = (v, name = 'state') => `<select name="${name}"><option value="">State</option>${STATES.map(s => `<option ${s === v ? 'selected' : ''}>${s}</option>`).join('')}</select>`;
-function expenseSheet(x) {
-  const isNew = !x; x = x || { date: isoDay(), cat: 'Fuel' };
+function expenseSheet(x, preset) {
+  const isNew = !x; x = x || Object.assign({ date: isoDay(), cat: 'Fuel' }, preset || {});
   const recent = [...LH.S.loads].sort((a, b) => b.created - a.created).slice(0, 15);
   const s = openSheet(isNew ? 'Add expense' : 'Edit expense', `<form id="exForm2"><div class="grid2"><label class="f"><span>Date</span><input type="date" name="date" value="${x.date}" required></label><label class="f"><span>Amount ($)</span><input name="amount" inputmode="decimal" value="${x.amount || ''}" required></label></div>
     <div class="grid2"><label class="f"><span>Category</span><select name="cat" id="exCat">${CATS.map(c => `<option ${c === x.cat ? 'selected' : ''}>${c}</option>`).join('')}</select></label><label class="f"><span>Vendor</span><input name="vendor" value="${esc(x.vendor || '')}"></label></div>
@@ -140,6 +142,7 @@ function expenseSheet(x) {
   };
   const del = $('#exDel', s); if (del) del.onclick = () => ask('Delete expense?', 'This removes it from your records.', 'Delete', async () => { if (x.receiptId) await LH.delBlob(x.receiptId); LH.S.expenses = LH.S.expenses.filter(y => y.id !== x.id); LH.save(); LH.render(); });
 }
+LH.expenseSheet = expenseSheet;
 LH.acts.addExpense = () => expenseSheet();
 LH.acts.editExpense = el => expenseSheet(LH.S.expenses.find(x => x.id === el.dataset.id));
 function tripSheet(t) {
@@ -251,7 +254,7 @@ LH.pages.settings = () => {
     title: 'Settings', html: LH.accountCard() + `<form id="setForm"><div class="cols"><div><div class="card"><h3>Your business</h3>${f('name', 'Your name')}${f('bizName', 'Business name')}<div class="grid2">${f('mc', 'MC number', { mode: 'numeric' })}${f('dot', 'USDOT number', { mode: 'numeric' })}</div>${f('phone', 'Phone', { type: 'tel' })}${f('email', 'Email', { type: 'email' })}<label class="f"><span>Address</span><textarea name="address">${esc(s.address || '')}</textarea></label><label class="f"><span>Payment instructions on invoices</span><textarea name="payInfo" placeholder="Remit to, or factoring company details">${esc(s.payInfo || '')}</textarea></label></div></div>
     <div><div class="card"><h3>Your numbers</h3><div class="grid2">${f('mpg', 'Truck MPG', { mode: 'decimal' })}${f('fuelPrice', 'Fuel price ($/gal)', { mode: 'decimal' })}</div>${f('costPerMile', 'Other running cost per mile ($)', { mode: 'decimal', ph: 'Tires, maintenance, insurance' })}<div class="grid2">${f('terms', 'Default payment terms (days)', { mode: 'numeric' })}${f('defFree', 'Default free hours', { mode: 'decimal', ph: '2' })}</div>${f('defDet', 'Default detention ($/hour)', { mode: 'decimal', zero: 1 })}</div>
     <button class="btn pri block" style="margin-bottom:12px">Save settings</button></div></div></form>
-    <div class="card"><h3>Your data</h3><p class="muted" style="margin:0 0 12px;font-size:14px">Everything is stored on this device only. There is no account or sync yet. Make a backup now and then, and before you clear your browser data or change phones.</p>
+    ${LH.demo ? LH.demo.card() : ''}<div class="card"><h3>Your data</h3><p class="muted" style="margin:0 0 12px;font-size:14px">Everything is stored on this device only. There is no account or sync yet. Make a backup now and then, and before you clear your browser data or change phones.</p>
     <div class="row wrap"><button class="btn" data-act="exportData">${ic('down', 16)}Back up</button><label class="btn" for="impFile">Restore backup</label><input type="file" id="impFile" accept="application/json" data-change="importData"><button class="btn" data-act="toggleTheme">${ic('sun', 16)}Light or dark</button></div>
     <p class="hint" style="margin-top:12px">To install on iPhone or iPad: tap Share, then Add to Home Screen. On Android: menu, then Install app.</p>
     <button class="btn bad sm" data-act="wipe">Erase all data on this device</button></div>`
@@ -286,7 +289,7 @@ LH.acts.wipe = () => ask('Erase everything?', 'All loads, photos, documents, and
 
 /* ---------------- MORE ---------------- */
 LH.pages.more = () => ({
-  title: 'More', html: `<div class="list">${[['dispatch', 'Dispatch', 'users', 'Loads from your dispatcher'], ['vault', 'Documents', 'doc', 'Insurance, registration, authority'], ['brokers', 'Brokers', 'users', 'Your notes and ratings'], ['calc', 'Profit calculator', 'calc', 'Check a load before you accept'], ['maint', 'Truck care', 'wrench', 'Service reminders and odometer'], ['settings', 'Settings', 'gear', 'Business info and backup']].map(r => `<a class="item" href="#/${r[0]}">${ic(r[2])}<div class="t"><b>${r[1]}</b><small>${r[3]}</small></div><span class="chev">${ic('chev', 18)}</span></a>`).join('')}</div>${LH.auth && LH.auth.user ? `<div class="list"><button class="item" data-act="signOut">${ic('back')}<div class="t"><b>Sign out</b><small>${esc(LH.auth.user.email || '')}</small></div></button></div>` : ''}${window.LHInstall && LHInstall.canShow() ? `<div class="list"><button class="item" data-a2hs>${ic('plus')}<div class="t"><b>Add to home screen</b><small>Open LaneHook like an app</small></div><span class="chev">${ic('chev', 18)}</span></button></div>` : ''}<p class="legal-links"><a href="/terms/" target="_blank" rel="noopener">Terms of Service</a> · <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a></p>`
+  title: 'More', html: `<div class="list">${[['dispatch', 'Dispatch', 'users', 'Loads from your dispatcher'], ['vault', 'Documents', 'doc', 'Insurance, registration, authority'], ['brokers', 'Brokers', 'users', 'Your notes and ratings'], ['calc', 'Profit calculator', 'calc', 'Check a load before you accept'], ['tools', 'Tools', 'calc', 'Detention, cost per mile and more, saved'], ['fuel', 'Fuel log', 'money', 'MPG, receipts and IFTA fuel'], ['scan', 'Scan to PDF', 'cam', 'Photograph pages, send one PDF'], ['road', 'Road tools', 'pin', 'Truck stops, parking, scales, repair'], ['breakdown', 'Breakdown kit', 'wrench', 'Contacts and your location'], ['inspect', 'Inspections', 'check', 'Pre-trip and post-trip checklist'], ['maint', 'Truck care', 'wrench', 'Service reminders and odometer'], ['settings', 'Settings', 'gear', 'Business info and backup']].map(r => `<a class="item" href="#/${r[0]}">${ic(r[2])}<div class="t"><b>${r[1]}</b><small>${r[3]}</small></div><span class="chev">${ic('chev', 18)}</span></a>`).join('')}</div><div class="list"><button class="item" data-act="invite">${ic('send')}<div class="t"><b>Share LaneHook</b><small>Send it to another driver</small></div><span class="chev">${ic('chev', 18)}</span></button></div>${LH.auth && LH.auth.user ? `<div class="list"><button class="item" data-act="signOut">${ic('back')}<div class="t"><b>Sign out</b><small>${esc(LH.auth.user.email || '')}</small></div></button></div>` : ''}${window.LHInstall && LHInstall.canShow() ? `<div class="list"><button class="item" data-a2hs>${ic('plus')}<div class="t"><b>Add to home screen</b><small>Open LaneHook like an app</small></div><span class="chev">${ic('chev', 18)}</span></button></div>` : ''}<p class="legal-links"><a href="/terms/" target="_blank" rel="noopener">Terms of Service</a> · <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a></p>`
 });
 
 /* ---------------- BOOT ---------------- */

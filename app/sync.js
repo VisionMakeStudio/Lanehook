@@ -7,13 +7,13 @@ LH.sync = (function () {
   const loadMeta = () => { try { meta = JSON.parse(localStorage.getItem(mk()) || '{}'); } catch (e) { meta = {}; } meta.up = meta.up || {}; };
   const saveMeta = () => { try { localStorage.setItem(mk(), JSON.stringify(meta)); } catch (e) { } };
   const setStatus = (s, e) => { api.status = s; api.err = e || ''; if (s === 'ok') api.last = Date.now(); if (LH.onSync) LH.onSync(); };
-  const hasData = s => !!(s && ((s.loads || []).length || (s.docs || []).length || (s.expenses || []).length || (s.maint || []).length || (s.trips || []).length || (s.settings && s.settings.bizName)));
-  const refs = s => { const ids = new Set(); (s.loads || []).forEach(l => (l.photos || []).forEach(p => ids.add(p.id))); (s.docs || []).forEach(d => (d.files || []).forEach(f => ids.add(f.id))); (s.expenses || []).forEach(x => x.receiptId && ids.add(x.receiptId)); return [...ids]; };
+  const hasData = s => !!(s && ((s.loads || []).length || (s.docs || []).length || (s.expenses || []).length || (s.maint || []).length || (s.trips || []).length || (s.calcs || []).length || (s.inspections || []).length || (s.contacts || []).length || (s.settings && s.settings.bizName)));
+  const refs = s => { const ids = new Set(); (s.loads || []).forEach(l => (l.photos || []).forEach(p => ids.add(p.id))); (s.docs || []).forEach(d => (d.files || []).forEach(f => ids.add(f.id))); (s.expenses || []).forEach(x => x.receiptId && ids.add(x.receiptId)); (s.inspections || []).forEach(i => (i.photos || []).forEach(p => ids.add(p.id))); return [...ids]; };
   const busyForm = () => { const r = LH.route(); return (r.name === 'load' && (r.id === 'new' || r.sub === 'edit')) || !!document.querySelector('.scrim'); };
 
   function mergeStates(local, remote) {
     const out = JSON.parse(JSON.stringify(remote));
-    ['loads', 'docs', 'expenses', 'maint', 'trips'].forEach(k => {
+    ['loads', 'docs', 'expenses', 'maint', 'trips', 'calcs', 'inspections', 'contacts'].forEach(k => {
       const seen = new Set((out[k] || []).map(x => x.id)); out[k] = out[k] || [];
       (local[k] || []).forEach(x => { if (!seen.has(x.id)) out[k].push(x); });
     });

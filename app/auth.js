@@ -36,7 +36,7 @@ LH.auth = {
     try { owner = localStorage.getItem('lh-owner'); } catch (e) { }
     if (owner && owner !== uid) await LH.resetLocal();
     try { localStorage.setItem('lh-owner', uid); } catch (e) { }
-    if (location.search || location.hash.indexOf('access_token') > -1) history.replaceState(null, '', location.pathname + '#/home');
+    if (location.search || location.hash.indexOf('access_token') > -1) history.replaceState(null, '', location.pathname + (/^#\/[a-z]/.test(location.hash) && location.hash.indexOf('access_token') < 0 ? location.hash : '#/home'));
     if (!first) LH.render();
     LH.sync.start(this.sb, uid);
     (async () => { if (LH.disp) await LH.disp.start(); if (LH.plans) LH.plans.start(); })();

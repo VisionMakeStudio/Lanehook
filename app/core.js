@@ -20,7 +20,7 @@ const addDays = (s, n) => { const d = new Date(s + 'T12:00:00'); d.setDate(d.get
 const cleanMC = v => String(v || '').replace(/\D/g, '').replace(/^0+/, '');
 
 /* ---------- storage: one JSON state in IndexedDB + photo blobs ---------- */
-const DEFAULT_STATE = () => ({ v: 1, settings: { terms: 30, mpg: 8, nextInv: 1, theme: 'dark', fuelPrice: 0, costPerMile: 0 }, loads: [], brokers: {}, docs: [], expenses: [], maint: [], trips: [], odometer: 0 });
+const DEFAULT_STATE = () => ({ v: 1, settings: { terms: 30, mpg: 8, nextInv: 1, theme: 'dark', fuelPrice: 0, costPerMile: 0 }, loads: [], brokers: {}, docs: [], expenses: [], maint: [], trips: [], odometer: 0, calcs: [], inspections: [], contacts: [] });
 let idb = null, saveTimer = null;
 LH.storageOK = false;
 
@@ -173,6 +173,12 @@ const NAV = [
   { k: 'vault', label: 'Documents', icon: 'doc', side: 1 },
   { k: 'brokers', label: 'Brokers', icon: 'users', side: 1 },
   { k: 'calc', label: 'Profit calculator', icon: 'calc', side: 1 },
+  { k: 'tools', label: 'Tools', icon: 'calc', side: 1 },
+  { k: 'fuel', label: 'Fuel log', icon: 'money', side: 1 },
+  { k: 'scan', label: 'Scan to PDF', icon: 'cam', side: 1 },
+  { k: 'road', label: 'Road tools', icon: 'pin', side: 1 },
+  { k: 'inspect', label: 'Inspections', icon: 'check', side: 1 },
+  { k: 'breakdown', label: 'Breakdown kit', icon: 'wrench', side: 1 },
   { k: 'maint', label: 'Truck care', icon: 'wrench', side: 1 },
   { k: 'settings', label: 'Settings', icon: 'gear', side: 1 }
 ];
@@ -186,10 +192,10 @@ LH.render = function () {
   closeMenu();
   const r = LH.route(), pg = LH.pages[r.name] || LH.pages.home;
   const out = pg(r) || { title: 'LaneHook', html: '' };
-  const group = { loads: 'loads', load: 'loads', guard: 'guard', money: 'money', vault: 'vault', brokers: 'brokers', dispatch: 'dispatch', calc: 'calc', maint: 'maint', settings: 'settings', home: 'home', more: 'more' }[r.name] || 'home';
+  const group = { loads: 'loads', load: 'loads', guard: 'guard', money: 'money', vault: 'vault', brokers: 'brokers', dispatch: 'dispatch', calc: 'calc', tools: 'tools', fuel: 'fuel', scan: 'scan', road: 'road', inspect: 'inspect', breakdown: 'breakdown', maint: 'maint', settings: 'settings', home: 'home', more: 'more' }[r.name] || 'home';
   const sideLinks = NAV.map(n => n.sep ? '<hr>' : (n.noside ? '' : `<a href="#/${n.k}" class="${group === n.k ? 'on' : ''}">${ic(n.icon)}${esc(n.label)}</a>`)).join('');
   const tabLinks = NAV.filter(n => n.tab).map(n => {
-    const on = group === n.k || (n.k === 'more' && ['vault', 'brokers', 'dispatch', 'calc', 'maint', 'settings'].includes(group));
+    const on = group === n.k || (n.k === 'more' && ['vault', 'brokers', 'dispatch', 'calc', 'tools', 'fuel', 'scan', 'road', 'inspect', 'breakdown', 'maint', 'settings'].includes(group));
     return `<a href="#/${n.k}" class="${on ? 'on' : ''}" ${on ? 'aria-current="page"' : ''}>${ic(n.icon, 24)}${esc(n.short || n.label)}</a>`;
   }).join('');
   $('#app').innerHTML = `

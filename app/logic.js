@@ -93,6 +93,7 @@ LH.alerts = function () {
   const a = [];
   const ad = LH.activeDetention();
   if (ad) a.push({ cls: 'bad', t: 'Detention clock running', s: LH.loadLabel(ad.load) + ' · ' + (ad.ev.stop === 'pick' ? 'pickup' : 'delivery'), href: '#/load/' + ad.load.id });
+  LH.S.loads.forEach(l => { const n = LH.claimDays ? LH.claimDays(l) : null; if (n != null && n >= 3) a.push({ cls: n >= 14 ? 'bad' : '', t: 'Detention claim unanswered: day ' + n, s: LH.loadLabel(l) + ' · ' + money(LH.detention(l).owed) + (l.brokerName ? ' · ' + l.brokerName : '') + (n >= 14 ? ' · call the broker and follow up in writing' : (n >= 7 ? ' · follow up again' : ' · first follow-up')), href: '#/load/' + l.id }); });
   LH.S.loads.filter(l => l.invoice && !l.paidDate).forEach(l => { const s = LH.invoiceStatus(l); if (s.k === 'overdue' || s.k === 'soon') a.push({ cls: s.k === 'overdue' ? 'bad' : '', t: 'Invoice ' + s.label.toLowerCase(), s: LH.loadLabel(l) + ' · ' + money(LH.invoiceTotal(l)) + (l.brokerName ? ' · ' + l.brokerName : ''), href: '#/load/' + l.id }); });
   LH.S.loads.filter(l => LH.stage(l) === 'delivered').forEach(l => a.push({ cls: '', t: 'Delivered, not invoiced', s: LH.loadLabel(l) + ' · ' + money(num(l.rate) + LH.extrasTotal(l)), href: '#/load/' + l.id }));
   LH.S.loads.filter(l => ['delivered', 'invoiced'].includes(LH.stage(l)) && !(l.photos || []).some(p => p.kind === 'POD')).forEach(l => a.push({ cls: '', t: 'No proof of delivery on file', s: LH.loadLabel(l), href: '#/load/' + l.id }));
