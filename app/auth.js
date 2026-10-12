@@ -73,7 +73,7 @@ LH.auth = {
     app.innerHTML = `<div class="auth"><div class="auth-card">
       <img class="auth-logo" src="${logo}" alt="LaneHook">
       <div id="authBody"></div>
-      <p class="auth-fine">By continuing you agree to the <a href="/terms/" target="_blank" rel="noopener">Terms of Service</a> and <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>. <a href="../">Back to lanehook.com</a></p></div></div>`;
+      <p class="auth-fine">By continuing you agree to the <a href="/terms/" target="_blank" rel="noopener">Terms of Service</a> and <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>. <a href="../">Back to lanehook.com</a></p><div style="margin-top:14px"><span data-lhl-mount data-select></span></div></div></div>`;
     const note = this.linkMsg || ''; this.linkMsg = '';
     stage === 'code' ? this.codeStep(prefill) : this.emailStep(prefill, note);
   },

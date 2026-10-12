@@ -24,7 +24,7 @@ small{color:var(--muted)}a{color:var(--blue)}
 </style>
 </head>
 <body>
-<header>LaneHook</header>
+<header style="display:flex;justify-content:space-between;align-items:center"><span>LaneHook</span><span data-lhl-mount></span></header>
 <main><div id="out"><div class="card"><p class="sub">Loading…</p></div></div>
 <p style="text-align:center;font-size:13px;color:var(--muted)">This page shows the status only. It refreshes by itself.<br>Status shared with you by the carrier.</p></main>
 <script src="/app/config.js"></script>
@@ -55,5 +55,6 @@ async function get(){
 }
 get();setInterval(()=>{if(!document.hidden)get()},60000);
 </script>
+<script src="/i18n.js" defer></script>
 </body>
 </html>
