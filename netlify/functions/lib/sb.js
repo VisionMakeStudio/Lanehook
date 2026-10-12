@@ -5,7 +5,7 @@ const DEFAULTS = {
   plans: {
     solo: { name: 'Solo', price: 19, tagline: 'For the owner-operator', available: true, popular: true, features: ['Unlimited loads', 'Rate con scanner', 'Load Guard broker checks', 'Invoices and expenses', 'Document vault'] },
     crew: { name: 'Crew', price: 49, tagline: 'Dispatcher plus drivers', available: false, popular: false, features: ['Everything in Solo', 'Dispatcher dashboard', 'Up to 5 drivers', 'Company Link'] },
-    fleet: { name: 'Fleet', price: 99, tagline: 'For growing fleets', available: false, popular: false, features: ['Everything in Crew', 'Up to 15 trucks', 'Driver settlements', 'Priority support'] }
+    fleet: { name: 'Fleet', price: 99, tagline: 'For growing fleets', available: true, popular: false, features: ['Everything in Crew', 'Up to 15 drivers', 'Priority support'] }
   }
 };
 function headers() {
