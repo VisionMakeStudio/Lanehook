@@ -23,6 +23,7 @@ function cleanSettings(d) {
     };
   });
   const ga = String(d.gaId || '').trim().toUpperCase(); out.gaId = /^G-[A-Z0-9]{6,14}$/.test(ga) ? ga : '';
+  const mk = String(d.mapKey || '').trim(); out.mapKey = /^[A-Za-z0-9_-]{16,80}$/.test(mk) ? mk : '';
   return out;
 }
 

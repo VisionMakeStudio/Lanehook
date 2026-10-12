@@ -223,6 +223,8 @@ function pagePlans(){
   <p style="font-size:13px;color:var(--muted);margin:10px 0 0;line-height:1.5">With early access off there is no free plan. New people enter a card, get this many free days, and are charged after unless they cancel. Each person gets one trial.</p></div>
   <div class="panel" style="margin-top:14px"><h3>Google Analytics</h3><p style="font-size:13px;color:var(--muted);margin:0 0 10px;line-height:1.5">Paste your GA4 Measurement ID (looks like G-ABC123XYZ). It turns on visitor stats for lanehook.com after you save. Leave it empty to turn analytics off.</p>
   <label class="f" style="margin:0;max-width:260px"><span>Measurement ID</span><input id="ga" value="${esc(d.gaId||'')}" maxlength="20" placeholder="G-XXXXXXXXXX" autocapitalize="characters" spellcheck="false"></label></div>
+  <div class="panel" style="margin-top:14px"><h3>Map for driver check-ins</h3><p style="font-size:13px;color:var(--muted);margin:0 0 10px;line-height:1.5">Paste your MapTiler API key. It draws the street map under the Fleet check-in pins. Leave it empty and pins still show, just without street tiles. In MapTiler, restrict the key to lanehook.com.</p>
+  <label class="f" style="margin:0;max-width:420px"><span>MapTiler key</span><input id="mk" value="${esc(d.mapKey||'')}" maxlength="80" placeholder="Paste key here" spellcheck="false" autocomplete="off"></label></div>
   <div class="plans4" style="margin-top:14px">${PN.map(k=>{const p=d.plans[k];return `<div class="plan" data-plan="${k}"><h3>${esc(k[0].toUpperCase()+k.slice(1))}</h3>
     <div class="two"><label class="f"><span>Name</span><input data-f="name" value="${esc(p.name)}" maxlength="24"></label><label class="f"><span>Price per month ($)</span><input data-f="price" type="number" min="1" step="1" value="${esc(p.price)}"  ></label></div>
     <label class="f"><span>One-line description</span><input data-f="tagline" value="${esc(p.tagline)}" maxlength="60"></label>
@@ -268,6 +270,7 @@ function wirePlans(){
   $('#ea').onclick=()=>{d.earlyAccess=!d.earlyAccess;mark();draw()};
   $('#td').oninput=e=>{d.trialDays=e.target.value;mark()};
   $('#ga').oninput=e=>{d.gaId=e.target.value.trim();mark()};
+  $('#mk').oninput=e=>{d.mapKey=e.target.value.trim();mark()};
   document.querySelectorAll('.plan').forEach(box=>{
     const k=box.dataset.plan,p=d.plans[k];
     box.querySelectorAll('[data-f]').forEach(i=>i.oninput=()=>{const f=i.dataset.f;p[f]=f==='features'?i.value.split('\n'):i.value;mark()});
@@ -276,6 +279,7 @@ function wirePlans(){
   $('#sv').onclick=async()=>{
     const bad=PN.find(k=>!(Number(d.plans[k].price)>=1));
     if(bad){toast('Every paid plan needs a price of at least $1.');return}
+    if(d.mapKey&&!/^[A-Za-z0-9_-]{16,80}$/.test(d.mapKey)){toast('That map key does not look right. Paste it again.');return}
     if(d.gaId&&!/^G-[A-Za-z0-9]{6,14}$/.test(d.gaId)){toast('That Analytics ID should look like G-ABC123XYZ.');return}
     $('#sv').disabled=true;
     try{const r=await api({action:'settings_save',settings:d});D.settings=r.settings;DRAFT=null;DIRTY=false;toast('Saved. The site and portal now show these plans.');draw()}

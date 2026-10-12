@@ -136,8 +136,19 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-b
 .mempty{margin:auto;color:var(--muted);text-align:center;padding:20px}
 @media(min-width:900px){.msgs{grid-template-columns:320px 1fr;align-items:start}.msgs .tlist{display:block!important}.msgs .tpane{display:flex}.tpane .back{display:none}.mlog{height:56vh}.tpane .none{display:flex}}
 
-.cal{display:grid;grid-template-columns:1fr;gap:10px}.cd{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:10px}.cd.today{border-color:var(--blue);box-shadow:0 0 0 2px #DBEAFE}.ch{font-weight:800;font-size:13px;margin-bottom:8px}.ch span{color:var(--muted);font-weight:600;margin-left:4px}.cn{color:var(--muted);font-size:13px}
-@media(min-width:1100px){.cal{grid-template-columns:repeat(7,minmax(0,1fr))}}
+.cal{display:grid;gap:8px}.cd{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:10px 12px;display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;align-items:start}.cd.today{border-color:var(--blue);box-shadow:0 0 0 2px #DBEAFE}.cd.none{padding:7px 12px;align-items:center;background:#F8FAFC}
+.ch{font-weight:800;font-size:13px;line-height:1.25}.ch span{display:block;color:var(--muted);font-weight:600;font-size:12px}.cn{color:var(--muted);font-size:13px}
+.ci{display:flex;flex-wrap:wrap;gap:6px}.cx{flex:1 1 210px;max-width:340px;min-width:0;background:#F8FAFC;border:1px solid var(--bd);border-radius:10px;padding:7px 10px;cursor:pointer;text-align:start;display:block}.cx:hover{border-color:#CBD5E1}
+.cx .l1,.cx .l2{display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap}.cx .l1{font-weight:700;font-size:13px}.cx .l2{font-size:12px;color:var(--muted);margin-top:2px}.cx .tx{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.cx .dot{width:8px;height:8px;border-radius:50%;background:#94A3B8;flex-shrink:0;margin-inline-start:auto}.cx .dot.open{background:#F59E0B}.cx .dot.assigned{background:#2563EB}.cx .dot.accepted{background:#4F46E5}.cx .dot.picked_up{background:#EA580C}.cx .dot.delivered{background:#16A34A}
+.lc.sm{padding:9px 12px;margin-bottom:6px}.lc.sm .t1 b{font-size:14px}.lc.sm small{margin-top:1px}.moreb{width:100%;margin:2px 0 10px}
+@media(max-width:600px){.cd{grid-template-columns:1fr;gap:6px}.ch{display:flex;gap:8px;align-items:baseline}.ch span{display:inline}.cx{max-width:none}}
+
+.ckmap{height:360px;border:1px solid var(--bd);border-radius:14px;overflow:hidden;background:#EAF0F7;margin-bottom:14px;z-index:0}
+.ckpin{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px #0006;color:#fff;font-weight:800;font-size:13px}
+.ckrow{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--bd);flex-wrap:wrap}.ckrow:first-child{border-top:0}.ckrow .g{flex:1;min-width:160px}.ckrow .g b{display:block}.ckrow .g small{display:block;color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+.ckdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block;margin-inline-end:6px}
+@media(max-width:600px){.ckmap{height:280px}}
 #atoasts{position:fixed;right:12px;top:calc(12px + var(--sat,0px));z-index:95;display:grid;gap:8px;max-width:min(360px,calc(100vw - 24px))}.at{text-align:start;background:var(--navy);color:var(--off);border-radius:14px;padding:12px 14px;box-shadow:0 8px 30px #0005;border-left:4px solid var(--orange);display:block;width:100%}.at b{display:block;font-size:14px}.at span{display:block;font-size:13px;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .kpis.six{grid-template-columns:repeat(2,1fr)}@media(min-width:700px){.kpis.six{grid-template-columns:repeat(3,1fr)}}@media(min-width:1100px){.kpis.six{grid-template-columns:repeat(6,1fr)}}
 .tbl .a,.paper .a{text-align:right}
@@ -155,7 +166,7 @@ const $=(s,r=document)=>r.querySelector(s), esc=s=>String(s==null?'':s).replace(
 const C=window.LH_CONFIG, sb=window.supabase.createClient(C.supabaseUrl,C.supabaseKey,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const ST={open:'Open',assigned:'Sent',accepted:'Accepted',picked_up:'Picked up',delivered:'Delivered',canceled:'Canceled'};
 const ERR={plan_required:'Your plan is not active. Choose a plan to keep sending loads.',bad_driver:'That driver is not in your company.',not_found:'That load was not found.',name_required:'Enter a name.',exists:'You already have a company.',is_driver:'This account is a driver. Leave the company in the Driver Portal first.',no_company:'Set up your company first.',sign_in:'Please sign in again.',company_inactive:'Your plan is not active, so messages are paused.',slow_down:'Slow down a little, then send again.',driver_load:'That load was booked by the driver. You can view it but not change it.'};
-let PEND=null, LAST=null, O=null, PLAN=null, CFG=null, VIEW='loads', TAB='open', Q='', FIRST=true, THREADS=[], TH='', MSGS=[], ABOUT='', DRAFT='', UNREAD=0, TICK=0, POLLING=false;
+let DALL=false, PEND=null, LAST=null, O=null, PLAN=null, CFG=null, VIEW='loads', TAB='open', Q='', FIRST=true, THREADS=[], TH='', MSGS=[], ABOUT='', DRAFT='', UNREAD=0, TICK=0, POLLING=false;
 const billingBack=new URLSearchParams(location.search).get('billing')==='success';
 if(billingBack&&window.lhTrack)lhTrack('checkout_success',{portal:'dispatcher'});
 const money=n=>'$'+(Number(n)%1?Number(n).toFixed(2):(Number(n)||0));
@@ -166,7 +177,7 @@ const msg=e=>ERR[(e&&e.message)||'']||'Something went wrong. Try again.';
 async function rpc(name,args){if(DEMO)return demoRpc(name,args);try{const r=await sb.rpc(name,args||{});if(r.error){toast(msg(r.error),4000);return null}return r.data}catch(e){toast('You appear to be offline.');return null}}
 async function load(){
   if(DEMO&&!isOwner()){DEMO=false;try{localStorage.removeItem('lh-d-demo-active');localStorage.removeItem('lh-demo')}catch(e){}}
-  if(DEMO){O=demoOverview();PLAN={plan:'comped',sub_status:'active'};return draw()}
+  if(DEMO){O=demoOverview();PLAN={plan:'comped',sub_status:'active'};if(!CFG)sb.from('site_settings').select('data').eq('id',1).maybeSingle().then(r=>{if(r.data&&r.data.data){CFG=r.data.data;if(DEMO)draw()}}).catch(()=>{});return draw()}
   const [o,p,s]=await Promise.all([sb.rpc('company_overview'),sb.rpc('my_plan'),sb.from('site_settings').select('data').eq('id',1).maybeSingle()]);
   if(o.error){if(/sign_in/.test(o.error.message))return loginView('');toast('Could not load. Pull to refresh.');return}
   O=o.data; PLAN=Array.isArray(p.data)?p.data[0]:p.data; if(s.data&&s.data.data)CFG=s.data.data; draw();
@@ -234,6 +245,7 @@ function draw(){
   bind();
   if(FD===undefined&&!FLOAD&&O.allowed)loadFleet(VIEW!=='fleet');
   if(VIEW==='messages')msgOpen();
+  if(VIEW==='fleet'&&FT==='checkins'&&O.allowed){if(CK===undefined&&!CKLOAD)loadCk();else if(CK)ckPaint()}
   startPolls();
 }
 function openPlans(){const s=sheet(`<h2>Choose a plan</h2>${planCards()}`);s.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>checkout(b.dataset.plan))}
@@ -259,9 +271,10 @@ function pageBoard(){
   if(!COLS.some(c=>c[0]===TAB))TAB='open';
   return `<div class="head"><div><h1>Loads</h1><p>${(O.loads||[]).length?'Send a load to a driver and watch it move.':'Create your first load.'}</p></div><div class="row2"><input id="q" type="search" placeholder="Search loads" value="${esc(Q)}" style="width:200px" aria-label="Search loads"><button class="btn pri" id="nl">New load</button></div></div>${viewToggle()}${availStrip()}
   <div class="chips m" role="tablist">${COLS.map(c=>`<button class="chip ${TAB===c[0]?'on':''}" data-tab="${c[0]}">${c[1]} <i>${cnt(c[0])}</i></button>`).join('')}</div>
-  <div class="board">${COLS.map(c=>{const ls=all.filter(l=>c[2].includes(l.status));return `<section class="col ${TAB===c[0]?'show':''}"><h3>${c[1]} · ${ls.length}</h3>${ls.length?ls.map(loadCard).join(''):`<div class="empty sm">${c[0]==='open'?'No open loads.':'Nothing here.'}</div>`}</section>`}).join('')}</div>`;
+  <div class="board">${COLS.map(c=>{const ls=all.filter(l=>c[2].includes(l.status)),dn=c[0]==='done',shown=dn&&!DALL?ls.slice(0,8):ls;return `<section class="col ${TAB===c[0]?'show':''}"><h3>${c[1]} · ${ls.length}</h3>${ls.length?shown.map(l=>dn?loadCard(l,true):loadCard(l)).join('')+(dn&&ls.length>8?`<button class="btn sm moreb" data-x="dall">${DALL?'Show fewer':'Show all '+ls.length}</button>`:''):`<div class="empty sm">${c[0]==='open'?'No open loads.':'Nothing here.'}</div>`}</section>`}).join('')}</div>`;
 }
-function loadCard(l){const d=l.data||{},m=drv(l.driver_id),route=[d.pickCity,d.delivCity].filter(Boolean).join(' → ');
+function loadCard(l,sm){const d=l.data||{},m=drv(l.driver_id),route=[d.pickCity,d.delivCity].filter(Boolean).join(' → ');
+  if(sm)return `<div class="lc sm" data-l="${esc(l.id)}" role="button" tabindex="0"><div class="t1"><div><b>${esc(route||'Load')}</b>${d.ref?` <span style="color:var(--muted)">#${esc(d.ref)}</span>`:''}</div><button class="dots" data-m="${esc(l.id)}" aria-label="Load actions">⋯</button></div><small>${esc([m?dname(m):'No driver',d.rate?money(d.rate):'',l.status==='canceled'?'Canceled':''].filter(Boolean).join(' · '))}</small></div>`;
   return `<div class="lc" data-l="${esc(l.id)}" role="button" tabindex="0"><div class="t1"><div><b>${esc(route||'Load')}</b>${d.ref?` <span style="color:var(--muted)">#${esc(d.ref)}</span>`:''}${l.source==='driver'?' <span class="tag">Driver booked</span>':''}</div><button class="dots" data-m="${esc(l.id)}" aria-label="Load actions">⋯</button></div>
   <small>${esc([d.broker,d.rate?money(d.rate):''].filter(Boolean).join(' · '))}${d.pickTime?'<br>Pickup '+esc(when(d.pickTime)):''}</small>
   <div class="ft"><span class="stat ${esc(l.status)}">${esc(ST[l.status]||l.status)}</span><span style="font-size:13px;color:var(--muted)">${m?esc(dname(m)):'No driver'}</span></div></div>`}
@@ -404,7 +417,7 @@ function bind(){
   const q=$('#q');if(q)q.oninput=()=>{Q=q.value;const pos=q.selectionStart;draw();const n=$('#q');n.focus();n.setSelectionRange(pos,pos)};
   const nl=$('#nl');if(nl)nl.onclick=()=>loadForm(null);
   document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{TAB=b.dataset.tab;draw()});
-  document.querySelectorAll('.lc').forEach(c=>{const l=(O.loads||[]).find(x=>x.id===c.dataset.l);c.onclick=e=>{if(e.target.closest('.dots'))return;l.source==='driver'?viewLoad(l):loadForm(l)}});
+  document.querySelectorAll('.lc,.cx').forEach(c=>{const l=(O.loads||[]).find(x=>x.id===c.dataset.l);if(!l)return;c.onclick=e=>{if(e.target.closest('.dots'))return;l.source==='driver'?viewLoad(l):loadForm(l)}});
   document.querySelectorAll('[data-m]').forEach(b=>b.onclick=e=>{e.stopPropagation();loadMenu(b,(O.loads||[]).find(x=>x.id===b.dataset.m))});
   document.querySelectorAll('[data-dm]').forEach(b=>b.onclick=()=>{const m=drv(b.dataset.dm);menu(b,[{t:'History',f:()=>driverHistory(m.user_id)},{t:'Pay sheet',f:()=>{PAYD=m.user_id;MT='pay';location.hash='#/money'}},{t:'Message',f:()=>msgDriver(m.user_id)},{t:'Send a load',f:()=>loadForm(null,m.user_id)},'-',{t:'Remove from company',bad:1,f:()=>confirmBox('Remove '+dname(m)+'?','They lose access to your loads. Loads they have not finished go back to Open.','Remove',()=>act('remove_driver',{p_user:m.user_id},'Driver removed'))}])});
   const cp=(id,txt,ok)=>{const b=$('#'+id);if(b)b.onclick=async()=>{try{await navigator.clipboard.writeText(txt);toast(ok)}catch(e){toast('Copy it by hand: '+txt,5000)}}};
@@ -514,10 +527,10 @@ function pageCal(){
   L.filter(l=>l.status!=='canceled').forEach(l=>{const x=l.data||{},p=(x.pickTime||'').slice(0,10),q=(x.delivTime||'').slice(0,10);let any=false;
     if(ev[p]){ev[p].push({l,t:'PU',time:x.pickTime,city:x.pickCity});any=true}if(ev[q]){ev[q].push({l,t:'DEL',time:x.delivTime,city:x.delivCity});any=true}
     if(!p&&!q&&['open','assigned','accepted','picked_up'].includes(l.status))unsched.push(l)});
-  const item=e=>{const x=e.l.data||{},m=e.l.driver_id?drv(e.l.driver_id):null;return `<div class="lc cal-i" data-l="${esc(e.l.id)}" role="button" tabindex="0" style="padding:9px 10px;margin-bottom:6px"><div class="t1"><b style="font-size:13px">${e.t==='PU'?'Pickup':'Delivery'} ${esc((e.time||'').slice(11,16))}</b><span class="stat ${esc(e.l.status)}" style="font-size:11px;padding:2px 8px">${esc(ST[e.l.status]||e.l.status)}</span></div><small>${esc([e.city,x.ref&&'#'+x.ref].filter(Boolean).join(' · '))}<br>${m?esc(dname(m)):'No driver'}</small></div>`};
+  const item=e=>{const x=e.l.data||{},m=e.l.driver_id?drv(e.l.driver_id):null,fn=m?String(dname(m)).split(' ')[0]:'No driver';return `<button class="cx" data-l="${esc(e.l.id)}" title="${esc(ST[e.l.status]||e.l.status)}"><span class="l1"><span>${e.t==='PU'?'↑':'↓'}</span><span>${esc((e.time||'').slice(11,16))}</span>${x.ref?`<span class="tx" style="font-weight:600;color:var(--muted)">#${esc(x.ref)}</span>`:''}<i class="dot ${esc(e.l.status)}"></i></span><span class="l2"><span class="tx">${esc(e.city||'—')}</span><span>·</span><span class="tx">${esc(fn)}</span></span></button>`};
   return `<div class="head"><div><h1>Loads</h1><p>Pickups and deliveries for the week.</p></div><div class="row2"><input id="q" type="search" placeholder="Search loads" value="${esc(Q)}" style="width:200px" aria-label="Search loads"><button class="btn pri" id="nl">New load</button></div></div>${viewToggle()}
   <div class="row2" style="justify-content:center;margin:0 0 12px"><button class="btn sm" data-x="cnav" data-v="-1" aria-label="Previous week">‹</button><b id="clabel" style="min-width:200px;text-align:center">${esc(sd(days[0])+' – '+sd(days[6])+', '+days[6].slice(0,4))}</b><button class="btn sm" data-x="cnav" data-v="1" aria-label="Next week">›</button>${CALOFF?'<button class="btn sm" data-x="cnow">This week</button>':''}</div>
-  <div class="cal" id="cal">${days.map(d=>`<div class="cd ${d===today?'today':''}"><div class="ch">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][days.indexOf(d)]} <span>${sd(d)}</span></div>${ev[d].length?ev[d].sort((a,b)=>(a.time||'').localeCompare(b.time||'')).map(item).join(''):'<div class="cn">Nothing</div>'}</div>`).join('')}</div>
+  <div class="cal" id="cal">${days.map(d=>`<div class="cd ${d===today?'today':''} ${ev[d].length?'':'none'}"><div class="ch">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][days.indexOf(d)]} <span>${sd(d)}</span></div>${ev[d].length?`<div class="ci">${ev[d].sort((a,b)=>(a.time||'').localeCompare(b.time||'')).map(item).join('')}</div>`:'<div class="cn">Nothing</div>'}</div>`).join('')}</div>
   ${unsched.length?`<div class="panel" style="margin-top:14px"><h3>No dates yet</h3>${unsched.map(l=>{const x=l.data||{};return `<div class="li"><div class="e">${esc([x.pickCity,x.delivCity].filter(Boolean).join(' → ')||'Load')}${x.ref?' #'+esc(x.ref):''}<small>${esc(ST[l.status]||l.status)}</small></div><button class="btn sm" data-x="openload" data-v="${esc(l.id)}">Open</button></div>`}).join('')}</div>`:''}`;
 }
 /* ----- alerts ----- */
@@ -607,6 +620,7 @@ function demoOverview(){
 }
 function demoRpc(name,a){
   a=a||{};const L=O.loads;
+  if(name==='fleet_checkins')return demoCk();
   if(/^(fleet_data|save_fleet_item|delete_fleet_item|save_truck|delete_truck|save_fleet_pay)$/.test(name))return demoFleetRpc(name,a);
   if(name==='save_company_load'){let l=a.p_id&&L.find(x=>x.id===a.p_id);if(!l){l={id:'dn'+Date.now(),status:'open',source:'dispatcher',created_at:new Date().toISOString()};L.unshift(l)}l.data=a.p_data||{};if((a.p_driver||null)!==l.driver_id){l.driver_id=a.p_driver||null;l.status=l.driver_id?'assigned':'open'}l.updated_at=new Date().toISOString();return O}
   if(name==='set_company_load_status'){const l=L.find(x=>x.id===a.p_id);if(l){l.status=a.p_status;l.updated_at=new Date().toISOString()}return O}
@@ -631,7 +645,7 @@ const XA={
   drvhist:b=>{if(b.dataset.v)driverHistory(b.dataset.v)},brhist:b=>brokerHistory(b.dataset.v),
   payprint:()=>{const s=sheet(payPaper()+`<div class="noprint" style="margin-top:14px"><button class="btn pri" style="width:100%" id="pp">Print or save PDF</button></div>`);$('#pp',s).onclick=()=>window.print()},
   paycsv:()=>{const d=payData(),m=drv(PAYD),rows=[['Date','Load','Route','Rate','Miles','Pay']];d.rows.forEach(x=>rows.push([x.date,x.ref,x.route,x.rate.toFixed(2),x.mi,x.pay.toFixed(2)]));rows.push([],['','','','','Gross',d.gross.toFixed(2)]);if(d.ded)rows.push(['','','','',PAYDEDN||'Deduction',(-d.ded).toFixed(2)]);rows.push(['','','','','Net',d.net.toFixed(2)]);saveCSV('pay-'+dname(m).replace(/\W+/g,'-')+'-'+PAYFROM+'.csv',rows)},
-  lview:b=>{LVIEW=b.dataset.v;draw()},cnav:b=>{CALOFF+=+b.dataset.v;draw()},cnow:()=>{CALOFF=0;draw()},activity:activitySheet,
+  lview:b=>{LVIEW=b.dataset.v;draw()},cnav:b=>{CALOFF+=+b.dataset.v;draw()},cnow:()=>{CALOFF=0;draw()},dall:()=>{DALL=!DALL;draw()},ckrefresh:()=>{CK=undefined;draw()},ckpick:b=>{CKSEL=b.dataset.v;ckPaint();const m=$('#ckmap');if(m)m.scrollIntoView({behavior:'smooth',block:'center'})},activity:activitySheet,
   openload:b=>{const l=(O.loads||[]).find(x=>x.id===b.dataset.v);if(l)l.source==='driver'?viewLoad(l):loadForm(l)},
   atoast:b=>{setAlertPref('toast',!alertPrefs().toast);draw()},
   abrowser:async b=>{const p=alertPrefs();if(p.browser){setAlertPref('browser',false);draw();return}
@@ -643,7 +657,7 @@ document.addEventListener('change',e=>{const t=e.target;
   if(t.id==='payd'){PAYD=t.value;PAYMODE=(payPrefs()[PAYD]||{}).mode||PAYMODE;draw()}else if(t.id==='paym'){PAYMODE=t.value;draw()}else if(t.id==='payf'||t.id==='payt'){PAYFROM=$('#payf').value||PAYFROM;PAYTO=$('#payt').value||PAYTO;draw()}});
 document.addEventListener('input',e=>{const t=e.target;if(t.id==='payv'||t.id==='payded'||t.id==='paydn'){if(t.id==='payded')PAYDED=t.value;if(t.id==='paydn')PAYDEDN=t.value;savePayPref();const d=payData();const g=$('#payg'),n=$('#paynet');if(g)g.textContent=money2(d.gross);if(n)n.textContent=money2(d.net)}});
 /* ================= v6: Fleet plan (scorecards, lanes, pay run, reminders, trucks, idle alerts) ================= */
-let FD, FT='score', FP=30, FPAY='week', FPOFF=0, FLOAD=false, FERR=false, DFD=null;
+let CK, CKERR=false, CKLOAD=false, CKMAP=null, CKSEL='', CKLIB=null, FD, FT='score', FP=30, FPAY='week', FPOFF=0, FLOAD=false, FERR=false, DFD=null;
 const DAYMS=864e5, todayIso=()=>iso(new Date());
 const idleDays=()=>{try{return Math.max(1,Number(localStorage.getItem('lh-d-idle'))||3)}catch(e){return 3}};
 const daysTo=s=>Math.round((new Date(s+'T12:00:00')-new Date(todayIso()+'T12:00:00'))/DAYMS);
@@ -706,8 +720,8 @@ function pageFleet(){
   if(FD===undefined)return head+'<div class="empty">Loading…</div>';
   if(FERR||!FD)return head+`<div class="panel"><h3>Could not load Fleet tools</h3><p class="sub">Check your connection and try again.</p><button class="btn pri" data-x="fretry">Try again</button></div>`;
   if(!FD.fleet)return head+fleetTeaser();
-  const tabs=[['score','Scorecards'],['lanes','Lanes'],['payrun','Pay run'],['remind','Reminders'],['trucks','Trucks']];
-  const body={score:fleetScore,lanes:fleetLanes,payrun:fleetPayRun,remind:fleetRemind,trucks:fleetTrucks}[FT]();
+  const tabs=[['score','Scorecards'],['lanes','Lanes'],['payrun','Pay run'],['remind','Reminders'],['trucks','Trucks'],['checkins','Check-ins']];
+  const body={score:fleetScore,lanes:fleetLanes,payrun:fleetPayRun,remind:fleetRemind,trucks:fleetTrucks,checkins:fleetCheckins}[FT]();
   return head+fleetAlerts()+`<div class="chips" role="tablist">${tabs.map(c=>`<button class="chip ${FT===c[0]?'on':''}" data-x="ftab" data-v="${c[0]}">${c[1]}${c[0]==='remind'&&fleetSoon().length?` <i>${fleetSoon().length}</i>`:''}</button>`).join('')}</div>${body}`;
 }
 function fleetTeaser(){
@@ -816,6 +830,51 @@ async function doUpgrade(){
   try{const {data}=await sb.auth.getSession();const r=await fetch('/.netlify/functions/billing',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+data.session.access_token},body:JSON.stringify({action:'change',plan:'fleet',ret:'dispatch'})});const j=await r.json().catch(()=>({}));
     if(r.ok&&j.ok){toast('You are on Fleet now');FD=undefined;await load();return}
     toast({same_plan:'You are already on Fleet.',no_subscription:'Could not find an active subscription. Use Manage billing.',early_access:'Everything is free right now.',bad_plan:'That plan is not available.'}[j.error]||'Could not change your plan. Try again in a minute.',5000)}catch(e){toast('You appear to be offline.')}
+}
+/* ----- check-ins ----- */
+const ckAge=t=>{const m=Math.max(0,Math.round((Date.now()-new Date(t))/6e4));if(m<1)return 'just now';if(m<60)return m+' min ago';const h=Math.round(m/60);if(h<24)return h+(h===1?' hour ago':' hours ago');const d=Math.round(h/24);return d+(d===1?' day ago':' days ago')};
+const ckFresh=t=>{const ms=Date.now()-new Date(t);return ms<2*36e5?'#16A34A':ms<24*36e5?'#F59E0B':'#94A3B8'};
+const ckKind={pickup:'At pickup',delivery:'At delivery'};
+async function loadCk(){
+  if(CKLOAD)return;CKLOAD=true;const r=await srpc('fleet_checkins');CKLOAD=false;
+  const old=JSON.stringify(CK);if(r){CK=r;CKERR=false}else{CK=null;CKERR=true}
+  if(VIEW==='fleet'&&FT==='checkins'&&JSON.stringify(CK)!==old)draw();
+}
+function ckLatest(){const seen={},out=[];((CK&&CK.list)||[]).forEach(c=>{if(!seen[c.driver_id]){seen[c.driver_id]=1;out.push(c)}});return out}
+function fleetCheckins(){
+  if(CK===undefined)return '<div class="empty">Loading…</div>';
+  if(CKERR||!CK)return `<div class="panel"><h3>Could not load check-ins</h3><p class="sub">Check your connection and try again.</p><button class="btn pri" data-x="ckrefresh">Try again</button></div>`;
+  const last=ckLatest(),by={};last.forEach(c=>by[c.driver_id]=c);
+  const ms=(O.members||[]).slice().sort((a,b)=>(by[b.user_id]?new Date(by[b.user_id].at):0)-(by[a.user_id]?new Date(by[a.user_id].at):0));
+  const note=isOwner()&&!(CFG&&CFG.mapKey)?'<p class="ft2" style="margin:0 0 10px">Owner note: no map key is saved yet, so pins show without street tiles. Add one in Admin, Plans and pricing.</p>':'';
+  const map=last.length?`${note}<div class="ckmap" id="ckmap" role="img" aria-label="Map of the latest driver check-ins"></div>`:'';
+  const rows=ms.length?ms.map(m=>{const c=by[m.user_id];
+    return `<div class="ckrow"><span class="av">${esc(ini(m))}</span><span class="g"><b>${esc(dname(m))}</b>${c?`<small><i class="ckdot" style="background:${ckFresh(c.at)}"></i><span>Checked in</span> <span>${esc(ckAge(c.at))}</span>${ckKind[c.kind]?' · <span>'+ckKind[c.kind]+'</span>':''}${c.eta?' · <span>ETA</span> '+esc(c.eta.replace(/^ETA\s*/i,'')):''}</small>${c.note?`<small>${esc(c.note)}</small>`:''}`:'<small>No check-in yet</small>'}</span>${c?`<span class="row2"><button class="btn sm" data-x="ckpick" data-v="${esc(m.user_id)}">Show on map</button><a class="btn sm" href="https://www.google.com/maps?q=${c.lat},${c.lng}" target="_blank" rel="noopener">Open in Maps</a></span>`:''}</div>`}).join(''):'<div class="empty sm">No drivers yet.</div>';
+  return `<div class="panel"><div class="row2" style="justify-content:space-between;margin-bottom:8px"><div><h3 style="margin:0">Where your drivers are</h3><p class="sub" style="margin:4px 0 0">Each pin is the last place a driver checked in. Green is under 2 hours, amber is under a day, gray is older.</p></div><button class="btn sm" data-x="ckrefresh">Refresh</button></div>${map}<div>${rows}</div>
+   <p class="ft2" style="margin-top:12px">A check-in is a one-time location a driver chooses to share from the Driver Portal. It is not live tracking. Check-ins are kept for 30 days and only you, the dispatcher, can see them.</p></div>`;
+}
+function ckLoadLib(){
+  if(window.L)return Promise.resolve();if(CKLIB)return CKLIB;
+  CKLIB=new Promise((res,rej)=>{const l=document.createElement('link');l.rel='stylesheet';l.href='vendor/leaflet.css';document.head.appendChild(l);const sc=document.createElement('script');sc.src='vendor/leaflet.js';sc.onload=res;sc.onerror=()=>{CKLIB=null;rej()};document.head.appendChild(sc)});
+  return CKLIB;
+}
+async function ckPaint(){
+  const el=$('#ckmap');if(!el)return;try{await ckLoadLib()}catch(e){el.innerHTML='<div class="empty sm" style="padding:30px">The map could not load. The list below still works.</div>';return}
+  const el2=$('#ckmap');if(!el2)return;if(CKMAP){try{CKMAP.remove()}catch(e){}CKMAP=null}
+  const last=ckLatest();if(!last.length)return;
+  const m=CKMAP=L.map(el2,{scrollWheelZoom:false,zoomControl:true,attributionControl:true});
+  const key=CFG&&CFG.mapKey;
+  if(key)L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key='+encodeURIComponent(key),{maxZoom:18,attribution:'&copy; MapTiler &copy; OpenStreetMap contributors'}).addTo(m);
+  const pts=[];last.forEach(c=>{const d=drv(c.driver_id);if(!d)return;const ll=[c.lat,c.lng];pts.push(ll);
+    const mk=L.marker(ll,{icon:L.divIcon({className:'',html:`<span class="ckpin" style="background:${ckFresh(c.at)}">${esc(ini(d))}</span>`,iconSize:[30,30],iconAnchor:[15,15]}),title:dname(d)}).addTo(m);
+    const pop=document.createElement('div');pop.innerHTML='<b></b><br><span>Checked in</span> <span class="a"></span>';pop.querySelector('b').textContent=dname(d);pop.querySelector('.a').textContent=ckAge(c.at);mk.bindPopup(pop);
+    if(CKSEL===c.driver_id)setTimeout(()=>mk.openPopup(),0)});
+  if(!pts.length)return;const sel=last.find(c=>c.driver_id===CKSEL);
+  if(sel)m.setView([sel.lat,sel.lng],11);else if(pts.length===1)m.setView(pts[0],9);else m.fitBounds(pts,{padding:[40,40],maxZoom:10});
+}
+function demoCk(){
+  const ms=(O&&O.members)||[],pl=[[40.7357,-74.1724,'Newark, NJ','Loaded, rolling','3:30 PM','pickup',12],[40.2732,-76.8867,'Harrisburg, PA','Fuel stop','5:15 PM','manual',55],[41.409,-75.6624,'Scranton, PA','','','delivery',190],[39.9526,-75.1652,'Philadelphia, PA','Waiting at the dock','','manual',1250],[40.6084,-75.4902,'Allentown, PA','','','manual',2900]];
+  return {fleet:true,list:ms.slice(0,5).map((m,i)=>({id:'dc'+i,driver_id:m.user_id,load_id:null,kind:pl[i][5],lat:pl[i][0],lng:pl[i][1],note:pl[i][3],eta:pl[i][4],at:new Date(Date.now()-pl[i][6]*6e4).toISOString()}))};
 }
 function demoFleet(){
   const ms=(O&&O.members)||[],dt=n=>iso(new Date(Date.now()+n*DAYMS));

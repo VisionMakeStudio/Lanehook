@@ -215,7 +215,7 @@ input[type=range]{accent-color:var(--blue);width:100%;height:30px}
 .bar i{width:11px;height:11px;border-radius:50%;background:var(--gray)}
 .url{margin-left:18px;background:var(--off);border-radius:6px;padding:4px 14px;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dm-body{flex:1;padding:22px 24px;min-height:0}
-.dv{display:none;height:100%}
+.dv{display:none;height:100%}.dm-body{padding:0!important}.dv.shot img{width:100%;height:auto;display:block}
 .dv.on{display:flex;animation:viewIn .45s var(--ease)}
 .fleet{gap:16px;width:100%}
 .map{flex:1.6;position:relative;border-radius:14px;overflow:hidden;background:var(--navy);min-height:260px}
@@ -534,7 +534,7 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
                   <svg width="30" height="17" aria-hidden="true"><use href="#hook"/></svg>
                   <span style="font-family:'Archivo',sans-serif;font-weight:800;color:var(--off);font-size:14px">Dispatch</span>
                 </div>
-                <div class="it on">Fleet</div><div class="it">Loads</div><div class="it">Load Guard</div><div class="it">Settlements</div><div class="it">Messages</div>
+                <div class="it">Loads</div><div class="it on">Drivers</div><div class="it">Money</div><div class="it">Fleet</div><div class="it">Messages</div>
                 <div style="margin-top:auto;background:var(--navy2);border-radius:10px;padding:10px;font-size:12px;line-height:1.5">
                   <div style="color:var(--gray)">Company code</div>
                   <div class="mono" style="color:var(--orange);font-size:14px">RMS-4471</div>
@@ -693,10 +693,10 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
       </div>
       <div class="seg" id="seg" role="tablist" aria-label="Dispatcher screens">
         <span class="thumb" id="segThumb"></span>
-        <button data-dp="fleet">Fleet map</button>
+        <button data-dp="fleet">Check-ins</button>
         <button data-dp="loads">Loads</button>
         <button data-dp="guard">Load Guard</button>
-        <button data-dp="pay">Settlements</button>
+        <button data-dp="pay">Pay run</button>
       </div>
     </div>
 
@@ -704,95 +704,12 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
       <div class="dmac" id="dmac">
         <div class="mac-lid">
           <div class="dm-screen">
-            <div class="bar"><i></i><i></i><i></i><div class="url mono">lanehook.com/dispatch/<span id="dpPath">fleet</span></div></div>
+            <div class="bar"><i></i><i></i><i></i><div class="url mono">lanehook.com/<span id="dpPath">dispatch/#/fleet</span></div></div>
             <div class="dm-body">
-
-              <div class="dv fleet" data-dp-view="fleet">
-                <div class="map">
-                  <svg viewBox="0 0 560 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                    <defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#16224A" stroke-width="1"/></pattern></defs>
-                    <rect width="560" height="500" fill="url(#grid)"/>
-                    <path id="r1" d="M60 430 C 160 360, 200 260, 300 230 S 470 120, 520 50" stroke="#2563EB" stroke-width="4" fill="none" stroke-linecap="round" opacity=".9"/>
-                    <path id="r2" d="M80 110 C 180 160, 260 200, 300 230" stroke="#2E3D6B" stroke-width="4" fill="none" stroke-dasharray="2 10" stroke-linecap="round"/>
-                    <path id="r3" d="M300 230 C 340 300, 400 380, 490 450" stroke="#2563EB" stroke-width="4" fill="none" stroke-linecap="round" opacity=".9"/>
-                    <g><animateMotion dur="16s" repeatCount="indefinite"><mpath href="#r1"/></animateMotion>
-                      <circle r="8" fill="#2563EB" stroke="#0B132B" stroke-width="3"/><rect x="12" y="-11" width="52" height="22" rx="6" fill="#F8FAFC"/><text x="38" y="4" text-anchor="middle" font-size="11" font-weight="600" fill="#0B132B" font-family="IBM Plex Sans,sans-serif">Unit 07</text></g>
-                    <g><animateMotion dur="12s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath href="#r3"/></animateMotion>
-                      <circle r="8" fill="#2563EB" stroke="#0B132B" stroke-width="3"/><rect x="12" y="-11" width="52" height="22" rx="6" fill="#F8FAFC"/><text x="38" y="4" text-anchor="middle" font-size="11" font-weight="600" fill="#0B132B" font-family="IBM Plex Sans,sans-serif">Unit 21</text></g>
-                    <g transform="translate(300 230)">
-                      <circle r="9" fill="none" stroke="#F59E0B" stroke-width="2"><animate attributeName="r" values="9;26" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="1.8s" repeatCount="indefinite"/></circle>
-                      <circle r="8" fill="#F59E0B" stroke="#0B132B" stroke-width="3"/>
-                      <rect x="12" y="-11" width="104" height="22" rx="6" fill="#F8FAFC"/><text x="64" y="4" text-anchor="middle" font-size="11" font-weight="600" fill="#0B132B" font-family="IBM Plex Sans,sans-serif">Unit 12 · Marcus</text>
-                    </g>
-                    <g transform="translate(80 110)"><circle r="8" fill="#94A3B8" stroke="#0B132B" stroke-width="3"/><rect x="12" y="-11" width="90" height="22" rx="6" fill="#F8FAFC"/><text x="57" y="4" text-anchor="middle" font-size="11" font-weight="600" fill="#0B132B" font-family="IBM Plex Sans,sans-serif">Unit 03 · idle</text></g>
-                  </svg>
-                  <div class="legend"><span><b style="color:var(--blue)">●</b> Rolling</span><span><b style="color:var(--orange)">●</b> Detention</span><span><b style="color:var(--gray)">●</b> Idle</span></div>
-                </div>
-                <div class="side-list">
-                  <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:18px">Live roster</div>
-                  <div class="rc" style="border-color:var(--orange)"><div class="t"><span>Marcus R. · U12</span><span class="mono js-clock" style="color:#B45309">2:14:30</span></div><div class="s">Detention at Port Newark · <span class="js-owed">$12.08</span> accruing</div></div>
-                  <div class="rc"><div class="t"><span>Jay P. · U07</span><span style="color:var(--blue)">Rolling</span></div><div class="s">I-84 E · ETA Hartford 1:10 PM</div></div>
-                  <div class="rc"><div class="t"><span>Ana S. · U21</span><span style="color:var(--blue)">Rolling</span></div><div class="s">I-95 S · ETA Baltimore 3:40 PM</div></div>
-                  <div class="rc"><div class="t"><span>Devon T. · U03</span><span style="color:#64748B">Idle 2h</span></div><div class="s">Elizabeth, NJ · needs a load</div></div>
-                </div>
-              </div>
-
-              <div class="dv col-v" data-dp-view="loads">
-                <div class="dhead"><h3>Loads this week</h3><div style="background:var(--blue);color:#fff;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600">+ New load</div></div>
-                <div class="kan">
-                  <div class="kcol"><div class="cap" style="color:var(--muted)">Booked · 2</div>
-                    <div class="kc"><b>Linden → Scranton</b>Unassigned · $560<div style="margin-top:8px;font-size:11px;color:var(--blue);font-weight:600">Assign driver →</div></div>
-                    <div class="kc"><b>Kearny → Albany</b>Devon T. · $910</div>
-                  </div>
-                  <div class="kcol"><div class="cap" style="color:var(--muted)">In transit · 3</div>
-                    <div class="kc" style="box-shadow:inset 0 0 0 1px var(--orange)"><b>Newark → Allentown</b>Marcus R. · $425 + detention</div>
-                    <div class="kc"><b>Edison → Hartford</b>Jay P. · $690</div>
-                    <div class="kc"><b>Secaucus → Baltimore</b>Ana S. · $780</div>
-                  </div>
-                  <div class="kcol"><div class="cap" style="color:var(--muted)">Delivered · 2</div>
-                    <div class="kc"><b>Elizabeth → Trenton</b>POD in · ready to invoice</div>
-                    <div class="kc"><b>Paterson → Philly</b>Invoiced · $640</div>
-                  </div>
-                </div>
-                <div class="mob-only" style="font-size:11px;color:#64748B;text-align:center">Swipe columns ↔</div>
-              </div>
-
-              <div class="dv guard" data-dp-view="guard">
-                <div class="gl">
-                  <div style="display:flex;align-items:center;gap:10px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M12 8v5M12 16h.01"/></svg><h3 style="font-size:20px">Check before you dispatch</h3></div>
-                  <div style="font-size:13px;color:var(--muted)">Linden → Scranton · posted by "Northline Freight LLC"</div>
-                  <div class="chk"><span>Broker authority on file</span><b style="color:var(--blue)">Looks active</b></div>
-                  <div class="chk"><span>Contact matches records</span><b style="color:#B45309">Email domain changed</b></div>
-                  <div class="chk"><span>Same load, other posters</span><b style="color:#B45309">Seen under 2 MCs</b></div>
-                  <div class="chk"><span>Your history with them</span><b style="color:var(--muted)">First load</b></div>
-                  <div style="margin-top:auto;background:#FEF3C7;color:#78350F;border-radius:10px;padding:12px;font-size:13px;line-height:1.5"><b>Verify before you send a truck.</b> Call the broker on the number from their official listing, not the one in the email.</div>
-                </div>
-                <div class="gr">
-                  <div style="font-size:12px;color:var(--gray);letter-spacing:.06em">RECENT CHECKS</div>
-                  <div class="gline" style="border-top:none;padding-top:0"><span>Northline Freight</span><b style="color:var(--orange)">Flagged</b></div>
-                  <div class="gline"><span>Atlas Lane Logistics</span><b style="color:#60A5FA">Clear</b></div>
-                  <div class="gline"><span>Keystone Brokerage</span><b style="color:#60A5FA">Clear</b></div>
-                  <div class="gline"><span>Harbor Point Freight</span><b style="color:#60A5FA">Clear</b></div>
-                  <div style="margin-top:auto;font-size:11px;color:#64748B">Sample brokers for preview</div>
-                </div>
-              </div>
-
-              <div class="dv col-v" data-dp-view="pay">
-                <div class="dhead"><h3>Settlements · Oct 5 – 11</h3><div style="background:var(--navy);color:var(--off);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600">Export PDFs</div></div>
-                <div class="tbl-box"><div class="tbl">
-                  <div class="tr h"><span>Driver</span><span>Loads</span><span>Gross</span><span>Fuel + fees</span><span>Net pay</span></div>
-                  <div class="tr mono"><b style="font-family:'IBM Plex Sans'">Marcus R.</b><span>5</span><span>$2,840</span><span>−$612</span><b>$2,228</b></div>
-                  <div class="tr mono"><b style="font-family:'IBM Plex Sans'">Jay P.</b><span>4</span><span>$2,610</span><span>−$540</span><b>$2,070</b></div>
-                  <div class="tr mono"><b style="font-family:'IBM Plex Sans'">Ana S.</b><span>4</span><span>$2,955</span><span>−$688</span><b>$2,267</b></div>
-                  <div class="tr mono"><b style="font-family:'IBM Plex Sans'">Devon T.</b><span>3</span><span>$1,790</span><span>−$401</span><b>$1,389</b></div>
-                </div></div>
-                <div style="display:flex;gap:14px;flex-wrap:wrap">
-                  <div class="stat" style="background:var(--navy);color:var(--off)"><div style="font-size:12px;color:var(--gray)">Detention recovered this week</div><div class="mono" style="font-size:24px;font-weight:600;color:var(--orange)" data-count="310" data-prefix="$">$310</div></div>
-                  <div class="stat" style="background:#fff;border:1px solid var(--line)"><div style="font-size:12px;color:var(--muted)">Docs missing before invoicing</div><div class="mono" style="font-size:24px;font-weight:600">1 POD</div></div>
-                </div>
-                <div style="font-size:11px;color:#64748B">Sample figures for preview</div>
-              </div>
-
+              <div class="dv shot" data-dp-view="fleet"><img src="/img/portal-checkins.webp" alt="Dispatcher Portal Check-ins page with a map of driver check-ins" width="946" height="552" loading="lazy" decoding="async"></div>
+              <div class="dv shot" data-dp-view="loads"><img src="/img/portal-loads.webp" alt="Dispatcher Portal loads board with Open, With drivers, On the road and Delivered columns" width="946" height="552" loading="lazy" decoding="async"></div>
+              <div class="dv shot" data-dp-view="guard"><img src="/img/portal-guard.webp" alt="Load Guard broker check showing a young authority and a free email warning" width="946" height="552" loading="lazy" decoding="async"></div>
+              <div class="dv shot" data-dp-view="pay"><img src="/img/portal-payrun.webp" alt="Fleet pay run table with one row per driver" width="946" height="552" loading="lazy" decoding="async"></div>
             </div>
           </div>
         </div>
@@ -807,7 +724,7 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
       <div><b>Messages</b><p>Chat with each driver and tie a message to a specific load.</p></div>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-top:22px" data-reveal>
-      <p style="margin:0;font-size:14px;color:var(--gray);max-width:560px">The laptop above is a preview. The fleet map and settlements are coming later.</p>
+      <p style="margin:0;font-size:14px;color:var(--gray);max-width:560px">These are real LaneHook screens with sample data. Check-ins come with the Fleet plan.</p>
       <a href="/dispatch/" class="btn btn-o" data-cta="dispatch">Open the Dispatcher Portal</a>
     </div>
   </div>
@@ -880,7 +797,7 @@ html[lang=pa] .hero h1,html[lang=ar] .hero h1{line-height:1.25}
       <h2 class="h2">Simple pricing. Start free.</h2>
       <p class="sub dk" id="pricingSub">Everything is free while LaneHook is in early access. We will tell you before any paid plan starts.</p>
     </div>
-    <div class="pgrid" id="pgrid"><div class="pc pop" data-reveal><span class="badge">Most popular</span><h3>Solo</h3><div class="price"><b class="mono" translate="no">$19</b><span>per month</span></div><p class="tag">For the owner-operator</p><ul><li>Unlimited loads</li><li>Rate con scanner</li><li>Load Guard broker checks</li><li>Invoices and expenses</li><li>Document vault</li><li>Weekly, monthly and yearly money reports</li><li>Fuel log with MPG</li><li>Detention claim tracker</li><li>Scan paperwork to PDF</li><li>Inspection checklists and breakdown kit</li></ul><a href="/app/" class="btn btn-o">Start free</a></div><div class="pc " data-reveal><h3>Crew</h3><div class="price"><b class="mono" translate="no">$49</b><span>per month</span></div><p class="tag">Dispatcher plus drivers</p><ul><li>Everything in Solo</li><li>Dispatcher dashboard</li><li>Up to 5 drivers</li><li>Company Link</li><li>Fleet revenue by driver and broker</li><li>Driver pay sheets</li><li>Week calendar and driver availability</li><li>Rate con scan when you create a load</li><li>Shareable load status links</li><li>Alerts when drivers update a load or message you</li></ul><div class="soon">Coming soon</div></div><div class="pc " data-reveal><h3>Fleet</h3><div class="price"><b class="mono" translate="no">$99</b><span>per month</span></div><p class="tag">For growing fleets</p><ul><li>Everything in Crew</li><li>Up to 25 drivers</li><li>Driver scorecards and idle alerts</li><li>Lane and broker rate-per-mile report</li><li>Pay run for all drivers at once</li><li>Trucks, service and document reminders</li><li>Priority support</li></ul><div class="soon">Coming soon</div></div></div>
+    <div class="pgrid" id="pgrid"><div class="pc pop" data-reveal><span class="badge">Most popular</span><h3>Solo</h3><div class="price"><b class="mono" translate="no">$19</b><span>per month</span></div><p class="tag">For the owner-operator</p><ul><li>Unlimited loads</li><li>Rate con scanner</li><li>Load Guard broker checks</li><li>Invoices and expenses</li><li>Document vault</li><li>Weekly, monthly and yearly money reports</li><li>Fuel log with MPG</li><li>Detention claim tracker</li><li>Scan paperwork to PDF</li><li>Inspection checklists and breakdown kit</li></ul><a href="/app/" class="btn btn-o">Start free</a></div><div class="pc " data-reveal><h3>Crew</h3><div class="price"><b class="mono" translate="no">$49</b><span>per month</span></div><p class="tag">Dispatcher plus drivers</p><ul><li>Everything in Solo</li><li>Dispatcher dashboard</li><li>Up to 5 drivers</li><li>Company Link</li><li>Fleet revenue by driver and broker</li><li>Driver pay sheets</li><li>Week calendar and driver availability</li><li>Rate con scan when you create a load</li><li>Shareable load status links</li><li>Alerts when drivers update a load or message you</li></ul><div class="soon">Coming soon</div></div><div class="pc " data-reveal><h3>Fleet</h3><div class="price"><b class="mono" translate="no">$99</b><span>per month</span></div><p class="tag">For growing fleets</p><ul><li>Everything in Crew</li><li>Up to 25 drivers</li><li>Driver scorecards and idle alerts</li><li>Lane and broker rate-per-mile report</li><li>Pay run for all drivers at once</li><li>Trucks, service and document reminders</li><li>Driver check-ins on a map</li><li>Priority support</li></ul><div class="soon">Coming soon</div></div></div>
     <p class="fine" data-reveal>Prices are in US dollars. No contract. Cancel any time.</p>
   </div>
 </section>
@@ -1268,6 +1185,14 @@ var R=[
 ["Everything in Crew", "Todo lo de Crew", "Всё из Crew", "Усе з Crew", "Crew ਦਾ ਸਭ ਕੁਝ", "Crew dagi hamma narsa", "كل ما في Crew"],
 ["Up to 25 drivers", "Hasta 25 choferes", "До 25 водителей", "До 25 водіїв", "25 ਡਰਾਈਵਰਾਂ ਤੱਕ", "25 tagacha haydovchi", "حتى 25 سائقًا"], ["Driver scorecards and idle alerts", "Fichas de desempeño y alertas de inactividad", "Показатели водителей и оповещения о простое", "Показники водіїв і сповіщення про простій", "ਡਰਾਈਵਰ ਸਕੋਰਕਾਰਡ ਅਤੇ ਵਿਹਲੇ ਹੋਣ ਦੀਆਂ ਚੇਤਾਵਨੀਆਂ", "Haydovchi reytinglari va bo‘sh turish ogohlantirishlari", "بطاقات أداء السائقين وتنبيهات التوقف"], ["Lane and broker rate-per-mile report", "Informe de rutas y brokers por tarifa por milla", "Отчёт по направлениям и брокерам: ставка за милю", "Звіт за напрямками та брокерами: ставка за милю", "ਲੇਨ ਅਤੇ ਬ੍ਰੋਕਰ ਪ੍ਰਤੀ ਮੀਲ ਰੇਟ ਰਿਪੋਰਟ", "Yo‘nalish va brokerlar bo‘yicha milya narxi hisoboti", "تقرير سعر الميل للمسارات والوسطاء"], ["Pay run for all drivers at once", "Pago a todos los choferes de una vez", "Расчёт выплат всем водителям сразу", "Розрахунок виплат усім водіям одразу", "ਸਾਰੇ ਡਰਾਈਵਰਾਂ ਲਈ ਇੱਕੋ ਵਾਰ ਤਨਖਾਹ ਰਨ", "Barcha haydovchilarga bir vaqtda to‘lov hisobi", "كشف أجور لجميع السائقين دفعة واحدة"], ["Trucks, service and document reminders", "Camiones y recordatorios de servicio y documentos", "Грузовики, напоминания об обслуживании и документах", "Вантажівки, нагадування про обслуговування та документи", "ਟਰੱਕ, ਸਰਵਿਸ ਅਤੇ ਦਸਤਾਵੇਜ਼ ਰਿਮਾਈਂਡਰ", "Yuk mashinalari, xizmat va hujjat eslatmalari", "الشاحنات وتذكيرات الصيانة والمستندات"],
 ["Driver settlements", "Liquidaciones de choferes", "Расчёты с водителями", "Розрахунки з водіями", "ਡਰਾਈਵਰ ਸੈਟਲਮੈਂਟ", "Haydovchi hisob-kitoblari", "تسويات السائقين"],
+["Driver check-ins on a map", "Check-ins de choferes en un mapa", "Отметки водителей на карте", "Відмітки водіїв на мапі", "ਨਕਸ਼ੇ ਉੱਤੇ ਡਰਾਈਵਰ ਚੈੱਕ-ਇਨ", "Haydovchilarning xaritadagi check-inlari", "تسجيلات وصول السائقين على الخريطة"],
+["These are real LaneHook screens with sample data. Check-ins come with the Fleet plan.","Estas son pantallas reales de LaneHook con datos de ejemplo. Los check-ins vienen con el plan Fleet.","Это настоящие экраны LaneHook с демо-данными. Отметки входят в тариф Fleet.","Це справжні екрани LaneHook з демо-даними. Відмітки входять у тариф Fleet.","ਇਹ ਨਮੂਨਾ ਡਾਟਾ ਵਾਲੀਆਂ ਅਸਲੀ LaneHook ਸਕ੍ਰੀਨਾਂ ਹਨ। ਚੈੱਕ-ਇਨ Fleet ਪਲਾਨ ਨਾਲ ਆਉਂਦੇ ਹਨ।","Bu namunaviy ma'lumotli haqiqiy LaneHook ekranlari. Check-inlar Fleet tarifi bilan beriladi.","هذه شاشات LaneHook حقيقية ببيانات تجريبية. تسجيلات الوصول ضمن خطة Fleet."],
+["Check-ins","Check-ins","Отметки","Відмітки","ਚੈੱਕ-ਇਨ","Check-inlar","تسجيلات الوصول"],
+["Pay run","Pago a choferes","Выплаты","Виплати","ਤਨਖਾਹ ਰਨ","To'lov hisobi","كشف الرواتب"],
+["Dispatcher Portal Check-ins page with a map of driver check-ins","Página de check-ins del Portal del despachador con un mapa","Страница отметок портала диспетчера с картой","Сторінка відміток порталу диспетчера з мапою","ਨਕਸ਼ੇ ਨਾਲ ਡਿਸਪੈਚਰ ਪੋਰਟਲ ਦਾ ਚੈੱਕ-ਇਨ ਪੰਨਾ","Xaritali Dispetcher portali check-in sahifasi","صفحة تسجيلات الوصول في بوابة المُرسِل مع خريطة"],
+["Dispatcher Portal loads board with Open, With drivers, On the road and Delivered columns","Tablero de cargas del Portal del despachador","Доска грузов портала диспетчера","Дошка вантажів порталу диспетчера","ਡਿਸਪੈਚਰ ਪੋਰਟਲ ਦਾ ਲੋਡ ਬੋਰਡ","Dispetcher portali yuklar taxtasi","لوحة الحمولات في بوابة المُرسِل"],
+["Load Guard broker check showing a young authority and a free email warning","Verificación de Load Guard con aviso de autoridad nueva y correo gratuito","Проверка Load Guard: молодая лицензия и бесплатная почта","Перевірка Load Guard: молода ліцензія і безкоштовна пошта","Load Guard ਬ੍ਰੋਕਰ ਜਾਂਚ: ਨਵੀਂ ਅਥਾਰਟੀ ਅਤੇ ਮੁਫ਼ਤ ਈਮੇਲ ਚੇਤਾਵਨੀ","Load Guard tekshiruvi: yangi vakolat va bepul pochta ogohlantirishi","فحص Load Guard يظهر ترخيصًا حديثًا وتحذيرًا من بريد مجاني"],
+["Fleet pay run table with one row per driver","Tabla de pago a choferes de Fleet, una fila por chofer","Таблица выплат Fleet: по строке на водителя","Таблиця виплат Fleet: рядок на водія","ਹਰ ਡਰਾਈਵਰ ਲਈ ਇੱਕ ਕਤਾਰ ਵਾਲੀ Fleet ਤਨਖਾਹ ਟੇਬਲ","Har bir haydovchi uchun bitta qatorli Fleet to'lov jadvali","جدول رواتب Fleet بصف لكل سائق"],
 ["Priority support", "Soporte prioritario", "Приоритетная поддержка", "Пріоритетна підтримка", "ਤਰਜੀਹੀ ਸਹਾਇਤਾ", "Ustuvor yordam", "دعم ذو أولوية"],
 ["Most popular", "Más popular", "Самый популярный", "Найпопулярніший", "ਸਭ ਤੋਂ ਪ੍ਰਸਿੱਧ", "Eng mashhur", "الأكثر شيوعًا"],
 ["Coming soon", "Próximamente", "Скоро", "Незабаром", "ਜਲਦੀ ਆ ਰਿਹਾ", "Tez orada", "قريبًا"],
@@ -1540,7 +1465,7 @@ window.LHI={t:t,setLang:setLang,init:init,onChange:function(f){hooks.push(f)},la
     add('bub out',q.getAttribute('data-qr'));buzz();setTimeout(function(){add('bub in','Got it, thanks Marcus.')},900)})});
 
   /* ---------- DISPATCH TABS ---------- */
-  var paths={fleet:'fleet',loads:'loads',guard:'load-guard',pay:'settlements'};
+  var paths={fleet:'dispatch/#/fleet',loads:'dispatch/#/loads',guard:'app/#/guard',pay:'dispatch/#/fleet'};
   function setDp(k,user){
     var on;$$('[data-dp]').forEach(function(b){var o=b.getAttribute('data-dp')===k;b.classList.toggle('on',o);b.setAttribute('aria-selected',o?'true':'false');if(o)on=b});
     moveThumb($('segThumb'),on);

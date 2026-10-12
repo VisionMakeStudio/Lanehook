@@ -2,9 +2,9 @@
 /* LaneHook driver portal: loads from your dispatcher, and joining a company with a code */
 (function () {
   try { const c = new URLSearchParams(location.search).get('join'); if (/^[A-Za-z0-9]{4,10}$/.test(c || '')) localStorage.setItem('lh-join-code', c.toUpperCase()); } catch (e) { }
-  const D = LH.disp = { data: null, joining: false, busy: false };
+  const D = LH.disp = { data: null, joining: false, busy: false, ck: false };
   const money = n => '$' + (Number(n) % 1 ? Number(n).toFixed(2) : Number(n) || 0);
-  const ERR = { company_inactive_chat: 'Messages are paused because the company plan is not active.', slow_down: 'Slow down a little, then send again.', bad_code: 'That code was not found. Check it with your dispatcher.', in_company: 'You are already in a company. Leave it first.', company_full: 'That company is full right now. Ask your dispatcher to upgrade their plan so you can join.', company_inactive: 'That company\'s plan is not active.', own_company: 'That is your own company code.', locked: 'That load has already moved on.', not_found: 'That load is no longer available.', sign_in: 'Please sign in again.' };
+  const ERR = { too_fast: 'You just checked in. Wait a moment before you check in again.', bad_location: 'We could not read your location. Try again.', fleet_required: 'Check-ins are not turned on for your company.', company_inactive_chat: 'Messages are paused because the company plan is not active.', slow_down: 'Slow down a little, then send again.', bad_code: 'That code was not found. Check it with your dispatcher.', in_company: 'You are already in a company. Leave it first.', company_full: 'That company is full right now. Ask your dispatcher to upgrade their plan so you can join.', company_inactive: 'That company\'s plan is not active.', own_company: 'That is your own company code.', locked: 'That load has already moved on.', not_found: 'That load is no longer available.', sign_in: 'Please sign in again.' };
   const msg = e => ERR[(e && e.message) || ''] || 'Something went wrong. Try again.';
   const STATUS = { assigned: ['New', 'blue'], accepted: ['Accepted', 'ok'], picked_up: ['Picked up', 'warn'], delivered: ['Delivered', 'ok'], canceled: ['Canceled', 'bad'], open: ['Open', ''] };
   const when = s => { const d = s ? new Date(s) : null; return d && !isNaN(d) ? d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : ''; };
@@ -16,7 +16,8 @@
   function apply(r) {
     if (r && r.data) { D.data = r.data; D.cleanShared(); const rt = LH.route(); if (rt.name === 'dispatch') LH.render(); }
   }
-  D.load = async function () { if (!LH.auth || !LH.auth.user) return; const r = await rpc('driver_overview'); apply(r); };
+  D.load = async function () { if (!LH.auth || !LH.auth.user) return; const r = await rpc('driver_overview'); apply(r); D.loadCk(); };
+  D.loadCk = async function () { if (!LH.auth || !LH.auth.user || !D.data || !D.data.company) { D.ck = false; return; } const r = await rpc('checkin_enabled'); const on = !r.error && r.data === true; if (on !== D.ck) { D.ck = on; const rt = LH.route(); if (rt.name === 'dispatch') LH.render(); } };
   D.join = async function (code) {
     code = String(code || '').trim().toUpperCase(); if (!code) { LH.toast('Enter the code from your dispatcher'); return false; }
     D.busy = true; const r = await rpc('join_company', { p_code: code }); D.busy = false;
@@ -57,6 +58,7 @@
     const ls = d.loads || [], active = ls.filter(l => ['assigned', 'accepted', 'picked_up'].includes(l.status)), done = ls.filter(l => !['assigned', 'accepted', 'picked_up'].includes(l.status));
     return { title: 'Dispatch', html: `<div class="card"><div class="row"><div class="t sp"><b>${esc(d.company.name)}</b><div class="muted" style="font-size:14px">${d.company.dispatcher_email ? 'Dispatcher ' + esc(d.company.dispatcher_email) : 'Your dispatcher'}</div></div>${d.company.active === false ? '<span class="badge bad">Inactive</span>' : ''}</div>
       <div class="row wrap" style="margin-top:12px"><button class="btn sm" data-act="dispLeave">Leave company</button></div></div>
+      ${D.ck ? `<div class="card"><h3>Check in</h3><p class="muted" style="margin:6px 0 12px;font-size:14px;line-height:1.5">Tap to tell your dispatcher where you are right now. It shares your location one time. LaneHook does not track you.</p><div class="row wrap"><button class="btn pri" data-act="dispCheckin">Check in</button><button class="btn sm" data-act="dispCkDelete">Delete my check-ins</button></div></div>` : ''}
       <div class="card chat"><h3>Messages</h3><div class="chat-log" id="chatLog" aria-live="polite"></div>
         <form id="chatForm" class="chat-form"><input name="body" id="chatBody" maxlength="1000" autocomplete="off" placeholder="Message your dispatcher" aria-label="Message your dispatcher"><button class="btn pri" type="submit">Send</button></form></div>
       <div class="sec"><h2>Your loads from dispatch</h2></div>${active.length ? active.map(loadCard).join('') : LH.empty('Nothing assigned right now', 'Loads your dispatcher sends you will show up here.')}
@@ -68,7 +70,25 @@
     const ok = await D.join(code);
     if (ok) { if (LH.plans) LH.plans.refreshView(); else LH.render(); }
   };
-  LH.acts.dispStatus = async el => { const r = await rpc('driver_set_status', { p_id: el.dataset.id, p_status: el.dataset.v }); if (r.error) { LH.toast(msg(r.error), 3500); D.load(); } else { apply(r); LH.toast('Updated'); } };
+  LH.acts.dispStatus = async el => { const r = await rpc('driver_set_status', { p_id: el.dataset.id, p_status: el.dataset.v }); if (r.error) { LH.toast(msg(r.error), 3500); D.load(); } else { apply(r); LH.toast('Updated'); if (D.ck && (el.dataset.v === 'picked_up' || el.dataset.v === 'delivered')) setTimeout(() => LH.ask('Check in now?', 'Let your dispatcher see where you are.', 'Check in', () => D.checkin(el.dataset.v === 'picked_up' ? 'pickup' : 'delivery', el.dataset.id), false), 600); } };
+  D.checkin = function (kind, loadId) {
+    const s = LH.openSheet('Check in', `<p class="muted" style="margin:0 0 12px;font-size:14px;line-height:1.5">Your phone will ask to share your location. It is sent one time to your dispatcher, who can see it for 30 days. You can delete your check-ins anytime.</p>
+      <label class="f"><span>Note (optional)</span><input id="ckNote" maxlength="200" placeholder="Loaded, heading out"></label>
+      <label class="f"><span>ETA (optional)</span><input id="ckEta" maxlength="40" placeholder="3:30 PM"></label>
+      <div class="grid2" style="margin-top:12px"><button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" id="ckGo">Share my location</button></div><p class="muted" id="ckMsg" style="font-size:14px;margin:10px 0 0"></p>`, { noFocus: true });
+    const go = $('#ckGo', s), m = $('#ckMsg', s);
+    go.onclick = () => {
+      if (!navigator.geolocation) { m.textContent = 'This device cannot share its location.'; return; }
+      go.disabled = true; m.textContent = 'Getting your location…';
+      navigator.geolocation.getCurrentPosition(async pos => {
+        const r = await rpc('driver_checkin', { p_lat: pos.coords.latitude, p_lng: pos.coords.longitude, p_note: $('#ckNote', s).value.trim(), p_eta: $('#ckEta', s).value.trim(), p_kind: kind || 'manual', p_load: loadId || null });
+        if (r.error) { go.disabled = false; m.textContent = msg(r.error); return; }
+        LH.closeSheet(); LH.toast('Checked in. Your dispatcher can see it.');
+      }, err => { go.disabled = false; m.textContent = err && err.code === 1 ? 'Location is blocked. Allow location for this site in your phone settings, then try again.' : 'We could not get your location. Move to an open area and try again.'; }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 });
+    };
+  };
+  LH.acts.dispCheckin = () => D.checkin('manual');
+  LH.acts.dispCkDelete = () => LH.ask('Delete your check-ins?', 'This removes every check-in you have shared. Your dispatcher will no longer see them.', 'Delete', async () => { const r = await rpc('delete_my_checkins'); LH.toast(r.error ? msg(r.error) : 'Check-ins deleted', 3000); });
   LH.acts.dispDecline = el => LH.ask('Decline this load?', 'It goes back to your dispatcher to give to someone else.', 'Decline', async () => { const r = await rpc('driver_decline', { p_id: el.dataset.id }); if (r.error) { LH.toast(msg(r.error), 3500); D.load(); } else apply(r); });
   LH.acts.dispLeave = () => LH.ask('Leave this company?', 'Loads you have not finished go back to your dispatcher. Your own loads stay.', 'Leave', async () => { const r = await rpc('leave_company'); if (r.error) LH.toast(msg(r.error), 3500); else { apply(r); if (LH.plans) await LH.plans.load(); } });
   LH.acts.dispImport = el => {
