@@ -19,10 +19,10 @@
     var m=n.__en.match(/^(\s*)([\s\S]*?)(\s*)$/),out=m[1]+t(m[2].replace(/\s+/g,' '))+m[3];
     if(out!==v)n.nodeValue=out;n.__tr=out;
   }
-  var ATTRS=['placeholder','aria-label','title','alt'];
+  var ATTRS=['placeholder','aria-label','title','alt','label'];
   function trAttrs(root){
-    var els=root.querySelectorAll?root.querySelectorAll('[placeholder],[aria-label],[title],[alt]'):[];
-    if(root.matches&&root.matches('[placeholder],[aria-label],[title],[alt]')){els=Array.prototype.slice.call(els);els.push(root)}
+    var els=root.querySelectorAll?root.querySelectorAll('[placeholder],[aria-label],[title],[alt],optgroup[label]'):[];
+    if(root.matches&&root.matches('[placeholder],[aria-label],[title],[alt],optgroup[label]')){els=Array.prototype.slice.call(els);els.push(root)}
     Array.prototype.forEach.call(els,function(el){if(skip(el))return;ATTRS.forEach(function(a){
       var v=el.getAttribute(a);if(v==null)return;var k='data-en-'+a;
       if(!el.hasAttribute(k)||el.getAttribute('data-tr-'+a)!==v)el.setAttribute(k,v);

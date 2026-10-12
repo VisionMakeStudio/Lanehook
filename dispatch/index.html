@@ -186,12 +186,12 @@ function loginView(email,stage,msg2){
   }
 }
 /* ---------- shell ---------- */
-const NAV=[['loads','Loads'],['drivers','Drivers'],['money','Money'],['messages','Messages'],['company','Company']];
+const NAV=[['loads','Loads'],['drivers','Drivers'],['money','Money'],['fleet','Fleet'],['messages','Messages'],['company','Company']];
 const nbHtml=()=>UNREAD?`<i class="nb" aria-label="${UNREAD} unread">${UNREAD>9?'9+':UNREAD}</i>`:'';
 function paintNb(){document.querySelectorAll('a .nb').forEach(x=>x.remove());document.querySelectorAll('a[href="#/messages"]').forEach(a=>a.insertAdjacentHTML('beforeend',nbHtml()));document.title=(UNREAD?'('+UNREAD+') ':'')+'LaneHook Dispatcher Portal'}
 function setUnread(n){n=Number(n)||0;if(n!==UNREAD){UNREAD=n;paintNb()}}
 function shell(inner){
-  const nav=NAV.map(n=>`<a href="#/${n[0]}" class="${VIEW===n[0]?'on':''}">${n[1]}${n[0]==='messages'?nbHtml():''}</a>`).join('');
+  const nav=NAV.map(n=>`<a href="#/${n[0]}" class="${VIEW===n[0]?'on':''}">${n[1]}${n[0]==='messages'?nbHtml():n[0]==='fleet'?fleetNbHtml():''}</a>`).join('');
   $('#app').innerHTML=`<div class="shell"><aside class="side"><div class="brand"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Dispatcher Portal</b></div>${nav}<div class="me">${esc((O&&O.company&&O.company.name)||'')}<br><span style="color:#94A3B8">${esc(me())}</span><br><button class="btn sm" id="so" style="margin-top:10px;width:100%">Sign out</button></div></aside>
   <div class="main"><div class="top"><img src="../app/icons/wordmark-nav.svg" alt="LaneHook"><b>Dispatcher</b><button class="btn sm" id="so2">Sign out</button></div><div class="nav2">${nav}</div><div class="wrap">${demoBanner()}${inner}</div></div></div>`;
   ['so','so2'].forEach(i=>{const b=$('#'+i);if(b)b.onclick=async()=>{if(DEMO)return demoOff();await sb.auth.signOut();loginView('')}});
@@ -228,9 +228,10 @@ function draw(){
     gate(`<h1 style="font-size:26px">Name your company</h1><p style="color:var(--muted)">Drivers will see this name when they join.</p><form id="cf" style="max-width:420px"><label class="f"><span>Company name</span><input name="n" maxlength="80" required autocomplete="organization"></label><button class="btn pri" style="width:100%">Create company</button></form>`);
     return $('#cf').onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector('button');b.disabled=true;const r=await rpc('create_company',{p_name:e.target.n.value});if(r){O=r;toast('Company created');draw()}else b.disabled=false}
   }
-  shell((O.allowed?'':`<div class="banner warn"><b>Your plan is not active.</b>You can look around, but you cannot send loads or add drivers until you choose a plan. <button class="btn sm" id="fixplan" style="margin-top:8px">Fix my plan</button></div>`)+({loads:pageLoads,drivers:pageDrivers,money:pageMoney,messages:pageMessages,company:pageCompany}[VIEW])());
+  shell((VIEW==='loads'?fleetBanner():'')+(O.allowed?'':`<div class="banner warn"><b>Your plan is not active.</b>You can look around, but you cannot send loads or add drivers until you choose a plan. <button class="btn sm" id="fixplan" style="margin-top:8px">Fix my plan</button></div>`)+({loads:pageLoads,drivers:pageDrivers,money:pageMoney,fleet:pageFleet,messages:pageMessages,company:pageCompany}[VIEW])());
   const fp=$('#fixplan');if(fp)fp.onclick=()=>PLAN&&PLAN.has_customer?portal():(O.company&&openPlans());
   bind();
+  if(FD===undefined&&!FLOAD&&O.allowed)loadFleet(VIEW!=='fleet');
   if(VIEW==='messages')msgOpen();
   startPolls();
 }
@@ -589,15 +590,17 @@ function demoOverview(){
   const loads=[];const mk=(i,status,ago,drv)=>{const c=cities[Math.floor(rnd()*cities.length)],mi=c[2],rate=Math.round((mi*(1.9+rnd()*.9)+150)/5)*5,t=Date.now()-ago*864e5,pk=new Date(t-864e5),dl=new Date(t);
     loads.push({id:'dl'+i,driver_id:drv,status,source:'dispatcher',data:{ref:'D'+(1000+i),rate:String(rate),miles:String(mi),broker:brokers[Math.floor(rnd()*brokers.length)],pickCity:c[0],delivCity:c[1],pickTime:iso(pk)+'T08:00',delivTime:iso(dl)+'T15:00'},created_at:new Date(t-2*864e5).toISOString(),updated_at:new Date(t).toISOString()})};
   let i=0;for(let d=1;d<=80;d+=2){mk(i++,'delivered',d+rnd()*1.5,'dm'+Math.floor(rnd()*5))}
-  [['picked_up',0],['picked_up',0],['accepted',0],['assigned',0],['assigned',0]].forEach((x,k)=>mk(i++,x[0],x[1],'dm'+k));
+  [['picked_up',0],['picked_up',0],['accepted',0],['assigned',0]].forEach((x,k)=>mk(i++,x[0],x[1],'dm'+k));
+  loads.forEach(l=>{if(l.driver_id==='dm4'&&l.status==='delivered'&&Date.now()-new Date(l.updated_at)<6*864e5)l.updated_at=new Date(Date.now()-(6+rnd()*2)*864e5).toISOString()});
   const todayIso=iso(new Date());[0,1,2].forEach(k=>{mk(i++,'open',0,null);const l=loads[loads.length-1];const dd=new Date();dd.setDate(dd.getDate()+k);l.data.pickTime=iso(dd)+'T09:00';const e=new Date(dd);e.setDate(e.getDate()+1);l.data.delivTime=iso(e)+'T14:00'});
   loads.forEach(l=>{if(['picked_up','accepted','assigned'].includes(l.status)){const dd=new Date();dd.setDate(dd.getDate()+(l.status==='assigned'?1:0));l.data.pickTime=iso(dd)+'T07:30';const e=new Date(dd);e.setDate(e.getDate()+1);l.data.delivTime=iso(e)+'T13:00'}});
   mk(i++,'delivered',2,'dm1');loads[loads.length-1].source='driver';
   members.forEach(m=>{m.active_loads=loads.filter(l=>l.driver_id===m.user_id&&['assigned','accepted','picked_up'].includes(l.status)).length});
-  return {company:{id:'demo',name:'Demo Freight LLC',code:'DEMO42'},allowed:true,limit:15,is_driver:false,members,loads:loads.sort((a,b)=>b.updated_at.localeCompare(a.updated_at))};
+  return {company:{id:'demo',name:'Demo Freight LLC',code:'DEMO42'},allowed:true,limit:25,is_driver:false,members,loads:loads.sort((a,b)=>b.updated_at.localeCompare(a.updated_at))};
 }
 function demoRpc(name,a){
   a=a||{};const L=O.loads;
+  if(/^(fleet_data|save_fleet_item|delete_fleet_item|save_truck|delete_truck|save_fleet_pay)$/.test(name))return demoFleetRpc(name,a);
   if(name==='save_company_load'){let l=a.p_id&&L.find(x=>x.id===a.p_id);if(!l){l={id:'dn'+Date.now(),status:'open',source:'dispatcher',created_at:new Date().toISOString()};L.unshift(l)}l.data=a.p_data||{};if((a.p_driver||null)!==l.driver_id){l.driver_id=a.p_driver||null;l.status=l.driver_id?'assigned':'open'}l.updated_at=new Date().toISOString();return O}
   if(name==='set_company_load_status'){const l=L.find(x=>x.id===a.p_id);if(l){l.status=a.p_status;l.updated_at=new Date().toISOString()}return O}
   if(name==='delete_company_load'){O.loads=L.filter(x=>x.id!==a.p_id);return O}
@@ -608,8 +611,8 @@ function demoRpc(name,a){
   if(name==='create_load_share')return 'demo-token';
   toast('Demo mode: that change is not saved.');return null;
 }
-function demoOn(){try{localStorage.setItem('lh-d-demo-active','1')}catch(e){}DEMO=true;O=demoOverview();draw()}
-function demoOff(){try{localStorage.removeItem('lh-d-demo-active')}catch(e){}DEMO=false;O=null;sb.auth.getSession().then(r=>r.data.session?load():loginView(''))}
+function demoOn(){FD=undefined;DFD=null;try{localStorage.setItem('lh-d-demo-active','1')}catch(e){}DEMO=true;O=demoOverview();draw()}
+function demoOff(){FD=undefined;DFD=null;try{localStorage.removeItem('lh-d-demo-active')}catch(e){}DEMO=false;O=null;sb.auth.getSession().then(r=>r.data.session?load():loginView(''))}
 function demoSimulate(){const prev=JSON.parse(JSON.stringify(O)),l=O.loads.find(x=>x.status==='assigned'||x.status==='accepted')||O.loads.find(x=>x.status==='picked_up');if(!l)return;l.status=l.status==='assigned'?'accepted':(l.status==='accepted'?'picked_up':'delivered');l.updated_at=new Date().toISOString();notifyDiff(prev,O);draw()}
 function demoBanner(){return DEMO?`<div class="banner info"><b>Demo mode</b>Sample company and loads. Nothing here is saved. <span class="row2" style="margin-top:8px"><button class="btn sm" data-x="demosim">Simulate a driver update</button><button class="btn sm" data-x="demooff">Exit demo</button></span></div>`:''}
 function demoPanel(){return (demoFlag()&&!DEMO)?`<div class="panel" style="margin-top:14px"><h3>Demo data</h3><p class="sub">Try the portal with a sample company, five drivers and about 45 loads. Nothing is saved, and your real company is not touched.</p><button class="btn sm pri" data-x="demoon">Open demo</button></div>`:''}
@@ -632,6 +635,185 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-x]');if(b&
 document.addEventListener('change',e=>{const t=e.target;
   if(t.id==='payd'){PAYD=t.value;PAYMODE=(payPrefs()[PAYD]||{}).mode||PAYMODE;draw()}else if(t.id==='paym'){PAYMODE=t.value;draw()}else if(t.id==='payf'||t.id==='payt'){PAYFROM=$('#payf').value||PAYFROM;PAYTO=$('#payt').value||PAYTO;draw()}});
 document.addEventListener('input',e=>{const t=e.target;if(t.id==='payv'||t.id==='payded'||t.id==='paydn'){if(t.id==='payded')PAYDED=t.value;if(t.id==='paydn')PAYDEDN=t.value;savePayPref();const d=payData();const g=$('#payg'),n=$('#paynet');if(g)g.textContent=money2(d.gross);if(n)n.textContent=money2(d.net)}});
+/* ================= v6: Fleet plan (scorecards, lanes, pay run, reminders, trucks, idle alerts) ================= */
+let FD, FT='score', FP=30, FPAY='week', FPOFF=0, FLOAD=false, FERR=false, DFD=null;
+const DAYMS=864e5, todayIso=()=>iso(new Date());
+const idleDays=()=>{try{return Math.max(1,Number(localStorage.getItem('lh-d-idle'))||3)}catch(e){return 3}};
+const daysTo=s=>Math.round((new Date(s+'T12:00:00')-new Date(todayIso()+'T12:00:00'))/DAYMS);
+const FERRS={fleet_required:'Fleet tools are part of the Fleet plan.',due_required:'Pick a due date.',too_many:'You reached the limit for this list.',bad_kind:'Something was not filled in right.',bad_value:'Enter a number.'};
+Object.assign(ERR,FERRS);
+async function loadFleet(bg){
+  if(FLOAD)return;FLOAD=true;
+  const r=await srpc('fleet_data');FLOAD=false;
+  if(r){FD=r;FERR=false}else{FD=null;FERR=true}
+  if(bg){paintFleetNb();if(VIEW==='loads'&&fleetSoon().length)draw()}else if(VIEW==='fleet')draw();
+}
+const fleetSoon=()=>(FD&&FD.fleet?FD.items:[]).filter(i=>daysTo(i.due)<=14);
+const fleetNbHtml=()=>{const n=(FD&&FD.fleet?FD.items:[]).filter(i=>daysTo(i.due)<=7).length;return n?`<i class="nb" aria-label="${n} due">${n>9?'9+':n}</i>`:''};
+function paintFleetNb(){document.querySelectorAll('a[href="#/fleet"] .nb').forEach(x=>x.remove());document.querySelectorAll('a[href="#/fleet"]').forEach(a=>a.insertAdjacentHTML('beforeend',fleetNbHtml()))}
+function fleetBanner(){
+  const s=fleetSoon();if(!s.length)return '';const od=s.filter(i=>daysTo(i.due)<0).length,soon=s.length-od;
+  return `<div class="banner warn"><b>${od?'Fleet reminders: '+od+' overdue':'Fleet reminders: '+soon+' coming due'}</b>${od&&soon?soon+' more due in the next 14 days. ':''}<a href="#/fleet" style="font-weight:700;color:inherit;text-decoration:underline">Open Fleet</a></div>`;
+}
+/* ----- numbers ----- */
+const winLoads=days=>{const from=iso(new Date(Date.now()-days*DAYMS));return (O.loads||[]).filter(l=>l.status==='delivered'&&dlvDate(l)>=from)};
+function onTime(l){const t=(l.data||{}).delivTime;if(!t)return null;const due=new Date(t);if(isNaN(due))return null;return new Date(l.updated_at)<=new Date(due.getTime()+60*60000)}
+function idleOf(m){
+  const mine=(O.loads||[]).filter(l=>l.driver_id===m.user_id&&l.status!=='canceled');
+  if(mine.some(l=>['assigned','accepted','picked_up'].includes(l.status)))return {s:'on',d:0};
+  if(!mine.length)return {s:'new',d:Math.floor((Date.now()-new Date(m.joined_at||Date.now()))/DAYMS)};
+  const last=Math.max.apply(null,mine.map(l=>new Date(l.updated_at||l.created_at).getTime()));
+  const d=Math.floor((Date.now()-last)/DAYMS);return {s:d>=idleDays()?'idle':'ok',d};
+}
+function scoreData(days){
+  const ls=winLoads(days);
+  const rows=(O.members||[]).map(m=>{const mine=ls.filter(l=>l.driver_id===m.user_id),rev=mine.reduce((s,l)=>s+rateOf(l),0),mi=mine.reduce((s,l)=>s+milesOf(l),0),
+    revM=mine.filter(l=>milesOf(l)>0).reduce((s,l)=>s+rateOf(l),0),ot=mine.map(onTime).filter(x=>x!==null);
+    return {m,n:mine.length,rev,mi,rpm:mi?revM/mi:0,avg:mine.length?rev/mine.length:0,otN:ot.length,otOk:ot.filter(Boolean).length,idle:idleOf(m)}}).sort((a,b)=>b.rev-a.rev||b.n-a.n);
+  const tot={n:rows.reduce((s,r)=>s+r.n,0),rev:rows.reduce((s,r)=>s+r.rev,0),mi:rows.reduce((s,r)=>s+r.mi,0),otN:rows.reduce((s,r)=>s+r.otN,0),otOk:rows.reduce((s,r)=>s+r.otOk,0)};
+  const revM=ls.filter(l=>milesOf(l)>0&&l.driver_id).reduce((s,l)=>s+rateOf(l),0),miM=ls.filter(l=>l.driver_id).reduce((s,l)=>s+milesOf(l),0);
+  tot.rpm=miM?revM/miM:0;return {rows,tot};
+}
+function laneData(days){
+  const ls=winLoads(days),lanes={},br={};let revM=0,mi=0;
+  ls.forEach(l=>{const x=l.data||{},r=rateOf(l),m=milesOf(l);if(m>0){revM+=r;mi+=m}
+    const a=String(x.pickCity||'').trim(),b=String(x.delivCity||'').trim();
+    if(a&&b){const k=(a+'>'+b).toLowerCase(),y=lanes[k]=lanes[k]||{name:a+' → '+b,n:0,rev:0,revM:0,mi:0};y.n++;y.rev+=r;if(m>0){y.revM+=r;y.mi+=m}}
+    const k2=bkey(l)||'(no broker)',z=br[k2]=br[k2]||{name:x.broker||'(no broker)',n:0,rev:0,revM:0,mi:0};z.n++;z.rev+=r;if(m>0){z.revM+=r;z.mi+=m}});
+  const fin=o=>Object.values(o).map(y=>Object.assign(y,{avg:y.n?y.rev/y.n:0,rpm:y.mi?y.revM/y.mi:0})).sort((a,b)=>b.n-a.n||b.rev-a.rev);
+  return {lanes:fin(lanes),brokers:fin(br),avg:mi?revM/mi:0,n:ls.length};
+}
+function payRun(){
+  const r=rng(FPAY,FPOFF),ls=(O.loads||[]).filter(l=>l.status==='delivered'&&dlvDate(l)>=r.from&&dlvDate(l)<=r.to);
+  const rows=(O.members||[]).map(m=>{const mine=ls.filter(l=>l.driver_id===m.user_id),rate=mine.reduce((s,l)=>s+rateOf(l),0),mi=mine.reduce((s,l)=>s+milesOf(l),0),
+    p=(FD.pay||[]).find(x=>x.driver_id===m.user_id),pay=p?(p.mode==='pct'?rate*p.val/100:mi*p.val):null;return {m,n:mine.length,rate,mi,p,pay}});
+  return {r,rows,total:rows.reduce((s,x)=>s+(x.pay||0),0),missing:rows.filter(x=>x.n&&!x.p).length};
+}
+const payLabel=p=>p?(p.mode==='pct'?p.val+'%':money2(p.val)+'/mi'):'';
+function dueInfo(s){const d=daysTo(s);return d<0?{t:(-d)+' days overdue',c:'off'}:d===0?{t:'Due today',c:'cancels'}:d<=14?{t:'Due in '+d+' days',c:'cancels'}:{t:'Due in '+d+' days',c:'ok'}}
+const itemWhoRaw=i=>{if(i.truck_id){const t=FD.trucks.find(x=>x.id===i.truck_id);if(t)return t.name}if(i.driver_id){const m=drv(i.driver_id);if(m)return dname(m)}return null};
+const itemWho=i=>{const w=itemWhoRaw(i);return w===null?'<span>Whole company</span>':esc(w)};
+/* ----- page ----- */
+function pageFleet(){
+  const head=`<div class="head"><div><h1>Fleet</h1><p>Scorecards, lanes, pay run, reminders and trucks for your whole fleet.</p></div></div>`;
+  if(FD===undefined)return head+'<div class="empty">Loading…</div>';
+  if(FERR||!FD)return head+`<div class="panel"><h3>Could not load Fleet tools</h3><p class="sub">Check your connection and try again.</p><button class="btn pri" data-x="fretry">Try again</button></div>`;
+  if(!FD.fleet)return head+fleetTeaser();
+  const tabs=[['score','Scorecards'],['lanes','Lanes'],['payrun','Pay run'],['remind','Reminders'],['trucks','Trucks']];
+  const body={score:fleetScore,lanes:fleetLanes,payrun:fleetPayRun,remind:fleetRemind,trucks:fleetTrucks}[FT]();
+  return head+fleetAlerts()+`<div class="chips" role="tablist">${tabs.map(c=>`<button class="chip ${FT===c[0]?'on':''}" data-x="ftab" data-v="${c[0]}">${c[1]}${c[0]==='remind'&&fleetSoon().length?` <i>${fleetSoon().length}</i>`:''}</button>`).join('')}</div>${body}`;
+}
+function fleetTeaser(){
+  const price=CFG&&CFG.plans&&CFG.plans.fleet&&CFG.plans.fleet.price;
+  const f=[['Driver scorecards','Revenue, rate per mile, on-time delivery and idle days for every driver.'],['Lane and broker report','See which lanes and brokers pay best per mile.'],['Pay run','Work out what you owe every driver in one table.'],['Reminders','Insurance, registration, inspections and service dates, with warnings before they run out.'],['Trucks','Keep your trucks, plates and drivers in one list.'],['Idle driver alerts','Know who has had no load for days.'],['Up to 25 drivers','Room to grow.']];
+  return `<div class="panel"><h3>Fleet tools come with the Fleet plan</h3><p class="sub">${price?'Fleet is '+money(price)+' a month. ':''}No hardware and no contract.</p><div style="display:grid;gap:12px;margin:6px 0 16px">${f.map(x=>`<div><b>${x[0]}</b><div style="color:var(--muted);font-size:14px">${x[1]}</div></div>`).join('')}</div><button class="btn pri" data-x="fup">Upgrade to Fleet</button></div>`;
+}
+function fleetAlerts(){
+  const idle=(O.members||[]).map(m=>({m,i:idleOf(m)})).filter(x=>x.i.s==='idle'),s=fleetSoon(),od=s.filter(i=>daysTo(i.due)<0).length;
+  const sel=`<select id="idlesel" aria-label="Idle after" style="min-height:34px">${[2,3,5,7].map(n=>`<option value="${n}" ${idleDays()===n?'selected':''}>${n} days</option>`).join('')}</select>`;
+  return `<div class="panel" style="margin-bottom:14px"><div class="row2" style="justify-content:space-between"><h3 style="margin:0">Needs attention</h3><label class="row2" style="gap:8px;font-size:13px;color:var(--muted)">Idle after ${sel}</label></div>
+   <div style="margin-top:10px;display:grid;gap:8px">${idle.length?idle.map(x=>`<div class="row2" style="gap:10px"><span class="pill cancels">Idle ${x.i.d} days</span><b>${esc(dname(x.m))}</b></div>`).join(''):'<div style="color:var(--muted)">No idle drivers.</div>'}
+   ${s.length?`<div class="row2" style="gap:10px"><span class="pill ${od?'off':'cancels'}">${od?od+' overdue':s.length+' coming due'}</span><a href="#/fleet" data-x="ftab" data-v="remind" style="font-weight:600">See reminders</a></div>`:'<div style="color:var(--muted)">Nothing due in the next 14 days.</div>'}</div></div>`;
+}
+function perToggle(){return `<div class="chips">${[30,90,365].map(d=>`<button class="chip ${FP===d?'on':''}" data-x="fper" data-v="${d}">${d===365?'1 year':'Last '+d+' days'}</button>`).join('')}</div>`}
+function fleetScore(){
+  const d=scoreData(FP),pct=(a,b)=>b?Math.round(a/b*100)+'%':'–';
+  const st=i=>i.s==='on'?'<span class="pill ok">On a load</span>':i.s==='idle'?`<span class="pill cancels">Idle ${i.d} days</span>`:i.s==='new'?'<span class="pill">No loads yet</span>':'<span class="pill">Available</span>';
+  return perToggle()+`<div class="kpis six"><div class="kpi"><span>Loads delivered</span><b>${d.tot.n}</b></div><div class="kpi"><span>Revenue</span><b>${money0(d.tot.rev)}</b></div><div class="kpi"><span>Revenue per mile</span><b>${d.tot.rpm?money2(d.tot.rpm):'–'}</b></div><div class="kpi"><span>On-time delivery</span><b>${pct(d.tot.otOk,d.tot.otN)}</b></div></div>
+  <div class="row2" style="margin:0 0 14px"><button class="btn sm" data-x="fcsv" data-v="score">Download CSV</button></div>
+  <div class="panel" style="padding:0;overflow:auto">${d.rows.length?`<table class="tbl" id="score"><thead><tr><th>#</th><th>Driver</th><th class="a">Loads</th><th class="a">Revenue</th><th class="a">Per mile</th><th class="a">Avg rate</th><th class="a">On time</th><th>Now</th></tr></thead><tbody>${d.rows.map((r,i)=>`<tr style="cursor:pointer" data-x="drvhist" data-v="${esc(r.m.user_id)}"><td>${i+1}</td><td><b>${esc(dname(r.m))}</b></td><td class="a">${r.n}</td><td class="a">${money0(r.rev)}</td><td class="a">${r.rpm?money2(r.rpm):'–'}</td><td class="a">${r.n?money0(r.avg):'–'}</td><td class="a">${pct(r.otOk,r.otN)}</td><td>${st(r.idle)}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Add drivers to see scorecards.</div>'}</div>
+  <p class="ft2">Based on loads marked delivered. On time means delivered within an hour of the delivery time on the load, and only counts loads that have a delivery time. It depends on drivers tapping Delivered when they deliver.</p>`;
+}
+function fleetLanes(){
+  const d=laneData(FP),tag=y=>!d.avg||y.n<2||!y.rpm?'':y.rpm<d.avg*.85?' <span class="pill off">Below average</span>':y.rpm>=d.avg*1.15?' <span class="pill ok">Strong</span>':'';
+  const tbl=(rows,title,id)=>`<div class="panel" style="padding:0;overflow:auto;margin-bottom:14px"><div style="padding:16px 18px 6px"><h3 style="margin:0">${title}</h3></div>${rows.length?`<table class="tbl" id="${id}"><thead><tr><th>${id==='lanes'?'Lane':'Broker'}</th><th class="a">Loads</th><th class="a">Avg rate</th><th class="a">Per mile</th></tr></thead><tbody>${rows.slice(0,15).map(y=>`<tr><td>${esc(y.name)}${tag(y)}</td><td class="a">${y.n}</td><td class="a">${money0(y.avg)}</td><td class="a">${y.rpm?money2(y.rpm):'–'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No delivered loads in this period.</div>'}</div>`;
+  return perToggle()+`<div class="kpis"><div class="kpi"><span>Your average per mile</span><b>${d.avg?money2(d.avg):'–'}</b></div><div class="kpi"><span>Loads in this period</span><b>${d.n}</b></div></div><div class="row2" style="margin:0 0 14px"><button class="btn sm" data-x="fcsv" data-v="lanes">Download CSV</button></div>${tbl(d.lanes,'Lanes','lanes')}${tbl(d.brokers,'Brokers','brokers')}<p class="ft2">Per mile uses loads that have miles filled in. Below average means more than 15% under your own average, with at least 2 loads.</p>`;
+}
+function fleetPayRun(){
+  const d=payRun(),r=d.r;
+  const nav=`<div class="chips">${[['week','Week'],['month','Month']].map(c=>`<button class="chip ${FPAY===c[0]?'on':''}" data-x="ppay" data-v="${c[0]}">${c[1]}</button>`).join('')}</div><div class="row2" style="justify-content:center;margin:0 0 14px"><button class="btn sm" data-x="pnav" data-v="-1" aria-label="Earlier">‹</button><b style="min-width:190px;text-align:center">${esc(r.label)}</b><button class="btn sm" data-x="pnav" data-v="1" aria-label="Later">›</button>${FPOFF?'<button class="btn sm" data-x="pnow">This '+FPAY+'</button>':''}</div>`;
+  return nav+`<div class="kpis"><div class="kpi"><span>Total to pay</span><b id="pgt">${money2(d.total)}</b></div><div class="kpi"><span>Drivers with loads</span><b>${d.rows.filter(x=>x.n).length}</b></div></div>
+  ${d.missing?`<div class="banner info"><b>Set a pay rate</b>${d.missing==1?'1 driver with loads has no rate yet. Rates are saved for next time.':d.missing+' drivers with loads have no rate yet. Rates are saved for next time.'}</div>`:''}
+  <div class="row2" style="margin:0 0 14px"><button class="btn pri sm" data-x="fprint">Print pay run</button><button class="btn sm" data-x="fcsv" data-v="pay">Download CSV</button></div>
+  <div class="panel" style="padding:0;overflow:auto"><table class="tbl" id="payrun"><thead><tr><th>Driver</th><th class="a">Loads</th><th class="a">Rate total</th><th>Pay by</th><th>Rate</th><th class="a">Pay</th></tr></thead><tbody>${d.rows.map(x=>`<tr><td><b>${esc(dname(x.m))}</b></td><td class="a">${x.n}</td><td class="a">${money0(x.rate)}</td><td><select data-prm="${esc(x.m.user_id)}" aria-label="Pay by"><option value="" ${x.p?'':'selected'}>Not set</option><option value="pct" ${x.p&&x.p.mode==='pct'?'selected':''}>Percent</option><option value="mile" ${x.p&&x.p.mode==='mile'?'selected':''}>Per mile</option></select></td><td><input data-prv="${esc(x.m.user_id)}" inputmode="decimal" style="width:84px" value="${x.p?esc(x.p.val):''}" ${x.p?'':'disabled'} placeholder="${x.p&&x.p.mode==='mile'?'0.60':'25'}" aria-label="Rate"></td><td class="a" data-pg="${esc(x.m.user_id)}">${x.p?money2(x.pay):'–'}</td></tr>`).join('')}</tbody></table></div>
+  <p class="ft2">Pay is worked out from delivered loads in the dates shown. Your numbers, your rules. LaneHook does not file payroll or taxes.</p>`;
+}
+function paintPayRun(){const d=payRun();d.rows.forEach(x=>{const c=document.querySelector('[data-pg="'+x.m.user_id+'"]');if(c)c.textContent=x.p?money2(x.pay):'–'});const t=$('#pgt');if(t)t.textContent=money2(d.total)}
+function fleetRemind(){
+  const its=FD.items.slice(),grp=[['Overdue',i=>daysTo(i.due)<0],['Due in 30 days',i=>{const d=daysTo(i.due);return d>=0&&d<=30}],['Later',i=>daysTo(i.due)>30]];
+  const row=i=>{const di=dueInfo(i.due);return `<div class="drv" style="cursor:pointer" data-x="fedit" data-v="${esc(i.id)}"><div class="g"><b>${esc(i.name)}</b><small><span>${i.kind==='document'?'Document':'Service'}</span> · ${itemWho(i)} · ${esc(day(i.due+'T12:00:00'))}${i.note?' · '+esc(i.note):''}</small></div><span class="pill ${di.c}">${di.t}</span></div>`};
+  return `<div class="row2" style="margin:0 0 14px"><button class="btn pri sm" data-x="fadd">Add reminder</button>${its.length?'<button class="btn sm" data-x="fcsv" data-v="rem">Download CSV</button>':''}</div>`+(its.length?grp.map(g=>{const ls=its.filter(g[1]);return ls.length?`<div class="panel" style="padding:0;margin-bottom:14px"><div style="padding:16px 18px 6px"><h3 style="margin:0">${g[0]} · ${ls.length}</h3></div>${ls.map(row).join('')}</div>`:''}).join(''):`<div class="panel"><div class="empty">No reminders yet.<br>Add insurance, registration, inspections and service dates, and LaneHook warns you before they run out.</div></div>`);
+}
+function fleetTrucks(){
+  const ts=FD.trucks;
+  return `<div class="row2" style="margin:0 0 14px"><button class="btn pri sm" data-x="tadd">Add truck</button></div>`+(ts.length?`<div class="panel" style="padding:0">${ts.map(t=>{const its=FD.items.filter(i=>i.truck_id===t.id).sort((a,b)=>a.due.localeCompare(b.due)),m=t.driver_id?drv(t.driver_id):null,nx=its[0],di=nx?dueInfo(nx.due):null;
+    return `<div class="drv" style="cursor:pointer" data-x="tedit" data-v="${esc(t.id)}"><div class="g"><b>${esc(t.name)}</b><small>${[t.plate,t.vin,m?dname(m):'No driver'].filter(Boolean).map(esc).join(' · ')}</small></div>${nx?`<span class="pill ${di.c}" title="${esc(nx.name)}">${di.t}</span>`:'<span class="pill">No reminders</span>'}</div>`}).join('')}</div>`:`<div class="panel"><div class="empty">No trucks yet.<br>Add your trucks, then attach reminders like oil changes and inspections to each one.</div></div>`);
+}
+/* ----- forms ----- */
+async function fact(name,args,okMsg){const r=await rpc(name,args);if(r){FD=r;closeSheet();if(okMsg)toast(okMsg);draw()}return r}
+function appliesOpts(sel){return `<option value="" ${!sel?'selected':''}>Whole company</option>`+(FD.trucks.length?`<optgroup label="Trucks">${FD.trucks.map(t=>`<option value="t:${esc(t.id)}" ${sel==='t:'+t.id?'selected':''}>${esc(t.name)}</option>`).join('')}</optgroup>`:'')+((O.members||[]).length?`<optgroup label="Drivers">${(O.members||[]).map(m=>`<option value="d:${esc(m.user_id)}" ${sel==='d:'+m.user_id?'selected':''}>${esc(dname(m))}</option>`).join('')}</optgroup>`:'')}
+function itemForm(id){
+  const it=id?FD.items.find(x=>x.id===id):null,sel=it?(it.truck_id?'t:'+it.truck_id:it.driver_id?'d:'+it.driver_id:''):'';
+  const s=sheet(`<h2>${it?'Edit reminder':'New reminder'}</h2><form id="fif" style="margin-top:10px"><div class="two"><label class="f"><span>Type</span><select name="k"><option value="document" ${it&&it.kind==='service'?'':'selected'}>Document</option><option value="service" ${it&&it.kind==='service'?'selected':''}>Service</option></select></label><label class="f"><span>Due date</span><input type="date" name="d" required value="${it?esc(it.due):''}"></label></div>
+   <label class="f"><span>Name</span><input name="n" maxlength="80" required list="fsug" value="${it?esc(it.name):''}" placeholder="Insurance, oil change…"><datalist id="fsug">${['Insurance','Registration','DOT annual inspection','IFTA decal','Medical card','CDL','Oil change','Tires','Brakes','Preventive maintenance'].map(x=>`<option value="${x}">`).join('')}</datalist></label>
+   <label class="f"><span>Applies to</span><select name="a">${appliesOpts(sel)}</select></label><label class="f"><span>Note (optional)</span><input name="o" maxlength="300" value="${it?esc(it.note):''}"></label>
+   <div style="display:grid;grid-template-columns:${it?'1fr 1fr 1fr':'1fr 1fr'};gap:10px;margin-top:6px"><button type="button" class="btn" id="fc">Cancel</button>${it?'<button type="button" class="btn bad" id="fd">Delete</button>':''}<button class="btn pri">Save</button></div></form>`);
+  $('#fc',s).onclick=closeSheet;
+  if(it)$('#fd',s).onclick=()=>confirmBox('Delete this reminder?',it.name+'','Delete',()=>fact('delete_fleet_item',{p_id:it.id},'Deleted'));
+  $('#fif',s).onsubmit=e=>{e.preventDefault();const f=e.target,a=f.a.value;fact('save_fleet_item',{p_id:it?it.id:null,p_kind:f.k.value,p_name:f.n.value,p_due:f.d.value,p_driver:a.startsWith('d:')?a.slice(2):null,p_truck:a.startsWith('t:')?a.slice(2):null,p_note:f.o.value},'Saved')};
+}
+function truckForm(id){
+  const t=id?FD.trucks.find(x=>x.id===id):null;
+  const s=sheet(`<h2>${t?'Edit truck':'New truck'}</h2><form id="tff" style="margin-top:10px"><label class="f"><span>Name or number</span><input name="n" maxlength="60" required value="${t?esc(t.name):''}" placeholder="Truck 12"></label>
+   <div class="two"><label class="f"><span>Plate</span><input name="p" maxlength="20" value="${t?esc(t.plate):''}"></label><label class="f"><span>VIN</span><input name="v" maxlength="24" value="${t?esc(t.vin):''}"></label></div>
+   <label class="f"><span>Driver</span><select name="d"><option value="">No driver</option>${(O.members||[]).map(m=>`<option value="${esc(m.user_id)}" ${t&&t.driver_id===m.user_id?'selected':''}>${esc(dname(m))}</option>`).join('')}</select></label><label class="f"><span>Note (optional)</span><input name="o" maxlength="300" value="${t?esc(t.note):''}"></label>
+   <div style="display:grid;grid-template-columns:${t?'1fr 1fr 1fr':'1fr 1fr'};gap:10px;margin-top:6px"><button type="button" class="btn" id="fc">Cancel</button>${t?'<button type="button" class="btn bad" id="fd">Delete</button>':''}<button class="btn pri">Save</button></div></form>`);
+  $('#fc',s).onclick=closeSheet;
+  if(t)$('#fd',s).onclick=()=>confirmBox('Delete this truck?','Its reminders are deleted too.','Delete',()=>fact('delete_truck',{p_id:t.id},'Deleted'));
+  $('#tff',s).onsubmit=e=>{e.preventDefault();const f=e.target;fact('save_truck',{p_id:t?t.id:null,p_name:f.n.value,p_plate:f.p.value,p_vin:f.v.value,p_driver:f.d.value||null,p_note:f.o.value},'Saved')};
+}
+function fleetCSVrows(w){
+  if(w==='score'){const d=scoreData(FP),rows=[['Driver','Loads','Revenue','Miles','Revenue per mile','Average rate','On time delivered','Loads with a delivery time']];d.rows.forEach(r=>rows.push([dname(r.m),r.n,r.rev.toFixed(2),Math.round(r.mi),r.rpm?r.rpm.toFixed(2):'',r.n?r.avg.toFixed(2):'',r.otOk,r.otN]));return ['lanehook-scorecards-'+FP+'d.csv',rows]}
+  if(w==='lanes'){const d=laneData(FP),rows=[['Type','Name','Loads','Average rate','Per mile']];d.lanes.forEach(y=>rows.push(['Lane',y.name,y.n,y.avg.toFixed(2),y.rpm?y.rpm.toFixed(2):'']));d.brokers.forEach(y=>rows.push(['Broker',y.name,y.n,y.avg.toFixed(2),y.rpm?y.rpm.toFixed(2):'']));return ['lanehook-lanes-'+FP+'d.csv',rows]}
+  if(w==='pay'){const d=payRun(),rows=[['Driver','Loads','Rate total','Miles','Pay by','Pay']];d.rows.forEach(x=>rows.push([dname(x.m),x.n,x.rate.toFixed(2),Math.round(x.mi),payLabel(x.p),x.p?x.pay.toFixed(2):'']));rows.push([],['Total','','','','',d.total.toFixed(2)]);return ['lanehook-pay-run-'+d.r.from+'.csv',rows]}
+  const rows=[['Type','Name','Applies to','Due','Days left','Note']];FD.items.forEach(i=>rows.push([i.kind,i.name,itemWhoRaw(i)||'Whole company',i.due,daysTo(i.due),i.note]));return ['lanehook-reminders.csv',rows];
+}
+function payRunPaper(){const d=payRun();return `<div class="paper"><h2>Pay run</h2><div><b>${esc(O.company.name)}</b> · ${esc(d.r.label)}</div><table><thead><tr><th>Driver</th><th>Loads</th><th class="a">Rate total</th><th>Pay by</th><th class="a">Pay</th></tr></thead><tbody>${d.rows.filter(x=>x.n).map(x=>`<tr><td>${esc(dname(x.m))}</td><td>${x.n}</td><td class="a">${money2(x.rate)}</td><td>${esc(payLabel(x.p)||'Not set')}</td><td class="a">${x.p?money2(x.pay):'–'}</td></tr>`).join('')}<tr><td colspan="4"><b>Total</b></td><td class="a"><b>${money2(d.total)}</b></td></tr></tbody></table><small>Prepared with LaneHook on ${day(new Date())}.</small></div>`}
+Object.assign(XA,{
+  ftab:(b,e)=>{if(e&&e.preventDefault)e.preventDefault();FT=b.dataset.v;draw()},fper:b=>{FP=+b.dataset.v;draw()},ppay:b=>{FPAY=b.dataset.v;FPOFF=0;draw()},pnav:b=>{FPOFF+=+b.dataset.v;draw()},pnow:()=>{FPOFF=0;draw()},
+  fadd:()=>itemForm(null),fedit:b=>itemForm(b.dataset.v),tadd:()=>truckForm(null),tedit:b=>truckForm(b.dataset.v),
+  fup:()=>PLAN&&PLAN.has_customer?portal():openPlans(),fretry:()=>{FD=undefined;draw()},
+  fprint:()=>{const s=sheet(payRunPaper()+`<div class="noprint" style="margin-top:14px"><button class="btn pri" style="width:100%" id="pp">Print or save PDF</button></div>`);$('#pp',s).onclick=()=>window.print()},
+  fcsv:b=>{const x=fleetCSVrows(b.dataset.v);saveCSV(x[0],x[1])}
+});
+document.addEventListener('change',async e=>{const t=e.target;
+  if(t.id==='idlesel'){try{localStorage.setItem('lh-d-idle',t.value)}catch(x){}draw();return}
+  const d=t.dataset&&(t.dataset.prm||t.dataset.prv);if(!d||!FD)return;
+  const row=t.closest('tr'),sel=row.querySelector('[data-prm]'),inp=row.querySelector('[data-prv]');
+  if(t.dataset.prm!==undefined){
+    if(!sel.value){const r=await rpc('save_fleet_pay',{p_driver:d,p_mode:null,p_val:null});if(r){FD=r;draw()}return}
+    inp.disabled=false;inp.placeholder=sel.value==='mile'?'0.60':'25';if(!inp.value){inp.focus();return}
+  }
+  const v=Number(String(inp.value).replace(/[^0-9.]/g,''));if(!sel.value||!inp.value||isNaN(v))return;
+  const r=await rpc('save_fleet_pay',{p_driver:d,p_mode:sel.value,p_val:v});if(r){FD=r;paintPayRun()}
+});
+function demoFleet(){
+  const ms=(O&&O.members)||[],dt=n=>iso(new Date(Date.now()+n*DAYMS));
+  const trucks=[{id:'dt1',name:'Truck 12',plate:'NJ-482XK',vin:'1FDXE4FS8KDC12345',driver_id:ms[0]&&ms[0].user_id,note:''},{id:'dt2',name:'Truck 14',plate:'NJ-771PL',vin:'3C7WRNBL1KG654321',driver_id:ms[1]&&ms[1].user_id,note:''},{id:'dt3',name:'Truck 21',plate:'NY-HJ4820',vin:'1HTMMAAL5KH987654',driver_id:ms[2]&&ms[2].user_id,note:''}];
+  const items=[['document','Insurance',-4,null],['service','Oil change',3,'dt1'],['document','DOT annual inspection',12,'dt2'],['service','Tires',26,'dt3'],['document','Registration',41,'dt1'],['document','Medical card',58,null,ms[3]&&ms[3].user_id],['document','IFTA decal',95,null]].map((x,i)=>({id:'di'+i,kind:x[0],name:x[1],due:dt(x[2]),truck_id:x[3]||null,driver_id:x[4]||null,note:''}));
+  return {fleet:true,trucks,items:items.sort((a,b)=>a.due.localeCompare(b.due)),pay:ms.slice(0,3).map((m,i)=>({driver_id:m.user_id,mode:i===2?'mile':'pct',val:i===2?0.6:25}))};
+}
+function demoFleetRpc(name,a){
+  const F=DFD||(DFD=demoFleet());let ch=true;
+  if(name==='fleet_data')return F;
+  if(name==='save_fleet_item'){let x=a.p_id&&F.items.find(i=>i.id===a.p_id);if(!x){x={id:'di'+Date.now()};F.items.push(x)}Object.assign(x,{kind:a.p_kind,name:a.p_name,due:a.p_due,driver_id:a.p_driver||null,truck_id:a.p_truck||null,note:a.p_note||''});F.items.sort((p,q)=>p.due.localeCompare(q.due))}
+  else if(name==='delete_fleet_item')F.items=F.items.filter(i=>i.id!==a.p_id);
+  else if(name==='save_truck'){let x=a.p_id&&F.trucks.find(i=>i.id===a.p_id);if(!x){x={id:'dt'+Date.now()};F.trucks.push(x)}Object.assign(x,{name:a.p_name,plate:a.p_plate||'',vin:a.p_vin||'',driver_id:a.p_driver||null,note:a.p_note||''})}
+  else if(name==='delete_truck'){F.trucks=F.trucks.filter(i=>i.id!==a.p_id);F.items=F.items.filter(i=>i.truck_id!==a.p_id)}
+  else if(name==='save_fleet_pay'){F.pay=F.pay.filter(p=>p.driver_id!==a.p_driver);if(a.p_mode)F.pay.push({driver_id:a.p_driver,mode:a.p_mode,val:a.p_val})}
+  else ch=false;
+  return ch?F:undefined;
+}
 (async function(){
   const {data}=await sb.auth.getSession();
   sb.auth.onAuthStateChange(async(ev,s)=>{if(ev==='SIGNED_IN'&&s){EMAIL=s.user.email||'';tellOwner(s);if(location.search||location.hash.indexOf('access_token')>-1)history.replaceState(null,'',location.pathname+location.hash);await load()}});
